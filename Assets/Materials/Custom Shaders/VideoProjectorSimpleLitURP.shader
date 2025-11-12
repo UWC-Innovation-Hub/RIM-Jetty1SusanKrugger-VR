@@ -109,20 +109,27 @@ Shader "URP/ProjectorSimpleLit"
                 return o;
             }
 
-            // Decode normal map to world space
-            float3 ApplyNormalMap(float2 uv, float3 normalWS, float4 tangentWS)
-            {
-                #if defined(_NORMALMAP)
-                float3 nTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, uv), _NormalScale);
-                float3 t = normalize(tangentWS.xyz);
-                float3 n = normalize(normalWS);
-                float3 b = normalize(cross(n, t) * tangentWS.w);
-                float3x3 TBN = float3x3(t, b, n);
-                return normalize(mul(nTS, TBN));
-                #else
-                return normalize(normalWS);
-                #endif
-            }
+float3 ApplyNormalMap(float2 uv, float3 normalWS, float4 tangentWS)
+{
+    #if defined(_NORMALMAP)
+    float3 nTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, uv), _NormalScale);
+
+    float3 t = normalize(tangentWS.xyz);
+    float3 n = normalize(normalWS);
+
+    // Handedness from tangent.w * object negative scale
+    float3 b = normalize(cross(n, t)) * tangentWS.w;
+
+    // Columns = t, b, n  (URP convention)
+    float3x3 TBN = float3x3(t, b, n);
+
+    // IMPORTANT: matrix * vector (column-major multiply)
+    return normalize(mul(TBN, nTS));
+    #else
+    return normalize(normalWS);
+    #endif
+}
+
 
             // // Very small, cheap lighting: ambient (SH) + main directional + simple spec
             // float3 SimpleLighting(float3 albedo, float3 normalWS, float3 viewDirWS, float smoothness)
