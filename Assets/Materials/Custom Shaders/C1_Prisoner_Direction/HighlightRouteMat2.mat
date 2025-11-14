@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: OutlineMat
-  m_Shader: {fileID: -6465566751694194690, guid: b36d75b324212ef4499fb3f9aa3ca311, type: 3}
+  m_Name: HighlightRouteMat2
+  m_Shader: {fileID: -6465566751694194690, guid: affa0d763758bc441a2d97ec03d05d7a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -24,6 +24,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -38,15 +42,23 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BaseIntensity: 0
+    - _EmissionStrength: 0
+    - _FresnelPower: 3
+    - _FresnelStrength: 1
+    - _PhaseOffset: 0
+    - _Pulse: 1
+    - _PulseAmplitude: 1
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _SineFrequency: 1
     - _XRMotionVectorsPass: 1
-    - _outline_scale: 1.03
     m_Colors:
-    - _outline_color: {r: 0.5, g: 0.41749284, b: 0.13915095, a: 1}
+    - _BaseColor: {r: 0, g: 0, b: 0, a: 0}
+    - _EmissionColor: {r: 1, g: 0.85, b: 0.3, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &4625289139848326226
+--- !u!114 &3931470718008990513
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
