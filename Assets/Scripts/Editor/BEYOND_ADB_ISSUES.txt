@@ -1,0 +1,267 @@
+================================================================================
+BEYOND ADB: WHY META SDK BEHAVES DIFFERENTLY THAN UNITY XR
+================================================================================
+
+YOUR QUESTION: "Is it just an ADB issue even if the headset was found?"
+
+SHORT ANSWER: 
+Yes, it's PRIMARILY an ADB authorization issue, but there are Meta SDK-specific
+factors that make it manifest differently than Unity XR.
+
+DETAILED EXPLANATION:
+--------------------
+
+DEVICE "FOUND" ≠ DEVICE "AUTHORIZED"
+───────────────────────────────────
+
+When you say "headset was found," this means:
+  ✓ USB connection is working
+  ✓ ADB can detect the hardware
+  ✓ Quest appears in device lists
+
+But this is DIFFERENT from:
+  ✗ ADB has AUTHORIZATION to install apps
+  ✗ ADB can write to the device
+  ✗ Unity can deploy builds to the device
+
+Think of it like this:
+  "Found" = You can see a locked door
+  "Authorized" = You have the key to unlock it
+
+
+WHY UNITY XR WORKS BUT META SDK DOESN'T:
+────────────────────────────────────────
+
+Unity XR Interaction Toolkit:
+┌────────────────────────────────────┐
+│ Unity Build Process                │
+│   ↓                                │
+│ Uses Unity's Android SDK           │
+│   ↓                                │
+│ Single ADB Server                  │
+│   ↓                                │
+│ One Authorization Request          │
+│   ↓                                │
+│ ✓ SUCCESS                          │
+└────────────────────────────────────┘
+
+Meta XR SDK (v78.0.0):
+┌────────────────────────────────────┐
+│ Unity Build Process                │
+│   ↓                                │
+│ Triggers Meta Build Hooks          │ ← Additional step
+│   ↓                                │
+│ May invoke MQDH integration        │ ← Can spawn ADB
+│   ↓                                │
+│ May check platform entitlements    │ ← Can spawn ADB
+│   ↓                                │
+│ Meta-specific manifest processing  │
+│   ↓                                │
+│ OVR build tools                    │ ← Can spawn ADB
+│   ↓                                │
+│ Multiple ADB Servers (1-4+)        │ ← PROBLEM!
+│   ↓                                │
+│ 4 Authorization Requests           │
+└────────────────────────────────────┘
+
+
+WHAT MAKES META SDK DIFFERENT:
+──────────────────────────────
+
+1. BUILD HOOKS
+   Meta XR SDK registers Unity build callbacks that can:
+   - Validate OVR settings
+   - Check for Meta Quest Developer Hub
+   - Trigger additional Android build steps
+   
+2. META QUEST DEVELOPER HUB INTEGRATION
+   If MQDH is running, it:
+   - Runs its own ADB server
+   - Monitors for Quest devices
+   - Can interfere with Unity's ADB connection
+   
+3. OCULUS PLATFORM ENTITLEMENT
+   Meta SDK can perform entitlement checks that:
+   - Require additional ADB communication
+   - May spawn separate ADB processes
+   - Can block app launch if not configured
+   
+4. OVR BUILD TOOLS
+   Additional build scripts that:
+   - Process Android manifest
+   - Add Meta-specific permissions
+   - May use different ADB instances
+
+
+THE 4 AUTHORIZATION REQUESTS BREAKDOWN:
+──────────────────────────────────────
+
+Request [1]: Unity's Android SDK ADB
+  └─ From: Unity Editor build process
+  
+Request [2]: Meta Quest Developer Hub ADB
+  └─ From: MQDH running in background
+  
+Request [3]: Android Studio ADB (if installed)
+  └─ From: Android Studio services
+  
+Request [4]: Meta Build Process ADB
+  └─ From: Meta XR SDK build hooks
+
+
+IS IT JUST ADB? YES, BUT WITH CAVEATS:
+─────────────────────────────────────
+
+PRIMARY ISSUE: ✓ Multiple ADB authorization states
+  └─ Each ADB server needs separate authorization
+  └─ Each triggers a prompt in the headset
+  └─ Results in 4 rapid-fire authorization requests
+
+SECONDARY ISSUES (Possible):
+  □ Meta XR SDK configuration conflicts
+  □ Oculus Platform entitlement checks
+  □ OVRManager settings
+  □ Conflicting XR loaders
+  □ Custom Android manifest issues
+
+
+HOW TO DIAGNOSE WHICH ISSUE YOU HAVE:
+─────────────────────────────────────
+
+USE THE TOOLS IN THIS ORDER:
+
+1. Meta > ADB Conflict Resolver
+   ↓
+   Diagnose Multiple ADB Instances
+   ↓
+   If it shows 4 ADB processes → THAT'S YOUR ISSUE
+   ↓
+   Use "Quick Fix: Kill All & Restart"
+   ↓
+   Problem solved? YES → It was just ADB
+                   NO  → Continue to step 2
+
+2. Meta > SDK Diagnostics
+   ↓
+   Run Full Meta SDK Diagnostic
+   ↓
+   Check for:
+   - Multiple XR loaders enabled
+   - OVRManager configuration issues
+   - Entitlement check failures
+   - Android manifest conflicts
+   ↓
+   Fix any issues found
+   ↓
+   Problem solved? YES → It was Meta SDK config
+                   NO  → Continue to step 3
+
+3. Meta > Quest Connection Helper
+   ↓
+   Check Device Status
+   ↓
+   If showing "unauthorized" after accepting prompt:
+   - Try different USB cable
+   - Try different USB port
+   - Clear ADB authorization keys
+   - Restart Quest headset
+
+
+MACHINE-SPECIFIC BEHAVIOR:
+─────────────────────────
+
+Why it works on some machines but not yours:
+
+WORKING MACHINE:
+  • Only Unity installed
+  • No Meta Quest Developer Hub
+  • No Android Studio
+  • Only 1 ADB server runs
+  • Gets 1 authorization request ✓
+
+YOUR MACHINE:
+  • Unity installed
+  • Meta Quest Developer Hub installed/running
+  • Possibly Android Studio
+  • 4 ADB servers run simultaneously
+  • Gets 4 authorization requests ✗
+
+
+THE DEFINITIVE TEST:
+───────────────────
+
+To prove it's (just) an ADB issue:
+
+1. Close Meta Quest Developer Hub completely
+2. Close Android Studio if open
+3. Run "Meta > ADB Conflict Resolver"
+4. Use "Quick Fix: Kill All & Restart"
+5. Reconnect Quest headset
+6. Build from Unity
+
+If you now get ONLY 1 authorization request:
+  ✓ Confirmed: It was purely multiple ADB servers
+  
+If you still get multiple requests:
+  ✗ There's an additional Meta SDK configuration issue
+  → Use "Meta > SDK Diagnostics" to investigate
+
+
+BEYOND ADB: OTHER POSSIBLE ISSUES
+─────────────────────────────────
+
+If fixing ADB doesn't solve it, check:
+
+1. OCULUS PLATFORM ENTITLEMENT
+   Symptom: App installs but doesn't launch
+   Fix: Disable entitlement check for development
+   Location: Oculus > Platform > Edit Settings
+   
+2. MULTIPLE XR LOADERS
+   Symptom: Conflicts between Oculus and OpenXR
+   Fix: Use only Meta OpenXR loader
+   Location: Edit > Project Settings > XR Plug-in Management
+   
+3. MISSING OVRCAMERARIG
+   Symptom: App launches but no VR functionality
+   Fix: Add OVRCameraRig to scene
+   Location: Meta > Tools > Building Blocks
+   
+4. ANDROID MANIFEST CONFLICTS
+   Symptom: Build fails or app won't install
+   Fix: Regenerate manifest using Meta tools
+   Location: Meta > Tools > Project Setup Tool
+
+
+FINAL ANSWER TO YOUR QUESTION:
+──────────────────────────────
+
+"Is it just an ADB issue even if the headset was found?"
+
+YES: The headset being "found" means USB works, but it's ADB AUTHORIZATION
+     that's failing due to multiple ADB servers.
+
+BUT: Meta XR SDK behaves differently than Unity XR because it can trigger
+     additional build processes that spawn more ADB servers.
+
+THE FIX: Kill all ADB servers, start only Unity's ADB, and keep Meta Quest
+         Developer Hub closed while building from Unity.
+
+If that doesn't work, there's a Meta SDK configuration issue on top of the
+ADB problem.
+
+
+QUICK CHECKLIST:
+───────────────
+
+□ Close Meta Quest Developer Hub
+□ Close Android Studio
+□ Run "Meta > ADB Conflict Resolver > Quick Fix"
+□ Reconnect Quest headset
+□ Accept the SINGLE authorization request
+□ Build from Unity
+□ Success? Done!
+□ Still failing? Run "Meta > SDK Diagnostics"
+
+
+================================================================================

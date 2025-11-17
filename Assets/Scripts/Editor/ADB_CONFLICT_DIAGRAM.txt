@@ -1,0 +1,132 @@
+================================================================================
+VISUAL EXPLANATION: WHY YOU GET 4 AUTHORIZATION REQUESTS
+================================================================================
+
+BEFORE FIX (Multiple ADB Servers Running):
+------------------------------------------
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        YOUR COMPUTER                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │
+│  │ Unity Editor │    │  Meta Quest  │    │Android Studio│      │
+│  │              │    │  Dev Hub     │    │              │      │
+│  │  ADB Server  │    │  ADB Server  │    │  ADB Server  │      │
+│  │   (Port 1)   │    │   (Port 2)   │    │   (Port 3)   │      │
+│  └──────┬───────┘    └──────┬───────┘    └──────┬───────┘      │
+│         │                   │                   │              │
+│         └───────────────────┼───────────────────┘              │
+│                             │                                  │
+│                     ┌───────▼────────┐                         │
+│                     │  Meta XR SDK   │                         │
+│                     │  Build Process │                         │
+│                     │  ADB Server    │                         │
+│                     │   (Port 4)     │                         │
+│                     └────────┬───────┘                         │
+│                              │                                 │
+└──────────────────────────────┼─────────────────────────────────┘
+                               │
+                               │ USB Cable
+                               │
+                    ┌──────────▼──────────┐
+                    │   Meta Quest 2/3    │
+                    │                     │
+                    │  Authorization      │
+                    │  Prompts:           │
+                    │  [1] [2] [3] [4]    │ ◄── 4 REQUESTS!
+                    │                     │
+                    └─────────────────────┘
+
+
+AFTER FIX (Single ADB Server):
+------------------------------
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        YOUR COMPUTER                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐      │
+│  │ Unity Editor │    │  Meta Quest  │    │Android Studio│      │
+│  │              │    │  Dev Hub     │    │              │      │
+│  │  ADB Server  │    │   CLOSED ✕   │    │   CLOSED ✕   │      │
+│  │   (Active)   │    │              │    │              │      │
+│  └──────┬───────┘    └──────────────┘    └──────────────┘      │
+│         │                                                       │
+│         │                                                       │
+│         │              ┌──────────────┐                         │
+│         │              │  Meta XR SDK │                         │
+│         └──────────────►  Build Process│                         │
+│                        │ (Uses Unity's│                         │
+│                        │  ADB Server) │                         │
+│                        └──────┬───────┘                         │
+│                               │                                 │
+└───────────────────────────────┼─────────────────────────────────┘
+                                │
+                                │ USB Cable
+                                │
+                     ┌──────────▼──────────┐
+                     │   Meta Quest 2/3    │
+                     │                     │
+                     │  Authorization      │
+                     │  Prompt:            │
+                     │      [1]            │ ◄── ONLY 1 REQUEST!
+                     │                     │
+                     └─────────────────────┘
+
+
+HOW THE FIX WORKS:
+-----------------
+
+Step 1: KILL ALL ADB SERVERS
+    taskkill /F /IM adb.exe  (Windows)
+    OR
+    killall adb  (Mac/Linux)
+    
+    Result: All 4 ADB servers terminated
+
+Step 2: START SINGLE ADB SERVER  
+    Use Unity's Android SDK ADB only
+    [Unity SDK]/platform-tools/adb start-server
+    
+    Result: Only 1 ADB server running
+
+Step 3: RECONNECT QUEST
+    Unplug → Wait → Replug USB cable
+    
+    Result: Single authorization request
+
+Step 4: BUILD FROM UNITY
+    Meta XR SDK uses Unity's existing ADB connection
+    No new ADB servers spawned
+    
+    Result: ✓ Success!
+
+
+WHY THIS HAPPENS:
+----------------
+
+Unity XR Interaction:
+  └─ Uses Unity's standard build pipeline
+  └─ Single ADB connection
+  └─ Works perfectly ✓
+
+Meta XR SDK:
+  ├─ May trigger Meta Quest Developer Hub integration
+  ├─ Uses additional build hooks
+  ├─ Can spawn multiple ADB processes
+  └─ Results in 4 auth requests if other tools are open
+
+
+KEY INSIGHT:
+-----------
+The Meta XR SDK itself isn't broken - it's the COMBINATION of:
+  • Unity's ADB
+  • Meta Quest Developer Hub's ADB (if running)
+  • Android Studio's ADB (if open)
+  • Meta build process potentially triggering another
+
+Close ALL other tools, use ONLY Unity's ADB = Problem solved!
+
+
+================================================================================
