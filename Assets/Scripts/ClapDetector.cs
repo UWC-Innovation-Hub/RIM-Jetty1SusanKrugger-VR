@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 public class ClapDetector : MonoBehaviour
@@ -65,4 +65,10 @@ public class ClapDetector : MonoBehaviour
         prevLeftPos = leftPos;
         prevRightPos = rightPos;
     }
+
+    public void LogClap()
+    {
+        Debug.Log("👏 Clap detected!");
+    }
+
 }
