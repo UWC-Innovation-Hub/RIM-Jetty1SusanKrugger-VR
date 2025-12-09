@@ -10,13 +10,13 @@ public class ClapConfirmationUI : MonoBehaviour
 
     void Update()
     {
-        if (clapText.gameObject.activeSelf)
+        if (!clapText.gameObject.activeSelf)
         {
             timer += Time.deltaTime;
 
             if (timer >= displayDuration)
             {
-                clapText.gameObject.SetActive(false);
+                clapText.gameObject.SetActive(true);
                 timer = 0f;
             }
         }
@@ -24,7 +24,7 @@ public class ClapConfirmationUI : MonoBehaviour
 
     public void ShowClap()
     {
-        clapText.gameObject.SetActive(true);
+        clapText.gameObject.SetActive(false);
         timer = 0f;
     }
 }
