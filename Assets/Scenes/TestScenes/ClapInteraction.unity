@@ -9190,6 +9190,30 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
   m_PrefabInstance: {fileID: 5255693483244049306}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1498448274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498448267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2756c251a8363df4f9d4b30ee6414bd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.SnapInteractor
+  _activeState: {fileID: 0}
+  _interactableFilters: []
+  _candidateTiebreaker: {fileID: 0}
+  _maxIterationsPerFrame: 3
+  _data: {fileID: 0}
+  _pointableElement: {fileID: 1498448268}
+  _rigidbody: {fileID: 1498448269}
+  _distanceThreshold: 0.01
+  _snapPoseTransform: {fileID: 0}
+  _defaultInteractable: {fileID: 0}
+  _timeOutInteractable: {fileID: 0}
+  _timeOut: 0
 --- !u!1 &1514349130
 GameObject:
   m_ObjectHideFlags: 0
@@ -12997,6 +13021,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Badge
       objectReference: {fileID: 0}
+    - target: {fileID: 5585257575539563601, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6484164071459306540, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       propertyPath: m_Radius
       value: 0.4957312
@@ -13014,8 +13042,16 @@ PrefabInstance:
       value: -0.18122564
       objectReference: {fileID: 0}
     - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.07915305
+      value: 0.18
       objectReference: {fileID: 0}
     - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13031,23 +13067,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.6845108
       objectReference: {fileID: 0}
     - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.7290027
       objectReference: {fileID: 0}
     - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 93.60602
       objectReference: {fileID: 0}
     - target: {fileID: 9118532416481530019, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -13073,6 +13109,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5585257575539563601, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1498448268}
+    - targetCorrespondingSourceObject: {fileID: 5585257575539563601, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1498448274}
   m_SourcePrefab: {fileID: 100100000, guid: f5e090055a7d3e947b0c204d8419ed7c, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
