@@ -8,6 +8,7 @@ public class HighlightExit : MonoBehaviour
     private Material HighLightMat;
     public HighlightExitManager HM;
     public int identifier;
+    private bool grabbed;
 
 
     public void Start()
@@ -33,7 +34,11 @@ public class HighlightExit : MonoBehaviour
     {
         Debug.Log($"{name} was released (distance).");
         //Highlight
-        HighLightMat.SetFloat("_EmissionStrength", 0f);
+        if (!grabbed)
+        {
+            HighLightMat.SetFloat("_EmissionStrength", 0f);
+        }
+        
 
 
         ////Outline
@@ -43,9 +48,19 @@ public class HighlightExit : MonoBehaviour
     }
 
 
+    public void OnGrabbed()
+    {
+        grabbed = true;
+        HighLightMat.SetColor("_EmissionColor", Color.red);
+        HighLightMat.SetFloat("_EmissionStrength", 2f);
+
+    }
+
+
    private void OnApplicationQuit()
     {
         HighLightMat.SetFloat("_EmissionStrength", 0f);
+        HighLightMat.SetColor("_EmissionColor", new Color(1f,0.8509f,0.2980f));
         //HighLightMat.SetFloat("_ShouldHighlight", 0f);
     }
 }

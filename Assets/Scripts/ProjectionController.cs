@@ -10,13 +10,14 @@ public class ProjectorController : MonoBehaviour
     [SerializeField] private VideoProjectorController projector;   // your existing script on "Projector"
     [SerializeField] private VideoPlayer videoPlayer;              // can be projector.videoPlayer too
     [SerializeField] private FingerprintLockout lockout;           // optional
+    [SerializeField] private Material _wallMat;                    // Material reference for projector image on wall
 
     [Header("Open / Close Animation")]
     [SerializeField, Min(0.01f)] private float activateDuration = 0.75f;
     [SerializeField, Min(0.01f)] private float deactivateDuration = 0.6f;
 
     [Tooltip("FOV when 'closed'. Use 1-5 degrees, not 0.")]
-    [SerializeField, Range(1f, 170f)] private float closedFOV = 1f;
+    [SerializeField, Range(0f, 170f)] private float closedFOV = 1f;
 
     [Tooltip("If 0, we'll use whatever projector.fieldOfView was at startup as 'open'.")]
     [SerializeField, Range(0f, 170f)] private float openFOVOverride = 0f;
@@ -222,13 +223,16 @@ public class ProjectorController : MonoBehaviour
     private void SetFOV(float fov)
     {
         if (projector == null) return;
-        projector.fieldOfView = Mathf.Clamp(fov, 1f, 170f);
+        projector.fieldOfView = Mathf.Clamp(fov, 0f, 170f);
     }
 
     private void SetIntensity(float intensity)
     {
         if (projector == null) return;
-        projector.intensity = Mathf.Max(0f, intensity);
+        float localIntensity = Mathf.Max(0f, intensity);
+        //projector.intensity = Mathf.Max(0f, intensity);
+        Debug.Log(localIntensity);
+        _wallMat.SetFloat("_Intensity", localIntensity);
     }
 
     private static float EaseInOut(float x)

@@ -12,18 +12,20 @@ public class FingerprintTrigger : MonoBehaviour
     [SerializeField] private bool disableColliderWhenLocked = true;
 
     private Collider _col;
+    private MeshRenderer _mesh;
     private bool _armed = true;
 
     private void Awake()
     {
         _col = GetComponent<Collider>();
+        _mesh = GetComponent<MeshRenderer>();
         if (!_col) Debug.LogWarning($"{name}: FingerprintTrigger needs a Collider.");
     }
 
     public void SetArmed(bool armed)
     {
         _armed = armed;
-        if (_col && disableColliderWhenLocked) _col.enabled = armed;
+        if (_col && disableColliderWhenLocked) _col.enabled = armed; _mesh.enabled = armed;
     }
 
     private void OnTriggerEnter(Collider other)
