@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 0.2
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 7c6b5565fa31c704fb37ab8605e2e51b, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: efdfe3acb554d444e893609d749e8103, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -456,6 +456,7 @@ GameObject:
   - component: {fileID: 43413992}
   - component: {fileID: 43413998}
   - component: {fileID: 43413997}
+  - component: {fileID: 43413999}
   m_Layer: 0
   m_Name: '[BuildingBlock] DistanceHandGrabInstallationRoutine (1)'
   m_TagString: Untagged
@@ -645,7 +646,19 @@ MonoBehaviour:
         m_CallState: 2
   _whenSelect:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 43413999}
+        m_TargetAssemblyTypeName: PrisonerRoute, Assembly-CSharp
+        m_MethodName: SelectRoute
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: truck
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenUnselect:
     m_PersistentCalls:
       m_Calls: []
@@ -661,6 +674,22 @@ MonoBehaviour:
   _whenSelectingInteractorViewRemoved:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &43413999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43413990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c29bb7f1f1e97e4f8c998f64a4a9e82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PrisonerRoute
+  Prisoner: {fileID: 539777488}
+  ChoiceAnimator: {fileID: 539777490}
+  PrisonerWalkAnimator: {fileID: 690826037}
+  identifier: truck
 --- !u!4 &59962532 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4637884401633410725, guid: 14fdfc1da3c888c4185e265a6df86923, type: 3}
@@ -735,7 +764,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 4
+  m_Range: 3
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -796,12 +825,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 81188053}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.367, y: 2.375, z: 3.277}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.1349998, y: -0.09100008, z: 4.732}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 735594413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &82475115
 PrefabInstance:
@@ -954,7 +983,7 @@ MonoBehaviour:
   _targetTransform: {fileID: 118817509}
   _maxGrabPoints: -1
   _rigidbody: {fileID: 118817505}
-  _kinematicWhileSelected: 1
+  _kinematicWhileSelected: 0
   _throwWhenUnselected: 1
 --- !u!54 &118817505
 Rigidbody:
@@ -1788,9 +1817,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8532788458253360736, guid: f5dcc110613f65c478860afd5fede789, type: 3}
+      propertyPath: m_Name
+      value: RCell
+      objectReference: {fileID: 0}
+    - target: {fileID: -8532788458253360736, guid: f5dcc110613f65c478860afd5fede789, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7324904602054250430, guid: f5dcc110613f65c478860afd5fede789, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5795845215311118915, guid: f5dcc110613f65c478860afd5fede789, type: 3}
+      propertyPath: m_Name
+      value: Cargo
+      objectReference: {fileID: 0}
+    - target: {fileID: -2422315340263230684, guid: f5dcc110613f65c478860afd5fede789, type: 3}
+      propertyPath: m_Name
+      value: LCell
+      objectReference: {fileID: 0}
+    - target: {fileID: -2422315340263230684, guid: f5dcc110613f65c478860afd5fede789, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1137414348868702924, guid: f5dcc110613f65c478860afd5fede789, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f5dcc110613f65c478860afd5fede789, type: 3}
       propertyPath: m_Name
-      value: Jetty1_Cell05
+      value: CargoRoom
+      objectReference: {fileID: 0}
+    - target: {fileID: 5988881256312858879, guid: f5dcc110613f65c478860afd5fede789, type: 3}
+      propertyPath: m_Name
+      value: Maquette
       objectReference: {fileID: 0}
     - target: {fileID: 5988881256312858879, guid: f5dcc110613f65c478860afd5fede789, type: 3}
       propertyPath: m_Layer
@@ -2461,12 +2522,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 386525370}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.502, y: 2.466, z: -1.455}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 735594413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &413216871
 GameObject:
@@ -2766,6 +2827,78 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -5738099386740791124, guid: 14fdfc1da3c888c4185e265a6df86923, type: 3}
   m_PrefabInstance: {fileID: 1144369535}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &539777488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 539777489}
+  - component: {fileID: 539777490}
+  - component: {fileID: 539777491}
+  m_Layer: 0
+  m_Name: Prisoner_Walk
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &539777489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539777488}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.2837769, z: -0, w: -0.9588903}
+  m_LocalPosition: {x: -2.618, y: 0.0019999743, z: -1.22424}
+  m_LocalScale: {x: 1.3359, y: 1.3359, z: 1.3359}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 543450652763491482}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -327.028, z: 0}
+--- !u!95 &539777490
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539777488}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 9f53bced1f7de6049b95db7cd2a6c10c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!111 &539777491
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539777488}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Animation: {fileID: 0}
+  m_Animations: []
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_UpdateMode: 0
+  m_CullingType: 0
 --- !u!4 &545576624 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -7239507436085175931, guid: 14fdfc1da3c888c4185e265a6df86923, type: 3}
@@ -2971,7 +3104,7 @@ Light:
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 4
+  m_Range: 1
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -3032,12 +3165,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 674775057}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.67, y: 2.375, z: 3.14}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.16800022, y: -0.09100008, z: 4.5950003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 735594413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &681065821 stripped
 Transform:
@@ -3176,6 +3309,41 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 19f2a864a538b1041b68e828d46b085b, type: 3}
+--- !u!1 &735594412
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 735594413}
+  m_Layer: 0
+  m_Name: Lights
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &735594413
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735594412}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.502, y: 2.466, z: -1.455}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 81188056}
+  - {fileID: 674775060}
+  - {fileID: 1302281751}
+  - {fileID: 386525373}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &752315817
 GameObject:
   m_ObjectHideFlags: 0
@@ -3339,6 +3507,7 @@ GameObject:
   - component: {fileID: 880684044}
   - component: {fileID: 880684043}
   - component: {fileID: 880684042}
+  - component: {fileID: 880684049}
   m_Layer: 0
   m_Name: '[BuildingBlock] DistanceHandGrabInstallationRoutine (1)'
   m_TagString: Untagged
@@ -3420,7 +3589,19 @@ MonoBehaviour:
         m_CallState: 2
   _whenSelect:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 880684049}
+        m_TargetAssemblyTypeName: PrisonerRoute, Assembly-CSharp
+        m_MethodName: SelectRoute
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: cell
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenUnselect:
     m_PersistentCalls:
       m_Calls: []
@@ -3544,6 +3725,22 @@ MonoBehaviour:
     _installationVariants:
     - _memberName: mode
       _value: '{"value__":2}'
+--- !u!114 &880684049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880684040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c29bb7f1f1e97e4f8c998f64a4a9e82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  Prisoner: {fileID: 539777488}
+  ChoiceAnimator: {fileID: 539777490}
+  PrisonerWalkAnimator: {fileID: 690826037}
+  identifier: cell
 --- !u!4 &885156307 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 877643626764280346, guid: 14fdfc1da3c888c4185e265a6df86923, type: 3}
@@ -3643,7 +3840,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &932740297
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3731,7 +3928,7 @@ Transform:
   m_GameObject: {fileID: 932740296}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.049, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4036,7 +4233,7 @@ MonoBehaviour:
   _targetTransform: {fileID: 993390813}
   _maxGrabPoints: -1
   _rigidbody: {fileID: 993390815}
-  _kinematicWhileSelected: 1
+  _kinematicWhileSelected: 0
   _throwWhenUnselected: 1
 --- !u!54 &993390815
 Rigidbody:
@@ -4662,7 +4859,7 @@ GameObject:
   - component: {fileID: 1146933822}
   - component: {fileID: 1146933821}
   m_Layer: 0
-  m_Name: Plane (1)
+  m_Name: Roof
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5735,12 +5932,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1302281748}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.014, y: 3.061, z: -0.222}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.516, y: 0.595, z: 1.233}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 735594413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1309891706
 GameObject:
@@ -6106,7 +6303,7 @@ MonoBehaviour:
   _targetTransform: {fileID: 1499172406}
   _maxGrabPoints: -1
   _rigidbody: {fileID: 1499172402}
-  _kinematicWhileSelected: 1
+  _kinematicWhileSelected: 0
   _throwWhenUnselected: 1
 --- !u!54 &1499172402
 Rigidbody:
@@ -6357,43 +6554,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.8229555
+      value: 1.5012076
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.13
+      value: 0.12992656
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.6239964
+      value: -1.5969689
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.99838656
+      value: -0.87633616
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0.0019426823
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.056782767
+      value: 0.48169348
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: -0.0016109776
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -0.106
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 366.51
+      value: 302.407
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 0.269
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0e112f141cb0fb74d854ccc8feb92717, type: 3}
       propertyPath: m_ConstrainProportionsScale
@@ -7586,6 +7783,7 @@ GameObject:
   - component: {fileID: 2012605372}
   - component: {fileID: 2012605371}
   - component: {fileID: 2012605370}
+  - component: {fileID: 2012605377}
   m_Layer: 0
   m_Name: '[BuildingBlock] DistanceHandGrabInstallationRoutine (1)'
   m_TagString: Untagged
@@ -7667,7 +7865,19 @@ MonoBehaviour:
         m_CallState: 2
   _whenSelect:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2012605377}
+        m_TargetAssemblyTypeName: PrisonerRoute, Assembly-CSharp
+        m_MethodName: SelectRoute
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: boat
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenUnselect:
     m_PersistentCalls:
       m_Calls: []
@@ -7791,6 +8001,22 @@ MonoBehaviour:
     _installationVariants:
     - _memberName: mode
       _value: '{"value__":2}'
+--- !u!114 &2012605377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2012605368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c29bb7f1f1e97e4f8c998f64a4a9e82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PrisonerRoute
+  Prisoner: {fileID: 539777488}
+  ChoiceAnimator: {fileID: 539777490}
+  PrisonerWalkAnimator: {fileID: 690826037}
+  identifier: boat
 --- !u!1 &2014086341
 GameObject:
   m_ObjectHideFlags: 0
@@ -8282,13 +8508,13 @@ Transform:
   m_GameObject: {fileID: 919132149026412064}
   serializedVersion: 2
   m_LocalRotation: {x: 0.031644166, y: 0.06626887, z: 0.008661442, w: 0.9972623}
-  m_LocalPosition: {x: -2.054242, y: -0.00000023841858, z: -0.823}
+  m_LocalPosition: {x: 0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8729224429400393791}
   - {fileID: 1576387213630059124}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 539777489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &571070864151370678
 Transform:
@@ -10569,6 +10795,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1514472056}
+  - {fileID: 1288146105}
   - {fileID: 932740300}
   - {fileID: 435904685}
   - {fileID: 1026506132}
@@ -10577,17 +10804,13 @@ SceneRoots:
   - {fileID: 118817509}
   - {fileID: 429064055}
   - {fileID: 1588108221}
-  - {fileID: 1288146105}
   - {fileID: 914053964}
   - {fileID: 1144369535}
   - {fileID: 82475115}
   - {fileID: 262926961}
   - {fileID: 733237320}
   - {fileID: 1146933824}
-  - {fileID: 81188056}
-  - {fileID: 674775060}
-  - {fileID: 1302281751}
-  - {fileID: 386525373}
+  - {fileID: 735594413}
   - {fileID: 320563595}
   - {fileID: 1501238721}
   - {fileID: 1902311753}
@@ -10596,4 +10819,4 @@ SceneRoots:
   - {fileID: 359174246}
   - {fileID: 1513454917}
   - {fileID: 1486566838}
-  - {fileID: 543450652763491482}
+  - {fileID: 539777489}
