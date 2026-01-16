@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
+using static OVRPlugin;
 
 public class ProjectorController : MonoBehaviour
 {
@@ -42,6 +43,8 @@ public class ProjectorController : MonoBehaviour
     private float _openFOV;
     private float _openIntensity;
 
+    private AudioSource AS;
+
     private void Awake()
     {
         if (projector == null)
@@ -55,6 +58,8 @@ public class ProjectorController : MonoBehaviour
 
         if (videoPlayer == null)
             Debug.LogError($"{name}: ProjectorController needs a VideoPlayer reference.");
+
+        AS = this.GetComponent<AudioSource>();
 
         CacheOpenValues();
         ResetToIdleImmediate();
@@ -209,6 +214,8 @@ public class ProjectorController : MonoBehaviour
 
         // if you ever see first-frame stalls, switch to Prepare() + prepareCompleted
         videoPlayer.Play();
+        AS.Play();
+
     }
 
     private void StopAndDisableVideo()
@@ -223,13 +230,13 @@ public class ProjectorController : MonoBehaviour
     private void SetFOV(float fov)
     {
         if (projector == null) return;
-        projector.fieldOfView = Mathf.Clamp(fov, 0f, 170f);
+        //projector.fieldOfView = Mathf.Clamp(fov, 0f, 170f);
     }
 
     private void SetIntensity(float intensity)
     {
         if (projector == null) return;
-        float localIntensity = Mathf.Max(0f, intensity);
+        float localIntensity = Mathf.Clamp(intensity, 0f, 1f); //Mathf.Max(0f, intensity);
         //projector.intensity = Mathf.Max(0f, intensity);
         Debug.Log(localIntensity);
         _wallMat.SetFloat("_Intensity", localIntensity);
@@ -239,5 +246,11 @@ public class ProjectorController : MonoBehaviour
     {
         // smoothstep
         return x * x * (3f - 2f * x);
+    }
+
+
+    private void OnApplicationQuit()
+    {
+        _wallMat.SetFloat("_Intensity", 0f);
     }
 }
