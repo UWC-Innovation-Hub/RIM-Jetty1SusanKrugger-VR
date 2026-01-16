@@ -45,6 +45,10 @@ Shader "URP/ProjectorSimpleLit"
             #pragma fragment frag
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
 
+            // XR / single-pass instancing safety (also harmless in Multi-Pass)
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ _STEREO_MULTIVIEW _STEREO_INSTANCING
+
             // Feature toggles
             #pragma shader_feature_local _NORMALMAP
 
@@ -78,6 +82,8 @@ Shader "URP/ProjectorSimpleLit"
                 float3 normalOS   : NORMAL;
                 float4 tangentOS  : TANGENT;
                 float2 uv         : TEXCOORD0;
+
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct Varyings {
@@ -87,11 +93,17 @@ Shader "URP/ProjectorSimpleLit"
                 float4 tangentWS  : TEXCOORD2; // xyz = tangent, w = sign
                 float2 uv         : TEXCOORD3;
                 float3 viewDirWS  : TEXCOORD4;
+
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
             Varyings vert (Attributes v)
             {
                 Varyings o;
+
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
                 float3 posWS = TransformObjectToWorld(v.positionOS);
                 o.positionCS = TransformWorldToHClip(posWS);
                 o.posWS = posWS;
@@ -243,6 +255,8 @@ float3 ApplyNormalMap(float2 uv, float3 normalWS, float4 tangentWS)
 
             half4 frag (Varyings i) : SV_Target
             {
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+
                 float2 baseUV = TransformBaseUV(i.uv);
                 float3 baseAlbedo = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, baseUV).rgb * _BaseColor.rgb;
 
