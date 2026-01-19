@@ -45,6 +45,10 @@ Shader "URP/ProjectorSimpleLit"
             #pragma fragment frag
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
 
+            // XR / single-pass instancing safety (also harmless in Multi-Pass)
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ _STEREO_MULTIVIEW _STEREO_INSTANCING
+
             // Feature toggles
             #pragma shader_feature_local _NORMALMAP
 
@@ -78,6 +82,8 @@ Shader "URP/ProjectorSimpleLit"
                 float3 normalOS   : NORMAL;
                 float4 tangentOS  : TANGENT;
                 float2 uv         : TEXCOORD0;
+
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct Varyings {
@@ -87,11 +93,17 @@ Shader "URP/ProjectorSimpleLit"
                 float4 tangentWS  : TEXCOORD2; // xyz = tangent, w = sign
                 float2 uv         : TEXCOORD3;
                 float3 viewDirWS  : TEXCOORD4;
+
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
             Varyings vert (Attributes v)
             {
                 Varyings o;
+
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
                 float3 posWS = TransformObjectToWorld(v.positionOS);
                 o.positionCS = TransformWorldToHClip(posWS);
                 o.posWS = posWS;
@@ -109,20 +121,27 @@ Shader "URP/ProjectorSimpleLit"
                 return o;
             }
 
-            // Decode normal map to world space
-            float3 ApplyNormalMap(float2 uv, float3 normalWS, float4 tangentWS)
-            {
-                #if defined(_NORMALMAP)
-                float3 nTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, uv), _NormalScale);
-                float3 t = normalize(tangentWS.xyz);
-                float3 n = normalize(normalWS);
-                float3 b = normalize(cross(n, t) * tangentWS.w);
-                float3x3 TBN = float3x3(t, b, n);
-                return normalize(mul(nTS, TBN));
-                #else
-                return normalize(normalWS);
-                #endif
-            }
+float3 ApplyNormalMap(float2 uv, float3 normalWS, float4 tangentWS)
+{
+    #if defined(_NORMALMAP)
+    float3 nTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_NormalMap, sampler_NormalMap, uv), _NormalScale);
+
+    float3 t = normalize(tangentWS.xyz);
+    float3 n = normalize(normalWS);
+
+    // Handedness from tangent.w * object negative scale
+    float3 b = normalize(cross(n, t)) * tangentWS.w;
+
+    // Columns = t, b, n  (URP convention)
+    float3x3 TBN = float3x3(t, b, n);
+
+    // IMPORTANT: matrix * vector (column-major multiply)
+    return normalize(mul(TBN, nTS));
+    #else
+    return normalize(normalWS);
+    #endif
+}
+
 
             // // Very small, cheap lighting: ambient (SH) + main directional + simple spec
             // float3 SimpleLighting(float3 albedo, float3 normalWS, float3 viewDirWS, float smoothness)
@@ -236,6 +255,8 @@ Shader "URP/ProjectorSimpleLit"
 
             half4 frag (Varyings i) : SV_Target
             {
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+
                 float2 baseUV = TransformBaseUV(i.uv);
                 float3 baseAlbedo = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, baseUV).rgb * _BaseColor.rgb;
 
