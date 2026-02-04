@@ -17,6 +17,7 @@ public class EquippableItem : MonoBehaviour
     [Header("Visual Settings")]
     public Vector3 equippedScale = Vector3.one;
     public Vector3 handHeldScale = Vector3.one;
+    public Vector3 equippableRotation = Vector3.zero;
 
     public enum ItemType
     {
@@ -111,9 +112,9 @@ public class EquippableItem : MonoBehaviour
     {
         isEquipped = true;
 
-        // CRITICAL: Set local scale AFTER parenting
         // Use original local scale, not the equipped scale multiplier
         transform.localScale = originalLocalScale;
+        //transform.localRotation = Quaternion.Euler(equippedRotation);
 
         if (rb != null)
         {

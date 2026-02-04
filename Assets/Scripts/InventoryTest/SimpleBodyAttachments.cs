@@ -6,11 +6,11 @@ public class SimpleBodyAttachments : MonoBehaviour
     public bool autoSetup = true;
 
     [Header("Position Configuration")]
-    public float hipHeight = -0.6f;      // Lower - 60cm below head
-    public float hipForward = 0.0f;      // Don't push forward, stay at body
-    public float chestHeight = -0.3f;    // 30cm below head
-    public float chestForward = 0.05f;   // Just slightly forward
-    public float beltSideOffset = 0.2f;  // Further to sides
+    float hipHeight = -0.4f;      // moved up ~15cm
+    float hipForward = 0.05f;      // pushed forward so visible when looking down
+    float chestHeight = -0.2f;     // Moved up ~10cm
+    float chestForward = 0.07f;     // pushed forward
+    float beltSideOffset = 0.16f;  // slightly tighter
 
     [Header("Attachment Points (Auto-Created)")]
     public GameObject hipSlot;
@@ -18,7 +18,7 @@ public class SimpleBodyAttachments : MonoBehaviour
     public GameObject beltRightSlot;
     public GameObject chestSlot;
 
-    private Transform trackingSpace;
+    private Transform trackingSpace; 
     private Transform centerEye;
 
     void Start()
@@ -48,7 +48,7 @@ public class SimpleBodyAttachments : MonoBehaviour
             return;
         }
 
-        // Create attachment slots - they'll follow the head
+        // Attachment slots that  will follow the head
         CreateSlot(ref hipSlot, "HipSlot", AvatarAttachmentPoint.AttachmentType.Hip);
         CreateSlot(ref beltLeftSlot, "BeltLeftSlot", AvatarAttachmentPoint.AttachmentType.Belt);
         CreateSlot(ref beltRightSlot, "BeltRightSlot", AvatarAttachmentPoint.AttachmentType.Belt);
@@ -56,7 +56,7 @@ public class SimpleBodyAttachments : MonoBehaviour
 
         Debug.Log("Body attachment system initialized successfully!");
     }
-
+    // Create slots 
     void CreateSlot(ref GameObject slot, string name, AvatarAttachmentPoint.AttachmentType type)
     {
         slot = new GameObject(name);

@@ -15,8 +15,8 @@ public class AvatarAttachmentPoint : MonoBehaviour
     public Vector3 localRotationOffset;
 
     [Header("Visual Feedback")]
-    public Color normalColor = new Color(1f, 1f, 0f, 0.3f);
-    public Color hoverColor = new Color(0f, 1f, 0f, 0.5f);
+    public Color normalColor = new Color(1f, 1f, 0f, 0.08f); // Color yellow
+    public Color hoverColor = new Color(0f, 1f, 0f, 0.15f);  // Color green
 
     public enum AttachmentType
     {
@@ -62,7 +62,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
         sphere.name = "SnapZoneVisualizer";
         sphere.transform.SetParent(transform);
         sphere.transform.localPosition = Vector3.zero;
-        sphere.transform.localScale = Vector3.one * snapRadius * 1.5f;
+        sphere.transform.localScale = Vector3.one * snapRadius * 0.4f;
 
         // Remove the collider (we only want visual)
         Destroy(sphere.GetComponent<Collider>());
