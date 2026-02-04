@@ -252,5 +252,6 @@ public class ProjectorController : MonoBehaviour
     private void OnApplicationQuit()
     {
         _wallMat.SetFloat("_Intensity", 0f);
+        StopAllCoroutines();
     }
 }

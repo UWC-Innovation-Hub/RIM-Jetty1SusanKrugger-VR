@@ -5,6 +5,7 @@ public class FingerprintTrigger : MonoBehaviour
 {
     [Header("Wiring")]
     [SerializeField] private ProjectorController projector;
+    public ProjectorController proj;
     [SerializeField] private VideoClip clip;
 
     [Header("Touch Filtering (optional)")]
