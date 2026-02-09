@@ -9,12 +9,6 @@ public class PrisonerRoute : MonoBehaviour
 
     public AudioSource AS;
 
-    public void Awake()
-    {
- 
-    }
-
-
     public void SelectRoute(string identifier)
     {
         switch(identifier)            

@@ -63,7 +63,6 @@ public class HighlightExit : MonoBehaviour
             go.SetActive(false);
         }
 
-
     }
 
 
