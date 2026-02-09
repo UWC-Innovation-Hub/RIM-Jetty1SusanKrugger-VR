@@ -5,9 +5,10 @@ using UnityEngine;
 //Think more carefully about implementation of grabbing and highlight material
 public class HighlightExit : MonoBehaviour
 {
+    public PrisonerSortModule PSort;
     private Material HighLightMat;
     public HighlightExitManager HM;
-    public int identifier;
+    //public int identifier;
     public bool grabbed;
     public GameObject DistanceHandGrabInteractor;
 
@@ -18,29 +19,29 @@ public class HighlightExit : MonoBehaviour
 
     public void Start()
     {
-        HighLightMat = HM.HighLightMats[identifier];
-        Debug.Log(HighLightMat.name);
+        //HighLightMat = HM.HighLightMats[identifier];
+        //Debug.Log(HighLightMat.name);
     }
 
-    public void OnSelect()
+    public void OnHover(int identifier)
     {
         Debug.Log($"{name} was grabbed.");
+        HighLightMat = HM.HighLightMats[identifier];
         //Highlight
-        HighLightMat.SetFloat("_EmissionStrength", 2f);
+        HM.HighLightMats[identifier].SetFloat("_EmissionStrength", 2f);
+        //HighLightMat.SetFloat("_EmissionStrength", 2f);
         Debug.Log(HighLightMat.name);
-
-        //Outline
-        //HighLightMat.SetFloat("_ShouldHighlight", 1f);
+        
     }
 
-    public void OnDeselect()
+    public void OnDeHover(int identifier)
     {
         Debug.Log($"{name} was released (distance).");
         Debug.Log(HighLightMat.name);
         //Highlight
         if (!grabbed)
         {
-            HighLightMat.SetFloat("_EmissionStrength", 0f);
+            HM.HighLightMats[identifier].SetFloat("_EmissionStrength", 0f);
         }
         else
         {
@@ -69,11 +70,14 @@ public class HighlightExit : MonoBehaviour
     //Where is this function called, it isn't really doing anything?
     public void ResetPaths()
     {
-        DistanceHandGrabInteractor.SetActive(true);
-        grabbed = false;
-        foreach (GameObject go in Selectors)
+        if (!PSort.IsComplete)
         {
-            go.SetActive(true);
+            DistanceHandGrabInteractor.SetActive(true);
+            grabbed = false;
+            foreach (GameObject go in Selectors)
+            {
+                go.SetActive(true);
+            }
         }
 
         foreach (Material mat in RouteMats)

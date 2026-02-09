@@ -31,6 +31,12 @@ public class PrisonerSortModule : InteractionModuleBase
         Debug.Log($"[PrisonerSortModule] Arrived: {SortedCount}/{requiredSorted}");
 
         if (SortedCount >= requiredSorted)
+
             Complete();
+    }
+
+    public void DisableInteractables()
+    {
+
     }
 }

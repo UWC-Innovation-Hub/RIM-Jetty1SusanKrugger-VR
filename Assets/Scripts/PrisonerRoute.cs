@@ -2,10 +2,17 @@ using UnityEngine;
 
 public class PrisonerRoute : MonoBehaviour
 {
-    public GameObject Prisoner;
-    public Animator ChoiceAnimator;
-    public Animator PrisonerWalkAnimator;
+    //public GameObject Prisoner;
+    public Animator[] ChoiceAnimators;
+    public Animator[] PrisonerWalkAnimators;
     public string identifier;
+    private int index;
+
+
+    private void Awake()
+    {
+        index = 0;
+    }
 
     public AudioSource AS;
 
@@ -14,21 +21,23 @@ public class PrisonerRoute : MonoBehaviour
         switch(identifier)            
         {
             case "cell":
-                ChoiceAnimator.SetTrigger("GoToCell");
-                PrisonerWalkAnimator.SetTrigger("ShouldWalk");
+                ChoiceAnimators[index].SetTrigger("GoToCell");
+                PrisonerWalkAnimators[index].SetTrigger("ShouldWalk");
                 AS.Play();
                 break;
             case "boat":
-                ChoiceAnimator.SetTrigger("GoToBoat");
-                PrisonerWalkAnimator.SetTrigger("ShouldWalk");
+                ChoiceAnimators[index].SetTrigger("GoToBoat");
+                PrisonerWalkAnimators[index].SetTrigger("ShouldWalk");
                 AS.Play();
                 break;
             case "truck":
-                ChoiceAnimator.SetTrigger("GoToTruck");
-                PrisonerWalkAnimator.SetTrigger("ShouldWalk");
+                ChoiceAnimators[index].SetTrigger("GoToTruck");
+                PrisonerWalkAnimators[index].SetTrigger("ShouldWalk");
                 AS.Play();
                 break;
         }
+
+        index++;
     }
 
  
