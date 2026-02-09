@@ -8,16 +8,16 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
     [Header("Snap Zone Settings")]
     public float snapRadius = 0.08f;
-    // REMOVED: public LayerMask itemLayer;
-
+    
     [Header("Positioning")]
     public Vector3 localPositionOffset;
     public Vector3 localRotationOffset;
 
     [Header("Visual Feedback")]
-    public Color normalColor = new Color(1f, 1f, 0f, 0.08f); // Color yellow
-    public Color hoverColor = new Color(0f, 1f, 0f, 0.15f);  // Color green
+    public Color normalColor = new Color(1f, 1f, 0f, 0.08f); // Sphere Color yellow before insertion
+    public Color hoverColor = new Color(0f, 1f, 0f, 0.15f);  // Color green indicates correct attachment point
 
+    // Attachment Points
     public enum AttachmentType
     {
         Hip,
@@ -28,6 +28,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
         Waist
     }
 
+    // Variables to enable attachment
     private EquippableItem currentEquippedItem;
     private EquippableItem nearbyItem;
     private SphereCollider snapZone;
@@ -118,7 +119,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
                     visualizer.material.color = hoverColor;
                 }
 
-                Debug.Log($"Item {item.itemName} COMPATIBLE with {attachmentType} slot");
+                Debug.Log($"Item {item.itemName} COMPATIBLE with {attachmentType} slot"); //Log info
             }
             else
             {

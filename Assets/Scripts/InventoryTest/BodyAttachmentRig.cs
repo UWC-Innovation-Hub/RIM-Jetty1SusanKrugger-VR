@@ -3,7 +3,7 @@ using UnityEngine;
 public class BodyAttachmentRig : MonoBehaviour
 {
     [Header("Camera Rig References")]
-    public Transform trackingSpace;
+    public Transform trackingSpace; 
     public Transform centerEyeAnchor;
 
     [Header("Body Attachment Points")]
@@ -16,8 +16,8 @@ public class BodyAttachmentRig : MonoBehaviour
     [Header("Positioning Configuration")]
     public float hipHeight = -0.4f; // Below head
     public float hipForward = 0.1f; // Slightly forward
-    public float chestHeight = -0.2f;
-    public float beltSideOffset = 0.15f;
+    public float chestHeight = -0.2f; // Badge position
+    public float beltSideOffset = 0.15f; // Waist position
 
     void Start()
     {
@@ -94,6 +94,7 @@ public class BodyAttachmentRig : MonoBehaviour
         UpdateBodyPositions();
     }
 
+    // Update body position
     void UpdateBodyPositions()
     {
         if (centerEyeAnchor == null) return;
