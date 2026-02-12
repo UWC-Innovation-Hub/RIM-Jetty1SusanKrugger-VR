@@ -8,8 +8,10 @@ public class SimpleBodyAttachments : MonoBehaviour
     [Header("Position Configuration")]
     float hipHeight = -0.4f;      // moved up ~15cm
     float hipForward = 0.05f;      // pushed forward so visible when looking down
+    float hipSideOffset = -0.12f;  // left side for baton
     float chestHeight = -0.2f;     // Moved up ~10cm
     float chestForward = 0.07f;     // pushed forward
+    float chestSideOffset = -0.08f; // left side of chest
     float beltSideOffset = 0.16f;  // slightly tighter
 
     [Header("Attachment Points (Auto-Created)")]
@@ -50,9 +52,9 @@ public class SimpleBodyAttachments : MonoBehaviour
 
         // Attachment slots that  will follow the head
         CreateSlot(ref hipSlot, "HipSlot", AvatarAttachmentPoint.AttachmentType.Hip);
-        CreateSlot(ref beltLeftSlot, "BeltLeftSlot", AvatarAttachmentPoint.AttachmentType.Belt);
-        CreateSlot(ref beltRightSlot, "BeltRightSlot", AvatarAttachmentPoint.AttachmentType.Belt);
-        CreateSlot(ref chestSlot, "ChestSlot", AvatarAttachmentPoint.AttachmentType.Chest);
+        CreateSlot(ref beltLeftSlot, "BeltLeftSlot", AvatarAttachmentPoint.AttachmentType.BeltLeft);
+        CreateSlot(ref beltRightSlot, "BeltRightSlot", AvatarAttachmentPoint.AttachmentType.BeltRight);
+        CreateSlot(ref chestSlot, "ChestSlot", AvatarAttachmentPoint.AttachmentType.ChestLeft);
 
         Debug.Log("Body attachment system initialized successfully!");
     }
@@ -101,7 +103,8 @@ public class SimpleBodyAttachments : MonoBehaviour
         {
             hipSlot.transform.position = headPos +
                 Vector3.up * hipHeight +
-                headForward * hipForward;
+                headForward * hipForward +
+                headRight * hipSideOffset;
             hipSlot.transform.rotation = bodyRotation;
         }
 
@@ -110,7 +113,8 @@ public class SimpleBodyAttachments : MonoBehaviour
         {
             chestSlot.transform.position = headPos +
                 Vector3.up * chestHeight +
-                headForward * chestForward;
+                headForward * chestForward +
+                headRight * chestSideOffset;
             chestSlot.transform.rotation = bodyRotation;
         }
 

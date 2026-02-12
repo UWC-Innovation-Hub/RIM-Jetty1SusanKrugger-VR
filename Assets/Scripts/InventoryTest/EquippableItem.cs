@@ -129,6 +129,11 @@ public class EquippableItem : MonoBehaviour
 
     public bool IsBeingGrabbed() => isBeingGrabbed;
 
+    public Quaternion GetEquippedRotationOffset()
+    {
+        return Quaternion.Euler(equippableRotation);
+    }
+
     void OnDestroy()
     {
         if (grabbable != null)
