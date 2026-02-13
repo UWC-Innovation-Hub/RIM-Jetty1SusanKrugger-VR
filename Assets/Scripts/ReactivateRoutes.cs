@@ -58,7 +58,7 @@ public class ReactivateRoutes : MonoBehaviour
 
 
         //Deactivate Current Prisoner
-        //Prisoners[identifier].SetActive(false);
+        Prisoners[identifier].SetActive(false);
         identifier++;
     }
 

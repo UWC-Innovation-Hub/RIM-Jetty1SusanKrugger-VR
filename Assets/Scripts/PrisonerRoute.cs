@@ -39,6 +39,5 @@ public class PrisonerRoute : MonoBehaviour
 
         index++;
     }
-
  
 }

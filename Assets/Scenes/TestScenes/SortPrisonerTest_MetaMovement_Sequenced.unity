@@ -487,7 +487,6 @@ GameObject:
   - component: {fileID: 43413993}
   - component: {fileID: 43413992}
   - component: {fileID: 43413998}
-  - component: {fileID: 43413999}
   m_Layer: 0
   m_Name: '[BuildingBlock] DistanceHandGrabInstallationRoutineTruck'
   m_TagString: Untagged
@@ -664,7 +663,7 @@ MonoBehaviour:
   _whenSelect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 43413999}
+      - m_Target: {fileID: 1520555855}
         m_TargetAssemblyTypeName: PrisonerRoute, Assembly-CSharp
         m_MethodName: SelectRoute
         m_Mode: 5
@@ -703,28 +702,6 @@ MonoBehaviour:
   _whenSelectingInteractorViewRemoved:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &43413999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 43413990}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c29bb7f1f1e97e4f8c998f64a4a9e82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PrisonerRoute
-  ChoiceAnimators:
-  - {fileID: 539777490}
-  - {fileID: 150406359}
-  - {fileID: 1066993697}
-  PrisonerWalkAnimators:
-  - {fileID: 690826037}
-  - {fileID: 939938224}
-  - {fileID: 1634308959}
-  identifier: truck
-  AS: {fileID: 1520555853}
 --- !u!1 &56417455
 GameObject:
   m_ObjectHideFlags: 0
@@ -6709,7 +6686,6 @@ GameObject:
   - component: {fileID: 880684045}
   - component: {fileID: 880684044}
   - component: {fileID: 880684043}
-  - component: {fileID: 880684049}
   m_Layer: 0
   m_Name: '[BuildingBlock] DistanceHandGrabInstallationRoutineCage'
   m_TagString: Untagged
@@ -6778,7 +6754,7 @@ MonoBehaviour:
   _whenSelect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 880684049}
+      - m_Target: {fileID: 1520555855}
         m_TargetAssemblyTypeName: PrisonerRoute, Assembly-CSharp
         m_MethodName: SelectRoute
         m_Mode: 5
@@ -6925,28 +6901,6 @@ MonoBehaviour:
     _installationVariants:
     - _memberName: mode
       _value: '{"value__":2}'
---- !u!114 &880684049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 880684040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c29bb7f1f1e97e4f8c998f64a4a9e82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  ChoiceAnimators:
-  - {fileID: 539777490}
-  - {fileID: 150406359}
-  - {fileID: 1066993697}
-  PrisonerWalkAnimators:
-  - {fileID: 690826037}
-  - {fileID: 939938224}
-  - {fileID: 1634308959}
-  identifier: cell
-  AS: {fileID: 1520555853}
 --- !u!4 &885156307 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 877643626764280346, guid: 14fdfc1da3c888c4185e265a6df86923, type: 3}
@@ -11866,7 +11820,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1520555851}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c29bb7f1f1e97e4f8c998f64a4a9e82, type: 3}
   m_Name: 
@@ -19604,7 +19558,6 @@ GameObject:
   - component: {fileID: 2012605373}
   - component: {fileID: 2012605372}
   - component: {fileID: 2012605371}
-  - component: {fileID: 2012605377}
   m_Layer: 0
   m_Name: '[BuildingBlock] DistanceHandGrabInstallationRoutineShip'
   m_TagString: Untagged
@@ -19673,7 +19626,7 @@ MonoBehaviour:
   _whenSelect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2012605377}
+      - m_Target: {fileID: 1520555855}
         m_TargetAssemblyTypeName: PrisonerRoute, Assembly-CSharp
         m_MethodName: SelectRoute
         m_Mode: 5
@@ -19820,28 +19773,6 @@ MonoBehaviour:
     _installationVariants:
     - _memberName: mode
       _value: '{"value__":2}'
---- !u!114 &2012605377
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2012605368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c29bb7f1f1e97e4f8c998f64a4a9e82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PrisonerRoute
-  ChoiceAnimators:
-  - {fileID: 539777490}
-  - {fileID: 150406359}
-  - {fileID: 1066993697}
-  PrisonerWalkAnimators:
-  - {fileID: 690826037}
-  - {fileID: 939938224}
-  - {fileID: 1634308959}
-  identifier: boat
-  AS: {fileID: 1520555853}
 --- !u!1 &2014086341
 GameObject:
   m_ObjectHideFlags: 0

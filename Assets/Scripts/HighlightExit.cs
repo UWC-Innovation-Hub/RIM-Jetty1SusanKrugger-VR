@@ -46,8 +46,7 @@ public class HighlightExit : MonoBehaviour
         else
         {
             DistanceHandGrabInteractor.SetActive(false);
-        }
-        
+        }        
         ////Outline
         //HighLightMat.SetFloat("_ShouldHighlight", 0f);
     }
@@ -63,7 +62,6 @@ public class HighlightExit : MonoBehaviour
         {
             go.SetActive(false);
         }
-
     }
 
 
@@ -85,7 +83,6 @@ public class HighlightExit : MonoBehaviour
             mat.SetColor("_EmissionColor", new Color(1f, 0.8509f, 0.2980f));
             mat.SetFloat("_EmissionStrength", 0f);
         }
-
     }
 
     private void OnApplicationQuit()
