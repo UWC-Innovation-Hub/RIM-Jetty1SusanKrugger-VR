@@ -105,7 +105,7 @@ public class EquippableItem : MonoBehaviour
         // Enable gravity when dropped (if not equipped)
         if (rb != null && !isEquipped)
         {
-            rb.useGravity = true;
+            //rb.useGravity = true;
         }
 
         Debug.Log($"Released {itemName}");

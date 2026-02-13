@@ -14,27 +14,21 @@ public class SequenceBrain : MonoBehaviour
     }
 
     [Header("Wiring")]
-    [SerializeField] private GameObject timeline;              // Your timeline GO that holds the PlayableDirector
+    [SerializeField] private GameObject timeline;              // GO that holds PlayableDirector
     [SerializeField] private PlayableDirector director;
 
     [Header("Active Interaction (event-driven)")]
-    [Tooltip("The interaction module that will be activated when EnterInteraction() is called. " +
-             "It must inherit from InteractionModuleBase (e.g., PrisonerSortModule).")]
+    [Tooltip("The interaction module to activate when entering InInteraction. Set via the signal router.")]
     [SerializeField] private InteractionModuleBase activeInteraction;
 
     [Header("Systems toggled by state")]
-    [Tooltip("Enable these while IN SEQUENCE (e.g., reticle off, grab off, etc.).")]
     [SerializeField] private Behaviour[] enableInSequence;
-
-    [Tooltip("Enable these while IN INTERACTION (e.g., DistanceHandGrabInteractor, UI ray, etc.).")]
     [SerializeField] private Behaviour[] enableInInteraction;
 
-    [Header("Optional: modules you want globally toggled")]
-    [Tooltip("Additional behaviours you want enabled only during interaction (prompts, UI roots, highlights, etc.).")]
+    [Header("Optional: extra interaction-only behaviours")]
     [SerializeField] private Behaviour[] interactionModules;
 
     [Header("Startup enforcement")]
-    [Tooltip("Re-apply the initial state after a frame to override SDK init that may re-enable components.")]
     [SerializeField] private bool enforceStartupStateAfterFirstFrame = true;
 
     public SequenceState State { get; private set; } = SequenceState.InSequence;
@@ -57,8 +51,6 @@ public class SequenceBrain : MonoBehaviour
 
     private void Start()
     {
-        // Some Meta/OVR init paths re-enable interactors in Start/first frame.
-        // Re-apply our desired state after everything has bootstrapped.
         if (enforceStartupStateAfterFirstFrame)
         {
             if (_startupEnforceRoutine != null) StopCoroutine(_startupEnforceRoutine);
@@ -66,14 +58,28 @@ public class SequenceBrain : MonoBehaviour
         }
     }
 
+    //Possibly invalid code; what is the reason for this really? Previous issue with interaction on start up?
+    //maybe better just to move the sequence signal slightly down the line.
     private IEnumerator EnforceInitialStateNextFrame()
     {
-        yield return null; // wait 1 frame
+        yield return null; // wait 1 frame (OVR/Meta init tends to happen around here)
         ApplyState(SequenceState.InSequence, pauseDirector: false);
         _startupEnforceRoutine = null;
     }
 
-    // Called by a Timeline Signal (end of audio / gate point)
+    /// Call this BEFORE EnterInteraction() to choose which interaction module is active.
+    public void SetActiveInteraction(InteractionModuleBase module)
+    {
+        if (activeInteraction == module) return;
+
+        // If we were listening to a previous module, detach.
+        if (activeInteraction != null)
+            activeInteraction.Completed -= OnActiveInteractionCompleted;
+
+        activeInteraction = module;
+    }
+
+    /// Called by Timeline signal router at a gate moment.
     public void EnterInteraction()
     {
         if (State == SequenceState.InInteraction || State == SequenceState.TransitionToInteraction)
@@ -81,10 +87,9 @@ public class SequenceBrain : MonoBehaviour
 
         ApplyState(SequenceState.TransitionToInteraction, pauseDirector: true);
 
-        // Activate + subscribe to completion
         if (activeInteraction)
         {
-            // Defensive: ensure we don't double-subscribe
+            // Defensive: prevent double subscribe
             activeInteraction.Completed -= OnActiveInteractionCompleted;
 
             activeInteraction.Activate();
@@ -92,23 +97,20 @@ public class SequenceBrain : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"{name}: EnterInteraction() called but no Active Interaction is assigned.");
+            Debug.LogWarning($"{name}: EnterInteraction() called but no activeInteraction is assigned.");
         }
 
         ApplyState(SequenceState.InInteraction, pauseDirector: true);
     }
 
-    // Event handler for the current interaction module
     private void OnActiveInteractionCompleted()
     {
-        // Unsubscribe immediately to avoid any double-fire edge cases
-        if (activeInteraction)
+        if (activeInteraction != null)
             activeInteraction.Completed -= OnActiveInteractionCompleted;
 
         ExitInteractionResumeTimeline();
     }
 
-    // Called when interaction is complete (now driven by the module event)
     public void ExitInteractionResumeTimeline()
     {
         if (State == SequenceState.InSequence || State == SequenceState.TransitionToSequence)
@@ -116,8 +118,7 @@ public class SequenceBrain : MonoBehaviour
 
         ApplyState(SequenceState.TransitionToSequence, pauseDirector: true);
 
-        // Deactivate current interaction module
-        if (activeInteraction)
+        if (activeInteraction != null)
             activeInteraction.Deactivate();
 
         ApplyState(SequenceState.InSequence, pauseDirector: false);
@@ -132,14 +133,11 @@ public class SequenceBrain : MonoBehaviour
         {
             if (pauseDirector)
             {
-                // Pause keeps timeline time at current frame and stops evaluation.
-                // This does NOT affect regular animators/physics/audio outside timeline.
                 if (director.state == PlayState.Playing)
                     director.Pause();
             }
             else
             {
-                // Resume timeline.
                 if (director.state != PlayState.Playing)
                     director.Play();
             }
@@ -151,8 +149,6 @@ public class SequenceBrain : MonoBehaviour
 
         SetEnabled(enableInSequence, inSeq);
         SetEnabled(enableInInteraction, inInt);
-
-        // Optional extra interaction-only behaviours
         SetEnabled(interactionModules, inInt);
     }
 
@@ -164,17 +160,5 @@ public class SequenceBrain : MonoBehaviour
             if (!behaviours[i]) continue;
             behaviours[i].enabled = enabled;
         }
-    }
-
-    // Optional helper if you want to switch interactions from elsewhere (e.g., Timeline signal router)
-    public void SetActiveInteraction(InteractionModuleBase module)
-    {
-        if (activeInteraction == module) return;
-
-        // If we're currently listening to an old module, detach
-        if (activeInteraction != null)
-            activeInteraction.Completed -= OnActiveInteractionCompleted;
-
-        activeInteraction = module;
     }
 }
