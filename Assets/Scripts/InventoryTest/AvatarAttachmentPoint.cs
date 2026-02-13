@@ -16,6 +16,11 @@ public class AvatarAttachmentPoint : MonoBehaviour
     [Header("Visual Feedback")]
     public Color normalColor = new Color(1f, 1f, 0f, 0.08f); // Sphere Color yellow before insertion
     public Color hoverColor = new Color(0f, 1f, 0f, 0.15f);  // Color green indicates correct attachment point
+    [SerializeField] private Material highlightMaterial;
+    [SerializeField] private bool instantiateHighlightMaterial = true;
+    [SerializeField] private string emissionStrengthProperty = "_EmissionStrength";
+    [SerializeField] private float idleEmissionStrength = 0f;
+    [SerializeField] private float guidedEmissionStrength = 2f;
 
     // Attachment Points
     public enum AttachmentType
@@ -36,6 +41,38 @@ public class AvatarAttachmentPoint : MonoBehaviour
     private EquippableItem nearbyItem;
     private SphereCollider snapZone;
     private MeshRenderer visualizer;
+    private bool ownsVisualizerMaterial;
+
+    public void ConfigureHighlightMaterial(Material material, bool instantiateMaterial)
+    {
+        highlightMaterial = material;
+        instantiateHighlightMaterial = instantiateMaterial;
+
+        // If the visualizer already exists, apply immediately.
+        if (visualizer != null)
+        {
+            ApplyVisualizerMaterial();
+        }
+    }
+
+    public void SetGuidanceHighlighted(bool highlighted)
+    {
+        if (visualizer == null)
+        {
+            return;
+        }
+
+        Material visualMat = ownsVisualizerMaterial ? visualizer.material : visualizer.sharedMaterial;
+        if (visualMat == null || !visualMat.HasProperty(emissionStrengthProperty))
+        {
+            return;
+        }
+
+        visualMat.SetFloat(
+            emissionStrengthProperty,
+            highlighted ? guidedEmissionStrength : idleEmissionStrength
+        );
+    }
 
     void Start()
     {
@@ -71,29 +108,67 @@ public class AvatarAttachmentPoint : MonoBehaviour
         // Remove the collider (we only want visual)
         Destroy(sphere.GetComponent<Collider>());
 
-        // Setup material
         visualizer = sphere.GetComponent<MeshRenderer>();
-        Material mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-        // If URP shader not found, try Standard
-        if (mat.shader.name == "Hidden/InternalErrorShader")
-        {
-            mat = new Material(Shader.Find("Standard"));
-        }
-
-        // Set to transparent rendering mode
-        mat.SetOverrideTag("RenderType", "Transparent");
-        mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-        mat.SetInt("_ZWrite", 0);
-        mat.renderQueue = 3000;
-
-        // Set color with transparency
-        mat.color = normalColor;
-
-        visualizer.material = mat;
+        ApplyVisualizerMaterial();
         visualizer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         visualizer.receiveShadows = false;
+        SetGuidanceHighlighted(false);
+    }
+
+    private void ApplyVisualizerMaterial()
+    {
+        if (visualizer == null)
+        {
+            return;
+        }
+
+        if (ownsVisualizerMaterial && visualizer.material != null)
+        {
+            Destroy(visualizer.material);
+        }
+
+        Material mat;
+        if (highlightMaterial != null)
+        {
+            if (instantiateHighlightMaterial)
+            {
+                mat = new Material(highlightMaterial);
+                ownsVisualizerMaterial = true;
+                visualizer.material = mat;
+            }
+            else
+            {
+                mat = highlightMaterial;
+                ownsVisualizerMaterial = false;
+                visualizer.sharedMaterial = mat;
+            }
+        }
+        else
+        {
+            mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+
+            // If URP shader not found, try Standard
+            if (mat.shader.name == "Hidden/InternalErrorShader")
+            {
+                mat = new Material(Shader.Find("Standard"));
+            }
+
+            // Set to transparent rendering mode
+            mat.SetOverrideTag("RenderType", "Transparent");
+            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetInt("_ZWrite", 0);
+            mat.renderQueue = 3000;
+
+            // Set color with transparency
+            if (mat.HasProperty("_Color"))
+            {
+                mat.color = normalColor;
+            }
+
+            ownsVisualizerMaterial = true;
+            visualizer.material = mat;
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -119,7 +194,11 @@ public class AvatarAttachmentPoint : MonoBehaviour
                 // Visual feedback - change color
                 if (visualizer != null)
                 {
-                    visualizer.material.color = hoverColor;
+                    Material visualMat = ownsVisualizerMaterial ? visualizer.material : visualizer.sharedMaterial;
+                    if (visualMat != null && visualMat.HasProperty("_Color"))
+                    {
+                        visualMat.color = hoverColor;
+                    }
                 }
 
                 Debug.Log($"Item {item.itemName} COMPATIBLE with {attachmentType} slot"); //Log info
@@ -158,7 +237,11 @@ public class AvatarAttachmentPoint : MonoBehaviour
             // Reset visual feedback
             if (visualizer != null)
             {
-                visualizer.material.color = normalColor;
+                Material visualMat = ownsVisualizerMaterial ? visualizer.material : visualizer.sharedMaterial;
+                if (visualMat != null && visualMat.HasProperty("_Color"))
+                {
+                    visualMat.color = normalColor;
+                }
             }
         }
     }
@@ -264,8 +347,10 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
     void OnDestroy()
     {
-        if (visualizer != null && visualizer.material != null)
+        if (ownsVisualizerMaterial && visualizer != null && visualizer.material != null)
+        {
             Destroy(visualizer.material);
+        }
     }
 
     // Debug visualization in editor

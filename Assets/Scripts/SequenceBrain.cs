@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.Serialization;
 
 public class SequenceBrain : MonoBehaviour
 {
@@ -23,10 +24,12 @@ public class SequenceBrain : MonoBehaviour
 
     [Header("Systems toggled by state")]
     [SerializeField] private Behaviour[] enableInSequence;
-    [SerializeField] private Behaviour[] enableInInteraction;
+    [FormerlySerializedAs("enableInInteraction")]
+    [SerializeField] private Behaviour[] enableInInteractionShared;
 
-    [Header("Optional: extra interaction-only behaviours")]
-    [SerializeField] private Behaviour[] interactionModules;
+    [Header("Optional: extra shared interaction-only behaviours")]
+    [FormerlySerializedAs("interactionModules")]
+    [SerializeField] private Behaviour[] interactionSharedExtras;
 
     [Header("Startup enforcement")]
     [SerializeField] private bool enforceStartupStateAfterFirstFrame = true;
@@ -148,8 +151,8 @@ public class SequenceBrain : MonoBehaviour
         bool inInt = (newState == SequenceState.InInteraction);
 
         SetEnabled(enableInSequence, inSeq);
-        SetEnabled(enableInInteraction, inInt);
-        SetEnabled(interactionModules, inInt);
+        SetEnabled(enableInInteractionShared, inInt);
+        SetEnabled(interactionSharedExtras, inInt);
     }
 
     private static void SetEnabled(Behaviour[] behaviours, bool enabled)

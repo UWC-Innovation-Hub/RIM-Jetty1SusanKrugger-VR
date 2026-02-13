@@ -8,7 +8,7 @@ public class SequenceSignalRouter : MonoBehaviour
     [Header("Interaction Modules")]
 
     ////C1
-    //[SerializeField] private InteractionModuleBase InventoryInt;
+    [SerializeField] private InteractionModuleBase inventoryInt;
     [SerializeField] private InteractionModuleBase prisonerSort;
 
     ////C2
@@ -25,12 +25,12 @@ public class SequenceSignalRouter : MonoBehaviour
 
 
     //// Timeline signal calls THIS at the gate moment
-    //public void EnterInteraction_Inventory()
-    //{
-    //    if (!brain) return;
-    //    brain.SetActiveInteraction(InventoryInt);
-    //    brain.EnterInteraction();
-    //}
+    public void EnterInteraction_Inventory()
+    {
+        if (!brain) return;
+        brain.SetActiveInteraction(inventoryInt);
+        brain.EnterInteraction();
+    }
 
 
     // Timeline signal calls THIS at the gate moment

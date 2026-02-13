@@ -20,6 +20,13 @@ public class SimpleBodyAttachments : MonoBehaviour
     public GameObject beltRightSlot;
     public GameObject chestSlot;
 
+    [Header("Runtime Slot Highlight Materials")]
+    [SerializeField] private bool instantiateHighlightMaterials = true;
+    [SerializeField] private Material hipHighlightMaterial;
+    [SerializeField] private Material beltLeftHighlightMaterial;
+    [SerializeField] private Material beltRightHighlightMaterial;
+    [SerializeField] private Material chestHighlightMaterial;
+
     private Transform trackingSpace; 
     private Transform centerEye;
 
@@ -72,8 +79,26 @@ public class SimpleBodyAttachments : MonoBehaviour
         AvatarAttachmentPoint attachPoint = slot.AddComponent<AvatarAttachmentPoint>();
         attachPoint.attachmentType = type;
         attachPoint.snapRadius = 0.15f;
+        attachPoint.ConfigureHighlightMaterial(GetHighlightMaterialForType(type), instantiateHighlightMaterials);
 
         Debug.Log($"Created {name}");
+    }
+
+    private Material GetHighlightMaterialForType(AvatarAttachmentPoint.AttachmentType type)
+    {
+        switch (type)
+        {
+            case AvatarAttachmentPoint.AttachmentType.Hip:
+                return hipHighlightMaterial;
+            case AvatarAttachmentPoint.AttachmentType.BeltLeft:
+                return beltLeftHighlightMaterial;
+            case AvatarAttachmentPoint.AttachmentType.BeltRight:
+                return beltRightHighlightMaterial;
+            case AvatarAttachmentPoint.AttachmentType.ChestLeft:
+                return chestHighlightMaterial;
+            default:
+                return null;
+        }
     }
 
     void Update()

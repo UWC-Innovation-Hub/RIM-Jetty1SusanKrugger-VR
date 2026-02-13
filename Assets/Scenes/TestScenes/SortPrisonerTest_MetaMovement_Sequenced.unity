@@ -9592,8 +9592,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8acc0a40fe87404fb20f6c4c6dcacc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  enableWhenActive:
+  - {fileID: 510795797}
+  - {fileID: 880684047}
+  - {fileID: 43413995}
+  - {fileID: 2012605375}
+  activeWhenActive: []
   requiredSorted: 3
-  autoActivateOnStart: 1
+  autoActivateOnStart: 0
 --- !u!114 &1283325264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10682,14 +10688,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.SignalReceiver
   m_Events:
     m_Signals:
-    - {fileID: 11400000, guid: 96e9797c7df587e4d8a2b6b092c0c41b, type: 2}
     - {fileID: 11400000, guid: 4ef3bcebae361e84e8872a238535d33b, type: 2}
+    - {fileID: 11400000, guid: 249160cce6199f14ea5a9f9700037471, type: 2}
     m_Events:
     - m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 1399958929}
           m_TargetAssemblyTypeName: SequenceSignalRouter, Assembly-CSharp
-          m_MethodName: EnterInteraction_PrisonerSort
+          m_MethodName: ExitInteraction_ResumeTimeline
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -10703,7 +10709,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 1399958929}
           m_TargetAssemblyTypeName: SequenceSignalRouter, Assembly-CSharp
-          m_MethodName: ExitInteraction_ResumeTimeline
+          m_MethodName: EnterInteraction_Inventory
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -10726,6 +10732,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   brain: {fileID: 2038833516}
+  inventoryInt: {fileID: 8991393200729803628}
   prisonerSort: {fileID: 1283325262}
 --- !u!1 &1401904912
 GameObject:
@@ -19902,12 +19909,8 @@ MonoBehaviour:
   director: {fileID: 223598198}
   activeInteraction: {fileID: 1283325262}
   enableInSequence: []
-  enableInInteraction:
-  - {fileID: 510795797}
-  - {fileID: 880684047}
-  - {fileID: 43413995}
-  - {fileID: 2012605375}
-  interactionModules: []
+  enableInInteractionShared: []
+  interactionSharedExtras: []
   enforceStartupStateAfterFirstFrame: 1
 --- !u!4 &2041385929 stripped
 Transform:
@@ -21370,7 +21373,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  - {fileID: 2100000, guid: 128f50b8d32d28f449115d8aee71b7e9, type: 2}
+  - {fileID: 2100000, guid: 0ab641f61576321448381e991a837698, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -21760,6 +21763,11 @@ MonoBehaviour:
   beltLeftSlot: {fileID: 0}
   beltRightSlot: {fileID: 0}
   chestSlot: {fileID: 0}
+  instantiateHighlightMaterials: 1
+  hipHighlightMaterial: {fileID: 2100000, guid: 044afc5618f85584383433b9faacdc57, type: 2}
+  beltLeftHighlightMaterial: {fileID: 2100000, guid: 0ab641f61576321448381e991a837698, type: 2}
+  beltRightHighlightMaterial: {fileID: 2100000, guid: 4372fa031ec12da4d827c23cf42421ac, type: 2}
+  chestHighlightMaterial: {fileID: 2100000, guid: c6668afc5f169a0479f32cd9fa09b04c, type: 2}
 --- !u!4 &1809822707725248451
 Transform:
   m_ObjectHideFlags: 0
@@ -22028,7 +22036,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 128f50b8d32d28f449115d8aee71b7e9, type: 2}
+  - {fileID: 2100000, guid: 4372fa031ec12da4d827c23cf42421ac, type: 2}
   - {fileID: 2100000, guid: 5f1b4ba37d0dbe941b3bb60eb4728e0b, type: 2}
   - {fileID: 2100000, guid: 35d46875a32dbaf498d3af5c9712db28, type: 2}
   m_StaticBatchInfo:
@@ -22111,7 +22119,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: a89a4a18c09a3424e9bec1ba0d67b5af, type: 2}
-  - {fileID: 2100000, guid: 128f50b8d32d28f449115d8aee71b7e9, type: 2}
+  - {fileID: 2100000, guid: 0ab641f61576321448381e991a837698, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -22340,7 +22348,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: e7ae987daa053fb45bfe94399ab5216e, type: 2}
-  - {fileID: 2100000, guid: 128f50b8d32d28f449115d8aee71b7e9, type: 2}
+  - {fileID: 2100000, guid: 0ab641f61576321448381e991a837698, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -22648,7 +22656,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 97ebe7a4706a1da499fc20af9b60eb10, type: 2}
-  - {fileID: 2100000, guid: 128f50b8d32d28f449115d8aee71b7e9, type: 2}
+  - {fileID: 2100000, guid: 0ab641f61576321448381e991a837698, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -23744,7 +23752,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 440edfce766d5ca43837cfa2643d7fdf, type: 2}
-  - {fileID: 2100000, guid: 128f50b8d32d28f449115d8aee71b7e9, type: 2}
+  - {fileID: 2100000, guid: 0ab641f61576321448381e991a837698, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -24276,7 +24284,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 3ace7a3c3649982438064a56fad1cb98, type: 2}
-  - {fileID: 2100000, guid: 128f50b8d32d28f449115d8aee71b7e9, type: 2}
+  - {fileID: 2100000, guid: 044afc5618f85584383433b9faacdc57, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -24472,7 +24480,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: 3ace7a3c3649982438064a56fad1cb98, type: 2}
   - {fileID: 2100000, guid: 3ace7a3c3649982438064a56fad1cb98, type: 2}
-  - {fileID: 2100000, guid: 128f50b8d32d28f449115d8aee71b7e9, type: 2}
+  - {fileID: 2100000, guid: c6668afc5f169a0479f32cd9fa09b04c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -24765,6 +24773,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 735759622830317165}
+  - component: {fileID: 8991393200729803628}
   m_Layer: 0
   m_Name: Interaction_Inventory
   m_TagString: Untagged
@@ -24772,6 +24781,52 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8991393200729803628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8991393200729803627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5638dfdd1fa106b4bbb817ab87e571df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryModule
+  enableWhenActive: []
+  activeWhenActive: []
+  inventoryManager: {fileID: 1640955063626698675}
+  requiredEquippedCount: 4
+  autoActivateOnStart: 0
+  enforceOrder: 1
+  orderedItems:
+  - {fileID: 3061952065661815717}
+  - {fileID: 7041775786214609837}
+  - {fileID: 8091249377599344955}
+  - {fileID: 4869778365692239148}
+  orderedMatchMode: 1
+  rejectOutOfOrderEquips: 1
+  lockCorrectlyPlacedItems: 1
+  useHighlight: 1
+  highlightBindings:
+  - item: {fileID: 3061952065661815717}
+    highlightMaterials:
+    - {fileID: 2100000, guid: 0ab641f61576321448381e991a837698, type: 2}
+  - item: {fileID: 7041775786214609837}
+    highlightMaterials:
+    - {fileID: 2100000, guid: c6668afc5f169a0479f32cd9fa09b04c, type: 2}
+  - item: {fileID: 8091249377599344955}
+    highlightMaterials:
+    - {fileID: 2100000, guid: 4372fa031ec12da4d827c23cf42421ac, type: 2}
+  - item: {fileID: 4869778365692239148}
+    highlightMaterials:
+    - {fileID: 2100000, guid: 044afc5618f85584383433b9faacdc57, type: 2}
+  emissionStrengthProperty: _EmissionStrength
+  highlightedEmissionStrength: 2
+  idleEmissionStrength: 0
+  highlightExpectedAttachmentPoints: 1
+  autoFindAttachmentPoints: 1
+  attachmentPoints: []
 --- !u!4 &9005027887691743994
 Transform:
   m_ObjectHideFlags: 0
