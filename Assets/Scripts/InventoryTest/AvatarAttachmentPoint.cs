@@ -25,7 +25,10 @@ public class AvatarAttachmentPoint : MonoBehaviour
         Chest,
         Shoulder,
         Back,
-        Waist
+        Waist,
+        BeltLeft,
+        BeltRight,
+        ChestLeft
     }
 
     // Variables to enable attachment
@@ -109,7 +112,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
         {
             Debug.Log($"[{attachmentType}] Found item: {item.itemName}, IsEquipped: {item.IsEquipped()}, CompatibleWith: {item.compatibleAttachmentPoint}, ThisSlot: {attachmentType}");
 
-            if (!item.IsEquipped() && item.compatibleAttachmentPoint == attachmentType)
+            if (!item.IsEquipped() && IsCompatible(item.compatibleAttachmentPoint, attachmentType))
             {
                 nearbyItem = item;
 
@@ -175,7 +178,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
         // Apply positioning
         item.transform.localPosition = localPositionOffset;
-        item.transform.localRotation = Quaternion.Euler(localRotationOffset);
+        item.transform.localRotation = Quaternion.Euler(localRotationOffset) * item.GetEquippedRotationOffset();
 
         // Notify the item it's been equipped
         item.OnEquippedToSlot();
@@ -199,29 +202,70 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
     public void UnequipItem()
     {
-        if (currentEquippedItem != null)
-        {
-            Debug.Log($"[{attachmentType}] Unequipping {currentEquippedItem.itemName}");
+        if (currentEquippedItem == null)
+            return;
 
-            currentEquippedItem.transform.SetParent(null);
-            currentEquippedItem = null;
+        Debug.Log($"[{attachmentType}] Unequipping {currentEquippedItem.itemName}");
 
-            // Show visualizer again
-            if (visualizer != null)
-            {
-                visualizer.enabled = true;
-            }
+        EquippableItem item = currentEquippedItem;
+        currentEquippedItem = null; // Clear first to prevent re-entrant calls
 
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.OnItemUnequipped(attachmentType);
-            }
-        }
+        item.transform.SetParent(null);
+        item.NotifyUnequipped(); // Clears isEquipped flag and re-enables physics on item
+
+        // Show visualizer again
+        if (visualizer != null)
+            visualizer.enabled = true;
+
+        if (InventoryManager.Instance != null)
+            InventoryManager.Instance.OnItemUnequipped(attachmentType);
     }
 
     public bool HasItemEquipped()
     {
         return currentEquippedItem != null;
+    }
+
+    private static bool IsCompatible(AttachmentType itemType, AttachmentType slotType)
+    {
+        if (itemType == slotType)
+        {
+            return true;
+        }
+
+        if (itemType == AttachmentType.Belt &&
+            (slotType == AttachmentType.BeltLeft || slotType == AttachmentType.BeltRight))
+        {
+            return true;
+        }
+
+        if (itemType == AttachmentType.BeltLeft && slotType == AttachmentType.Belt)
+        {
+            return true;
+        }
+
+        if (itemType == AttachmentType.BeltRight && slotType == AttachmentType.Belt)
+        {
+            return true;
+        }
+
+        if (itemType == AttachmentType.Chest && slotType == AttachmentType.ChestLeft)
+        {
+            return true;
+        }
+
+        if (itemType == AttachmentType.ChestLeft && slotType == AttachmentType.Chest)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    void OnDestroy()
+    {
+        if (visualizer != null && visualizer.material != null)
+            Destroy(visualizer.material);
     }
 
     // Debug visualization in editor

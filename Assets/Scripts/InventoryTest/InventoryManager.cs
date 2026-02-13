@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
-    public static InventoryManager Instance { get; private set; }
+    public static InventoryManager Instance { get; private set; } //Singleton pattern
 
     [Header("Attachment Points")]
     public List<AvatarAttachmentPoint> attachmentPoints = new List<AvatarAttachmentPoint>();
@@ -55,26 +55,30 @@ public class InventoryManager : MonoBehaviour
 
     public void UnequipItem(AvatarAttachmentPoint.AttachmentType attachmentType)
     {
-        if (equippedItems.TryGetValue(attachmentType, out var item))
+        if (!equippedItems.ContainsKey(attachmentType))
+            return;
+
+        // Delegate to the attachment point so it properly clears its own state
+        // and updates the item's isEquipped flag via UnequipItem()
+        AvatarAttachmentPoint attachPoint = attachmentPoints.Find(
+            ap => ap.attachmentType == attachmentType
+        );
+
+        if (attachPoint != null)
         {
-            // Find the attachment point and detach item
-            AvatarAttachmentPoint attachPoint = attachmentPoints.Find(
-                ap => ap.attachmentType == attachmentType
-            );
-
-            if (attachPoint != null && item != null)
+            attachPoint.UnequipItem(); // This calls back into OnItemUnequipped → removes from dict
+        }
+        else
+        {
+            // No registered attachment point — fall back to direct cleanup
+            EquippableItem item = equippedItems[attachmentType];
+            if (item != null)
             {
-                // Detach from parent
                 item.transform.SetParent(null);
-
-                // Re-enable physics
-                Rigidbody rb = item.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    rb.isKinematic = false;
-                    rb.useGravity = true;
-                }
+                item.NotifyUnequipped();
             }
+            equippedItems.Remove(attachmentType);
+            OnItemUnequippedEvent?.Invoke(attachmentType);
         }
     }
 

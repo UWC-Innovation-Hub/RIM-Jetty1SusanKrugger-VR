@@ -1,137 +1,172 @@
 using UnityEngine;
 
-public class BodyAttachmentRig : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class BodyAttachmentRig : MonoBehaviour
 {
     [Header("Camera Rig References")]
-    public Transform trackingSpace; 
-    public Transform centerEyeAnchor;
+    [SerializeField] private Transform trackingSpace;
+    [SerializeField] private Transform centerEyeAnchor;
 
     [Header("Body Attachment Points")]
-    public Transform bodyAttachments;
-    public AvatarAttachmentPoint hipAttachment;
-    public AvatarAttachmentPoint chestAttachment;
-    public AvatarAttachmentPoint beltLeftAttachment;
-    public AvatarAttachmentPoint beltRightAttachment;
+    [SerializeField] private Transform bodyAttachments;
+    [SerializeField] private AvatarAttachmentPoint hipAttachment;
+    [SerializeField] private AvatarAttachmentPoint chestAttachment;
+    [SerializeField] private AvatarAttachmentPoint beltLeftAttachment;
+    [SerializeField] private AvatarAttachmentPoint beltRightAttachment;
 
-    [Header("Positioning Configuration")]
-    public float hipHeight = -0.4f; // Below head
-    public float hipForward = 0.1f; // Slightly forward
-    public float chestHeight = -0.2f; // Badge position
-    public float beltSideOffset = 0.15f; // Waist position
+    [Header("Positioning")]
+    [SerializeField] private bool updatePositions = true;
+    [SerializeField] private float hipHeight = -0.4f;
+    [SerializeField] private float hipForward = 0.1f;
+    [SerializeField] private float hipSideOffset = -0.12f;
+    [SerializeField] private float chestHeight = -0.2f;
+    [SerializeField] private float chestForward = 0.05f;
+    [SerializeField] private float chestSideOffset = -0.08f;
+    [SerializeField] private float beltSideOffset = 0.15f;
 
-    void Start()
+    private bool initialized;
+
+    private void Awake()
     {
-        SetupBodyAttachments();
+        Initialize();
     }
 
-    void SetupBodyAttachments()
+    private void LateUpdate()
     {
-        if (trackingSpace == null)
+        if (!updatePositions)
         {
-            OVRCameraRig cameraRig = FindObjectOfType<OVRCameraRig>();
-            if (cameraRig != null)
-            {
-                trackingSpace = cameraRig.trackingSpace;
-                centerEyeAnchor = cameraRig.centerEyeAnchor;
-            }
+            return;
         }
 
-        // Create body attachments parent if it doesn't exist
-        if (bodyAttachments == null)
+        if (!initialized)
         {
-            GameObject bodyGO = new GameObject("BodyAttachments");
-            bodyAttachments = bodyGO.transform;
-            bodyAttachments.SetParent(trackingSpace);
-            bodyAttachments.localPosition = Vector3.zero;
-            bodyAttachments.localRotation = Quaternion.identity;
+            Initialize();
         }
 
-        CreateAttachmentPoints();
-    }
-
-    void CreateAttachmentPoints()
-    {
-        // Hip attachment (center)
-        if (hipAttachment == null)
+        if (centerEyeAnchor == null)
         {
-            GameObject hipGO = new GameObject("HipAttachment");
-            hipGO.transform.SetParent(bodyAttachments);
-            hipAttachment = hipGO.AddComponent<AvatarAttachmentPoint>();
-            hipAttachment.attachmentType = AvatarAttachmentPoint.AttachmentType.Hip;
+            return;
         }
 
-        // Chest attachment
-        if (chestAttachment == null)
-        {
-            GameObject chestGO = new GameObject("ChestAttachment");
-            chestGO.transform.SetParent(bodyAttachments);
-            chestAttachment = chestGO.AddComponent<AvatarAttachmentPoint>();
-            chestAttachment.attachmentType = AvatarAttachmentPoint.AttachmentType.Chest;
-        }
-
-        // Belt left
-        if (beltLeftAttachment == null)
-        {
-            GameObject beltLeftGO = new GameObject("BeltLeftAttachment");
-            beltLeftGO.transform.SetParent(bodyAttachments);
-            beltLeftAttachment = beltLeftGO.AddComponent<AvatarAttachmentPoint>();
-            beltLeftAttachment.attachmentType = AvatarAttachmentPoint.AttachmentType.Belt;
-        }
-
-        // Belt right
-        if (beltRightAttachment == null)
-        {
-            GameObject beltRightGO = new GameObject("BeltRightAttachment");
-            beltRightGO.transform.SetParent(bodyAttachments);
-            beltRightAttachment = beltRightGO.AddComponent<AvatarAttachmentPoint>();
-            beltRightAttachment.attachmentType = AvatarAttachmentPoint.AttachmentType.Belt;
-        }
-    }
-
-    void Update()
-    {
-        // Update positions relative to head position
         UpdateBodyPositions();
     }
 
-    // Update body position
-    void UpdateBodyPositions()
+    private void Initialize()
     {
-        if (centerEyeAnchor == null) return;
+        if (initialized)
+        {
+            return;
+        }
 
-        // Get head position and forward direction
-        Vector3 headPos = centerEyeAnchor.position;
-        Vector3 headForward = centerEyeAnchor.forward;
-        headForward.y = 0; // Project to horizontal plane
+        initialized = true;
+        ResolveCameraRig();
+        EnsureBodyAttachmentsRoot();
+        EnsureAttachment(ref hipAttachment, "HipAttachment", AvatarAttachmentPoint.AttachmentType.Hip);
+        EnsureAttachment(ref chestAttachment, "ChestAttachment", AvatarAttachmentPoint.AttachmentType.ChestLeft);
+        EnsureAttachment(ref beltLeftAttachment, "BeltLeftAttachment", AvatarAttachmentPoint.AttachmentType.BeltLeft);
+        EnsureAttachment(ref beltRightAttachment, "BeltRightAttachment", AvatarAttachmentPoint.AttachmentType.BeltRight);
+    }
+
+    private void ResolveCameraRig()
+    {
+        if (trackingSpace != null && centerEyeAnchor != null)
+        {
+            return;
+        }
+
+        OVRCameraRig cameraRig = FindObjectOfType<OVRCameraRig>();
+        if (cameraRig == null)
+        {
+            return;
+        }
+
+        if (trackingSpace == null)
+        {
+            trackingSpace = cameraRig.trackingSpace;
+        }
+
+        if (centerEyeAnchor == null)
+        {
+            centerEyeAnchor = cameraRig.centerEyeAnchor;
+        }
+    }
+
+    private void EnsureBodyAttachmentsRoot()
+    {
+        if (bodyAttachments != null)
+        {
+            return;
+        }
+
+        GameObject bodyGO = new GameObject("BodyAttachments");
+        bodyAttachments = bodyGO.transform;
+
+        Transform parent = trackingSpace != null ? trackingSpace : transform;
+        bodyAttachments.SetParent(parent, false);
+    }
+
+    private void EnsureAttachment(
+        ref AvatarAttachmentPoint attachment,
+        string name,
+        AvatarAttachmentPoint.AttachmentType type)
+    {
+        if (attachment != null)
+        {
+            return;
+        }
+
+        GameObject attachmentGO = new GameObject(name);
+        attachmentGO.transform.SetParent(bodyAttachments, false);
+        attachment = attachmentGO.AddComponent<AvatarAttachmentPoint>();
+        attachment.attachmentType = type;
+    }
+
+    private void UpdateBodyPositions()
+    {
+        Vector3 headForward = Vector3.ProjectOnPlane(centerEyeAnchor.forward, Vector3.up);
+        if (headForward.sqrMagnitude < 0.0001f)
+        {
+            Vector3 fallbackForward = trackingSpace != null ? trackingSpace.forward : transform.forward;
+            headForward = Vector3.ProjectOnPlane(fallbackForward, Vector3.up);
+        }
+
+        if (headForward.sqrMagnitude < 0.0001f)
+        {
+            return;
+        }
+
         headForward.Normalize();
+        Vector3 headRight = Vector3.Cross(Vector3.up, headForward).normalized;
+        Vector3 headPos = centerEyeAnchor.position;
 
-        Vector3 headRight = centerEyeAnchor.right;
-        headRight.y = 0;
-        headRight.Normalize();
+        Quaternion facing = Quaternion.LookRotation(headForward, Vector3.up);
 
-        // Position hip attachment
-        hipAttachment.transform.position = headPos +
+        Vector3 hipPos = headPos +
             Vector3.up * hipHeight +
-            headForward * hipForward;
-        hipAttachment.transform.rotation = Quaternion.LookRotation(headForward);
+            headForward * hipForward +
+            headRight * hipSideOffset;
+        SetAttachmentTransform(hipAttachment, hipPos, facing);
 
-        // Position chest attachment
-        chestAttachment.transform.position = headPos +
-            Vector3.up * chestHeight +
-            headForward * (hipForward * 0.5f);
-        chestAttachment.transform.rotation = Quaternion.LookRotation(headForward);
+        Vector3 chestPos = headPos + Vector3.up * chestHeight +
+            headForward * chestForward +
+            headRight * chestSideOffset;
+        SetAttachmentTransform(chestAttachment, chestPos, facing);
 
-        // Position belt attachments (left and right side)
-        beltLeftAttachment.transform.position = headPos +
-            Vector3.up * hipHeight +
-            headRight * -beltSideOffset +
-            headForward * hipForward;
-        beltLeftAttachment.transform.rotation = Quaternion.LookRotation(headForward);
+        Vector3 beltOffset = headRight * beltSideOffset;
+        SetAttachmentTransform(beltLeftAttachment, hipPos - beltOffset, facing);
+        SetAttachmentTransform(beltRightAttachment, hipPos + beltOffset, facing);
+    }
 
-        beltRightAttachment.transform.position = headPos +
-            Vector3.up * hipHeight +
-            headRight * beltSideOffset +
-            headForward * hipForward;
-        beltRightAttachment.transform.rotation = Quaternion.LookRotation(headForward);
+    private static void SetAttachmentTransform(
+        AvatarAttachmentPoint attachment,
+        Vector3 position,
+        Quaternion rotation)
+    {
+        if (attachment == null)
+        {
+            return;
+        }
+
+        attachment.transform.SetPositionAndRotation(position, rotation);
     }
 }

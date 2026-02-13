@@ -6,11 +6,13 @@ public class SimpleBodyAttachments : MonoBehaviour
     public bool autoSetup = true;
 
     [Header("Position Configuration")]
-    float hipHeight = -0.4f;      // moved up ~15cm
-    float hipForward = 0.05f;      // pushed forward so visible when looking down
-    float chestHeight = -0.2f;     // Moved up ~10cm
-    float chestForward = 0.07f;     // pushed forward
-    float beltSideOffset = 0.16f;  // slightly tighter
+    [SerializeField] float hipHeight = -0.4f;      // moved up ~15cm
+    [SerializeField] float hipForward = 0.05f;      // pushed forward so visible when looking down
+    [SerializeField] float hipSideOffset = -0.12f;  // left side for baton
+    [SerializeField] float chestHeight = -0.2f;     // Moved up ~10cm
+    [SerializeField] float chestForward = 0.07f;     // pushed forward
+    [SerializeField] float chestSideOffset = -0.08f; // left side of chest
+    [SerializeField] float beltSideOffset = 0.16f;  // slightly tighter
 
     [Header("Attachment Points (Auto-Created)")]
     public GameObject hipSlot;
@@ -50,9 +52,9 @@ public class SimpleBodyAttachments : MonoBehaviour
 
         // Attachment slots that  will follow the head
         CreateSlot(ref hipSlot, "HipSlot", AvatarAttachmentPoint.AttachmentType.Hip);
-        CreateSlot(ref beltLeftSlot, "BeltLeftSlot", AvatarAttachmentPoint.AttachmentType.Belt);
-        CreateSlot(ref beltRightSlot, "BeltRightSlot", AvatarAttachmentPoint.AttachmentType.Belt);
-        CreateSlot(ref chestSlot, "ChestSlot", AvatarAttachmentPoint.AttachmentType.Chest);
+        CreateSlot(ref beltLeftSlot, "BeltLeftSlot", AvatarAttachmentPoint.AttachmentType.BeltLeft);
+        CreateSlot(ref beltRightSlot, "BeltRightSlot", AvatarAttachmentPoint.AttachmentType.BeltRight);
+        CreateSlot(ref chestSlot, "ChestSlot", AvatarAttachmentPoint.AttachmentType.ChestLeft);
 
         Debug.Log("Body attachment system initialized successfully!");
     }
@@ -80,19 +82,17 @@ public class SimpleBodyAttachments : MonoBehaviour
 
         // Get head position and direction
         Vector3 headPos = centerEye.position;
-        Vector3 headForward = centerEye.forward;
-        headForward.y = 0; // Project to horizontal plane
+        Vector3 headForward = Vector3.ProjectOnPlane(centerEye.forward, Vector3.up);
+
+        // Guard before normalizing — fallback if head is looking straight up/down
+        if (headForward.sqrMagnitude < 0.0001f)
+            headForward = Vector3.ProjectOnPlane(centerEye.right, Vector3.up);
+
+        if (headForward.sqrMagnitude < 0.0001f)
+            return;
+
         headForward.Normalize();
-
-        Vector3 headRight = centerEye.right;
-        headRight.y = 0;
-        headRight.Normalize();
-
-        // Only update if we have a valid forward direction
-        if (headForward.magnitude < 0.1f)
-        {
-            headForward = Vector3.forward;
-        }
+        Vector3 headRight = Vector3.Cross(Vector3.up, headForward).normalized;
 
         Quaternion bodyRotation = Quaternion.LookRotation(headForward);
 
@@ -101,7 +101,8 @@ public class SimpleBodyAttachments : MonoBehaviour
         {
             hipSlot.transform.position = headPos +
                 Vector3.up * hipHeight +
-                headForward * hipForward;
+                headForward * hipForward +
+                headRight * hipSideOffset;
             hipSlot.transform.rotation = bodyRotation;
         }
 
@@ -110,7 +111,8 @@ public class SimpleBodyAttachments : MonoBehaviour
         {
             chestSlot.transform.position = headPos +
                 Vector3.up * chestHeight +
-                headForward * chestForward;
+                headForward * chestForward +
+                headRight * chestSideOffset;
             chestSlot.transform.rotation = bodyRotation;
         }
 
