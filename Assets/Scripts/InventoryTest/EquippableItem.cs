@@ -14,10 +14,13 @@ public class EquippableItem : MonoBehaviour
     [SerializeField] private Grabbable grabbable;
     [SerializeField] private Rigidbody rb;
 
+    [Header("Equipped Placement")]
+    public Vector3 equippedPositionOffset = Vector3.zero;
+    public Vector3 equippableRotation = Vector3.zero;
+
     [Header("Visual Settings")]
     public Vector3 equippedScale = Vector3.one;
     public Vector3 handHeldScale = Vector3.one;
-    public Vector3 equippableRotation = Vector3.zero;
 
     public enum ItemType
     {
@@ -128,6 +131,19 @@ public class EquippableItem : MonoBehaviour
     public bool IsEquipped() => isEquipped;
 
     public bool IsBeingGrabbed() => isBeingGrabbed;
+
+    // Called by AvatarAttachmentPoint.UnequipItem() to sync state when removed programmatically
+    public void NotifyUnequipped()
+    {
+        isEquipped = false;
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+        }
+    }
+
+    public Vector3 GetEquippedPositionOffset() => equippedPositionOffset;
 
     public Quaternion GetEquippedRotationOffset()
     {

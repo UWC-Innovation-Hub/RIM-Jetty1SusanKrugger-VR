@@ -202,24 +202,23 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
     public void UnequipItem()
     {
-        if (currentEquippedItem != null)
-        {
-            Debug.Log($"[{attachmentType}] Unequipping {currentEquippedItem.itemName}");
+        if (currentEquippedItem == null)
+            return;
 
-            currentEquippedItem.transform.SetParent(null);
-            currentEquippedItem = null;
+        Debug.Log($"[{attachmentType}] Unequipping {currentEquippedItem.itemName}");
 
-            // Show visualizer again
-            if (visualizer != null)
-            {
-                visualizer.enabled = true;
-            }
+        EquippableItem item = currentEquippedItem;
+        currentEquippedItem = null; // Clear first to prevent re-entrant calls
 
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.OnItemUnequipped(attachmentType);
-            }
-        }
+        item.transform.SetParent(null);
+        item.NotifyUnequipped(); // Clears isEquipped flag and re-enables physics on item
+
+        // Show visualizer again
+        if (visualizer != null)
+            visualizer.enabled = true;
+
+        if (InventoryManager.Instance != null)
+            InventoryManager.Instance.OnItemUnequipped(attachmentType);
     }
 
     public bool HasItemEquipped()
@@ -261,6 +260,12 @@ public class AvatarAttachmentPoint : MonoBehaviour
         }
 
         return false;
+    }
+
+    void OnDestroy()
+    {
+        if (visualizer != null && visualizer.material != null)
+            Destroy(visualizer.material);
     }
 
     // Debug visualization in editor
