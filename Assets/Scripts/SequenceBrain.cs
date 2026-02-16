@@ -17,6 +17,7 @@ public class SequenceBrain : MonoBehaviour
     [Header("Wiring")]
     [SerializeField] private GameObject timeline;              // GO that holds PlayableDirector
     [SerializeField] private PlayableDirector director;
+    [SerializeField] private FadeController fadeController;
 
     [Header("Active Interaction (event-driven)")]
     [Tooltip("The interaction module to activate when entering InInteraction. Set via the signal router.")]
@@ -33,15 +34,21 @@ public class SequenceBrain : MonoBehaviour
 
     [Header("Startup enforcement")]
     [SerializeField] private bool enforceStartupStateAfterFirstFrame = true;
+    [SerializeField] private bool fadeOnStartup = false;
+    [SerializeField] private float startupFadeInDuration = 0.5f;
 
     public SequenceState State { get; private set; } = SequenceState.InSequence;
 
     private Coroutine _startupEnforceRoutine;
+    private Coroutine _transitionRoutine;
+    private bool _isTransitioning;
+    private bool _pendingExitAfterTransition;
 
     private void Reset()
     {
         if (!timeline) timeline = gameObject;
         director = timeline ? timeline.GetComponent<PlayableDirector>() : GetComponent<PlayableDirector>();
+        if (!fadeController) fadeController = FindFirstObjectByType<FadeController>();
     }
 
     private void Awake()
@@ -49,24 +56,31 @@ public class SequenceBrain : MonoBehaviour
         if (!director)
             director = timeline ? timeline.GetComponent<PlayableDirector>() : GetComponent<PlayableDirector>();
 
+        if (!fadeController)
+            fadeController = FindFirstObjectByType<FadeController>();
+
+        if (fadeOnStartup && fadeController != null)
+            fadeController.SetBlackInstant();
+
         ApplyState(SequenceState.InSequence, pauseDirector: false);
     }
 
     private void Start()
     {
-        if (enforceStartupStateAfterFirstFrame)
-        {
-            if (_startupEnforceRoutine != null) StopCoroutine(_startupEnforceRoutine);
-            _startupEnforceRoutine = StartCoroutine(EnforceInitialStateNextFrame());
-        }
+        if (_startupEnforceRoutine != null) StopCoroutine(_startupEnforceRoutine);
+        _startupEnforceRoutine = StartCoroutine(StartupSequenceRoutine());
     }
 
-    //Possibly invalid code; what is the reason for this really? Previous issue with interaction on start up?
-    //maybe better just to move the sequence signal slightly down the line.
-    private IEnumerator EnforceInitialStateNextFrame()
+    private IEnumerator StartupSequenceRoutine()
     {
-        yield return null; // wait 1 frame (OVR/Meta init tends to happen around here)
+        if (enforceStartupStateAfterFirstFrame)
+            yield return null; // wait 1 frame (OVR/Meta init tends to happen around here)
+
         ApplyState(SequenceState.InSequence, pauseDirector: false);
+
+        if (fadeOnStartup && fadeController != null)
+            yield return fadeController.FadeInRoutine(startupFadeInDuration);
+
         _startupEnforceRoutine = null;
     }
 
@@ -85,9 +99,22 @@ public class SequenceBrain : MonoBehaviour
     /// Called by Timeline signal router at a gate moment.
     public void EnterInteraction()
     {
+        if (_isTransitioning)
+            return;
+
         if (State == SequenceState.InInteraction || State == SequenceState.TransitionToInteraction)
             return;
 
+        if (_transitionRoutine != null)
+            StopCoroutine(_transitionRoutine);
+
+        _pendingExitAfterTransition = false;
+        _transitionRoutine = StartCoroutine(EnterInteractionRoutine());
+    }
+
+    private IEnumerator EnterInteractionRoutine()
+    {
+        _isTransitioning = true;
         ApplyState(SequenceState.TransitionToInteraction, pauseDirector: true);
 
         if (activeInteraction)
@@ -95,15 +122,31 @@ public class SequenceBrain : MonoBehaviour
             // Defensive: prevent double subscribe
             activeInteraction.Completed -= OnActiveInteractionCompleted;
 
+            if (ShouldUseFade(activeInteraction))
+                yield return fadeController.FadeOutRoutine(activeInteraction.FadeOutDuration);
+
             activeInteraction.Activate();
             activeInteraction.Completed += OnActiveInteractionCompleted;
+
+            ApplyState(SequenceState.InInteraction, pauseDirector: true);
+
+            if (ShouldUseFade(activeInteraction))
+                yield return fadeController.FadeInRoutine(activeInteraction.FadeInDuration);
         }
         else
         {
             Debug.LogWarning($"{name}: EnterInteraction() called but no activeInteraction is assigned.");
+            ApplyState(SequenceState.InInteraction, pauseDirector: true);
         }
 
-        ApplyState(SequenceState.InInteraction, pauseDirector: true);
+        _isTransitioning = false;
+        _transitionRoutine = null;
+
+        if (_pendingExitAfterTransition)
+        {
+            _pendingExitAfterTransition = false;
+            ExitInteractionResumeTimeline();
+        }
     }
 
     private void OnActiveInteractionCompleted()
@@ -116,15 +159,48 @@ public class SequenceBrain : MonoBehaviour
 
     public void ExitInteractionResumeTimeline()
     {
+        if (_isTransitioning)
+        {
+            _pendingExitAfterTransition = true;
+            return;
+        }
+
         if (State == SequenceState.InSequence || State == SequenceState.TransitionToSequence)
             return;
 
+        if (_transitionRoutine != null)
+            StopCoroutine(_transitionRoutine);
+
+        _transitionRoutine = StartCoroutine(ExitInteractionRoutine());
+    }
+
+    private IEnumerator ExitInteractionRoutine()
+    {
+        _isTransitioning = true;
+        _pendingExitAfterTransition = false;
+
         ApplyState(SequenceState.TransitionToSequence, pauseDirector: true);
 
-        if (activeInteraction != null)
-            activeInteraction.Deactivate();
+        InteractionModuleBase module = activeInteraction;
+
+        if (module != null && ShouldUseFade(module))
+            yield return fadeController.FadeOutRoutine(module.FadeOutDuration);
+
+        if (module != null)
+            module.Deactivate();
 
         ApplyState(SequenceState.InSequence, pauseDirector: false);
+
+        if (module != null && ShouldUseFade(module))
+            yield return fadeController.FadeInRoutine(module.FadeInDuration);
+
+        _isTransitioning = false;
+        _transitionRoutine = null;
+    }
+
+    private bool ShouldUseFade(InteractionModuleBase module)
+    {
+        return module != null && module.UseTransitionFade && fadeController != null;
     }
 
     private void ApplyState(SequenceState newState, bool pauseDirector)
