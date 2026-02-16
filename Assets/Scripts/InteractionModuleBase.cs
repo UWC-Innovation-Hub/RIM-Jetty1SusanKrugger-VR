@@ -12,10 +12,23 @@ public abstract class InteractionModuleBase : MonoBehaviour
     [Header("Module-local activation toggles")]
     [Tooltip("Enabled while this module is active; disabled when inactive.")]
     [SerializeField] private Behaviour[] enableWhenActive;
+    [Tooltip("Disabled while this module is active; enabled when inactive.")]
+    [SerializeField] private Behaviour[] disableWhenActive;
     [Tooltip("Set active while this module is active; set inactive when inactive.")]
     [SerializeField] private GameObject[] activeWhenActive;
+    [Tooltip("Set inactive while this module is active; set active when inactive.")]
+    [SerializeField] private GameObject[] inactiveWhenActive;
     [Tooltip("Force this module's local toggles OFF on scene load until Activate() is called.")]
     [SerializeField] private bool forceInactiveOnAwake = true;
+
+    [Header("Optional Environment")]
+    [Tooltip("When active, force RenderSettings.fog to this value.")]
+    [SerializeField] private bool enableFog = false;
+    [Tooltip("Restore previous RenderSettings.fog value when this module deactivates.")]
+    [SerializeField] private bool restoreFogOnDeactivate = true;
+
+    private bool _previousFogState;
+    private bool _hasFogStateSnapshot;
 
     protected virtual void Awake()
     {
@@ -25,7 +38,9 @@ public abstract class InteractionModuleBase : MonoBehaviour
         if (forceInactiveOnAwake)
         {
             SetEnabled(enableWhenActive, false);
+            SetEnabled(disableWhenActive, true);
             SetActive(activeWhenActive, false);
+            SetActive(inactiveWhenActive, true);
         }
     }
 
@@ -33,15 +48,28 @@ public abstract class InteractionModuleBase : MonoBehaviour
     {
         IsActive = true;
         IsComplete = false;
+        _previousFogState = RenderSettings.fog;
+        _hasFogStateSnapshot = true;
+
         SetEnabled(enableWhenActive, true);
+        SetEnabled(disableWhenActive, false);
         SetActive(activeWhenActive, true);
+        SetActive(inactiveWhenActive, false);
+        RenderSettings.fog = enableFog;
     }
 
     public virtual void Deactivate()
     {
         IsActive = false;
         SetEnabled(enableWhenActive, false);
+        SetEnabled(disableWhenActive, true);
         SetActive(activeWhenActive, false);
+        SetActive(inactiveWhenActive, true);
+
+        if (restoreFogOnDeactivate && _hasFogStateSnapshot)
+        {
+            RenderSettings.fog = _previousFogState;
+        }
     }
 
     protected void Complete()

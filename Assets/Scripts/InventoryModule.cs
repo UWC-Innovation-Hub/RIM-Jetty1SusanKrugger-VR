@@ -37,6 +37,10 @@ public class InventoryModule : InteractionModuleBase
     [SerializeField] private string emissionStrengthProperty = "_EmissionStrength";
     [SerializeField] private float highlightedEmissionStrength = 2f;
     [SerializeField] private float idleEmissionStrength = 0f;
+    [SerializeField] private bool lerpHighlightIn = true;
+    [SerializeField] private float highlightLerpDuration = 0.35f;
+    [SerializeField] private bool lerpHighlightOut = true;
+    [SerializeField] private float highlightOutLerpDuration = 0.25f;
 
     [Header("Attachment Point Guidance")]
     [SerializeField] private bool highlightExpectedAttachmentPoints = true;
@@ -50,6 +54,14 @@ public class InventoryModule : InteractionModuleBase
 
     private EquippableItem _highlightedItem;
     private bool _subscribed;
+    private readonly List<Material> _highlightLerpMaterials = new List<Material>();
+    private readonly Dictionary<Material, float> _highlightLerpTargets = new Dictionary<Material, float>();
+    private readonly Dictionary<Material, float> _highlightLerpSpeeds = new Dictionary<Material, float>();
+
+    private void Update()
+    {
+        TickHighlightLerpIn();
+    }
 
     public override void Activate()
     {
@@ -75,6 +87,7 @@ public class InventoryModule : InteractionModuleBase
         base.Deactivate();
 
         UnsubscribeInventoryEvents();
+        ClearHighlightLerp();
         ClearCurrentHighlight();
         ClearAttachmentPointHighlights();
         SetAllConfiguredHighlights(idleEmissionStrength);
@@ -429,7 +442,29 @@ public class InventoryModule : InteractionModuleBase
                 continue;
             }
 
-            mat.SetFloat(emissionStrengthProperty, targetStrength);
+            if (highlighted && lerpHighlightIn)
+            {
+                QueueHighlightLerp(
+                    mat,
+                    highlightedEmissionStrength,
+                    highlightLerpDuration,
+                    resetToIdleBeforeLerp: true
+                );
+            }
+            else if (!highlighted && lerpHighlightOut)
+            {
+                QueueHighlightLerp(
+                    mat,
+                    idleEmissionStrength,
+                    highlightOutLerpDuration,
+                    resetToIdleBeforeLerp: false
+                );
+            }
+            else
+            {
+                RemoveHighlightLerp(mat);
+                mat.SetFloat(emissionStrengthProperty, targetStrength);
+            }
         }
     }
 
@@ -461,6 +496,8 @@ public class InventoryModule : InteractionModuleBase
             return;
         }
 
+        ClearHighlightLerp();
+
         for (int i = 0; i < highlightBindings.Count; i++)
         {
             ItemHighlightBinding binding = highlightBindings[i];
@@ -480,6 +517,95 @@ public class InventoryModule : InteractionModuleBase
                 mat.SetFloat(emissionStrengthProperty, strength);
             }
         }
+    }
+
+    private void TickHighlightLerpIn()
+    {
+        if (_highlightLerpMaterials.Count == 0)
+        {
+            return;
+        }
+
+        for (int i = _highlightLerpMaterials.Count - 1; i >= 0; i--)
+        {
+            Material mat = _highlightLerpMaterials[i];
+            if (mat == null ||
+                !mat.HasProperty(emissionStrengthProperty) ||
+                !_highlightLerpTargets.ContainsKey(mat))
+            {
+                _highlightLerpTargets.Remove(mat);
+                _highlightLerpSpeeds.Remove(mat);
+                _highlightLerpMaterials.RemoveAt(i);
+                continue;
+            }
+
+            float target = _highlightLerpTargets[mat];
+            float speed = _highlightLerpSpeeds.ContainsKey(mat) ? _highlightLerpSpeeds[mat] : 0f;
+            float current = mat.GetFloat(emissionStrengthProperty);
+            float next = Mathf.MoveTowards(current, target, speed * Time.deltaTime);
+            mat.SetFloat(emissionStrengthProperty, next);
+
+            if (Mathf.Approximately(next, target))
+            {
+                _highlightLerpTargets.Remove(mat);
+                _highlightLerpSpeeds.Remove(mat);
+                _highlightLerpMaterials.RemoveAt(i);
+            }
+        }
+    }
+
+    private void QueueHighlightLerp(
+        Material mat,
+        float target,
+        float duration,
+        bool resetToIdleBeforeLerp)
+    {
+        if (mat == null || !mat.HasProperty(emissionStrengthProperty))
+        {
+            return;
+        }
+
+        if (resetToIdleBeforeLerp)
+        {
+            mat.SetFloat(emissionStrengthProperty, idleEmissionStrength);
+        }
+
+        float current = mat.GetFloat(emissionStrengthProperty);
+        if (Mathf.Approximately(current, target) || duration <= 0f)
+        {
+            RemoveHighlightLerp(mat);
+            mat.SetFloat(emissionStrengthProperty, target);
+            return;
+        }
+
+        float speed = Mathf.Abs(target - current) / Mathf.Max(0.0001f, duration);
+
+        if (!_highlightLerpTargets.ContainsKey(mat))
+        {
+            _highlightLerpMaterials.Add(mat);
+        }
+
+        _highlightLerpTargets[mat] = target;
+        _highlightLerpSpeeds[mat] = speed;
+    }
+
+    private void RemoveHighlightLerp(Material mat)
+    {
+        if (mat == null)
+        {
+            return;
+        }
+
+        _highlightLerpTargets.Remove(mat);
+        _highlightLerpSpeeds.Remove(mat);
+        _highlightLerpMaterials.Remove(mat);
+    }
+
+    private void ClearHighlightLerp()
+    {
+        _highlightLerpMaterials.Clear();
+        _highlightLerpTargets.Clear();
+        _highlightLerpSpeeds.Clear();
     }
 
     private bool ContainsExpectedItem(
