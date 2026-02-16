@@ -22,7 +22,6 @@ public class InventoryModule : InteractionModuleBase
 
     [Header("Completion Rule")]
     [SerializeField] private int requiredEquippedCount = 4;
-    [SerializeField] private bool autoActivateOnStart = false;
 
     [Header("Order Enforcement")]
     [SerializeField] private bool enforceOrder = true;
@@ -51,14 +50,6 @@ public class InventoryModule : InteractionModuleBase
 
     private EquippableItem _highlightedItem;
     private bool _subscribed;
-
-    private void Start()
-    {
-        if (autoActivateOnStart)
-        {
-            Activate();
-        }
-    }
 
     public override void Activate()
     {

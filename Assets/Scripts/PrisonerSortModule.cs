@@ -4,15 +4,8 @@ public class PrisonerSortModule : InteractionModuleBase
 {
     [Header("Completion Rule")]
     [SerializeField] private int requiredSorted = 5;
-    [SerializeField] private bool autoActivateOnStart = false;
 
     public int SortedCount { get; private set; }
-
-    private void Start()
-    {
-        if (autoActivateOnStart)
-            Activate();
-    }
 
     public override void Activate()
     {
