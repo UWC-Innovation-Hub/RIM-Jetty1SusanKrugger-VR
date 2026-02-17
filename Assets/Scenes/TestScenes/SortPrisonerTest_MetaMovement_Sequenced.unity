@@ -20079,6 +20079,7 @@ GameObject:
   - component: {fileID: 1924693936}
   - component: {fileID: 1924693938}
   - component: {fileID: 1924693937}
+  - component: {fileID: 1924693939}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -20113,7 +20114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
@@ -20177,7 +20178,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.1
-  far clip plane: 1000
+  far clip plane: 100
   field of view: 86.7
   orthographic: 0
   orthographic size: 5
@@ -20196,6 +20197,31 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1924693939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924693935}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 568c3ff8952744dab1e710ad9acc804e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MirrorFollow
+  mirrorCamera: {fileID: 1924693938}
+  mirrorSurface: {fileID: 320563595}
+  sourceHead: {fileID: 1294405901}
+  sourceCamera: {fileID: 1294405899}
+  flipSurfaceNormal: 1
+  copySourceFov: 1
+  applyLowCostCameraDefaults: 1
+  renderEveryNFrames: 1
+  mirrorFarClip: 40
+  overrideCullingMask: 0
+  mirrorCullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!4 &1925989689 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7147775673956413065, guid: 14fdfc1da3c888c4185e265a6df86923, type: 3}
