@@ -3528,6 +3528,8 @@ PlayableDirector:
     value: {fileID: 1399958928}
   - key: {fileID: 7522581006819083386, guid: 57fbf4374d60e9342b02175073bbf1a1, type: 2}
     value: {fileID: 1450838412}
+  - key: {fileID: 7979130008628276692, guid: 57fbf4374d60e9342b02175073bbf1a1, type: 2}
+    value: {fileID: 600510395}
   m_ExposedReferences:
     m_References: []
 --- !u!4 &223598199
@@ -10532,9 +10534,11 @@ MonoBehaviour:
   enableFog: 0
   restoreFogOnDeactivate: 1
   useTransitionFade: 0
-  fadeOutDuration: 0.35
-  fadeInDuration: 0.35
+  fadeOutDuration: 2
+  fadeInDuration: 2
   requiredSorted: 3
+  routeController: {fileID: 0}
+  prisonerRoute: {fileID: 0}
 --- !u!114 &1283325264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10562,6 +10566,9 @@ MonoBehaviour:
   Grabbed: {fileID: 1520555854}
   PrisonerWalkAnimator: []
   DistanceHandGrabInteractor: {fileID: 510795793}
+  reactivateAllPrisonersOnReset: 1
+  firstActivePrisonerIndex: 0
+  restorePrisonerTransformsOnReset: 1
   PrisonerSortModule: {fileID: 1283325262}
 --- !u!1 &1287143588
 GameObject:
@@ -11991,7 +11998,7 @@ Transform:
   m_GameObject: {fileID: 1450838410}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18.17, y: -0.15878001, z: 0.093382}
+  m_LocalPosition: {x: -7.301, y: -0.15878001, z: 0.093382}
   m_LocalScale: {x: 0.76324165, y: 0.76324165, z: 0.76324165}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -27211,10 +27218,10 @@ MonoBehaviour:
   - {fileID: 1283325260}
   forceInactiveOnAwake: 1
   enableFog: 1
-  restoreFogOnDeactivate: 0
+  restoreFogOnDeactivate: 1
   useTransitionFade: 1
-  fadeOutDuration: 1
-  fadeInDuration: 1
+  fadeOutDuration: 2
+  fadeInDuration: 2
   inventoryManager: {fileID: 1640955063626698675}
   requiredEquippedCount: 4
   enforceOrder: 1
