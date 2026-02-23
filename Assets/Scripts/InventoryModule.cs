@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Oculus.Interaction;
+using Oculus.Interaction.HandGrab;
 using UnityEngine;
 
 public class InventoryModule : InteractionModuleBase
@@ -154,7 +154,7 @@ public class InventoryModule : InteractionModuleBase
         CorrectPlacedCount = _acceptedItems.Count;
         CurrentStepIndex = CorrectPlacedCount;
 
-        if (lockCorrectlyPlacedItems)
+        if (lockCorrectlyPlacedItems && ShouldLockItem(item))
         {
             SetItemLocked(item, true);
         }
@@ -784,10 +784,15 @@ public class InventoryModule : InteractionModuleBase
             return;
         }
 
-        Grabbable grabbable = item.GetComponentInChildren<Grabbable>(true);
-        if (grabbable != null)
+        HandGrabInteractable handGrabInteractable = item.GetComponent<HandGrabInteractable>();
+        if (handGrabInteractable != null)
         {
-            grabbable.enabled = !locked;
+            handGrabInteractable.enabled = !locked;
         }
+    }
+
+    private static bool ShouldLockItem(EquippableItem item)
+    {
+        return item != null && item.itemType != EquippableItem.ItemType.Baton;
     }
 }
