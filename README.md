@@ -21,217 +21,209 @@ Through VR, visitors can walk through historically significant locations on Robb
 
 <!-- AUTO-STRUCTURE-START -->
 ```
-├── .github/
-│   └── ISSUE_TEMPLATE/               # Issue templates for project management
-│       ├── 2d-assets-task.md
-│       ├── 3d-assests-task.md
-│       ├── audio-task.md
-│       ├── bug-task.md
-│       ├── doc-task.md
-│       ├── pre-prod-task.md
-│       ├── unity-development-task.md
-│       ├── video-task.md
-│       └── xr-test-case.md
-│
-├── Assets/                            # Unity Project Root (Assets)
-│   ├── Animations/                    # Animation clips & controllers
-│   │   └── C1/                        # Chapter 1 animations
-│   │
-│   ├── Audio/                         # Audio assets per chapter
-│   │   ├── C1/ – C6/                  # Chapter-specific audio clips
-│   │
-│   ├── CompositionLayers/             # Meta Quest composition layers
-│   │
-│   ├── Custom Prefabs/                # Custom reusable prefabs
-│   │
-│   ├── InteractionSDK/                # Meta Interaction SDK config
-│   │
-│   ├── InventoryPrefabs/              # Inventory system prefabs & materials
-│   │
-│   ├── Materials/                     # Materials organised by chapter/zone
-│   │   ├── C1_J2_Lobby/
-│   │   ├── C4_J5/
-│   │   ├── C6_SK1_The_Hold/
-│   │   ├── Cell/
-│   │   ├── Custom Shaders/
-│   │   ├── General/
-│   │   └── MAIO_Tests/
-│   │
-│   ├── Media/                         # Audio & video media files
-│   │   ├── Audio/
-│   │   └── Video/
-│   │
-│   ├── MetaXR/                        # Meta XR platform config
-│   │
-│   ├── Models/                        # 3D models & scans
-│   │   ├── 3D_Scans/                  # Photogrammetry scans
-│   │   ├── C1_J2_Lobby/
-│   │   ├── C2_J3_J4_Cell/
-│   │   ├── C4_J6_Black_Visitors_Room/
-│   │   └── C6_SK1_The_Hold/
-│   │
-│   ├── Oculus/                        # Oculus platform integration
-│   │
-│   ├── Plugins/                       # Android plugins
-│   │   └── Android/
-│   │
-│   ├── Prefabs/                       # Shared prefab assets
-│   │
-│   ├── Prisoner Shaders/              # Custom shaders for prisoner visuals
-│   │
-│   ├── RIM_jetty1_assets/             # Jetty 1 specific assets
-│   │   ├── 3dContent/
-│   │   ├── Images/
-│   │   ├── Material/
-│   │   ├── Videos/
-│   │   └── scripts/                   # ElapsedTimer, SceneManager, UISceneLoader
-│   │
-│   ├── Samples/                       # SDK samples
-│   │   ├── Meta XR All-in-One SDK/
-│   │   ├── Meta XR Audio SDK/         # Spatial audio examples
-│   │   ├── Meta XR Interaction SDK/   # Hand/controller interaction examples
-│   │   ├── Meta XR Movement SDK/      # Body tracking samples
-│   │   ├── Scriptable Render Pipeline Core/
-│   │   ├── Shader Graph/              # UGUI shaders, feature examples
-│   │   ├── XR Hands/                  # Hand tracking visualiser
-│   │   └── XR Interaction Toolkit/    # Hands demo, starter assets
-│   │
-│   ├── Scenes/
-│   │   ├── C1_J2_Warden_Experience.unity        # Ch1 — Warden's Lobby
-│   │   ├── C2_J3_Cell.unity                     # Ch2 — The Cell
-│   │   ├── C4_J6_Black_Visitors_Room.unity      # Ch4 — Black Visitors Room
-│   │   ├── C6_SK1_The_Hold.unity                # Ch6 — The Hold (Susan Kruger)
-│   │   └── TestScenes/                          # Development & test scenes
-│   │       ├── Cell_ProjectionTest.unity
-│   │       ├── ClapInteraction.unity
-│   │       ├── ConfirmInteraction.unity
-│   │       ├── InteractionTest.unity
-│   │       ├── InventoryTest.unity
-│   │       ├── MAIO_Gesture_Recognition_Template.unity
-│   │       ├── MAIO_Test.unity
-│   │       ├── MemoryProjectorTest.unity
-│   │       ├── SortPrisonerTest.unity
-│   │       ├── SortPrisonerTest_MetaMovement.unity
-│   │       ├── SortPrisonerTest_MetaMovement_Sequenced.unity
-│   │       └── (more test/prototype scenes)
-│   │
-│   ├── Scripts/                       # Core application scripts
-│   │   ├── ClapConfirmationUI.cs
-│   │   ├── ClapDetector.cs
-│   │   ├── FadeControllerScript.cs
-│   │   ├── FingerprintLockout.cs
-│   │   ├── FingerprintTrigger.cs
-│   │   ├── HighFiveTrigger.cs
-│   │   ├── HighlightExit.cs
-│   │   ├── HighlightExitManager.cs
-│   │   ├── InteractionCompleteListener.cs
-│   │   ├── InteractionModuleBase.cs
-│   │   ├── InventoryModule.cs
-│   │   ├── MAIO_Vid_Controller.cs
-│   │   ├── MirrorFollow.cs
-│   │   ├── PalmGestureDetector.cs
-│   │   ├── PrisonerRoute.cs
-│   │   ├── PrisonerSortModule.cs
-│   │   ├── ProjectionController.cs
-│   │   ├── ReactivateRoutes.cs
-│   │   ├── SequenceBrain.cs
-│   │   ├── SequenceSignalRouter.cs
-│   │   ├── SetNextPrisoner.cs
-│   │   ├── VideoProjectorController.cs
-│   │   └── InventoryTest/            # Inventory system scripts
-│   │       ├── AvatarAttachmentPoint.cs
-│   │       ├── BodyAttachmentRig.cs
-│   │       ├── EquippableItem.cs
-│   │       ├── InventoryManager.cs
-│   │       └── SimpleBodyAttachments.cs
-│   │
-│   ├── Settings/                      # Build profiles & project config
-│   │
-│   ├── Starter Assets/                # First/third person controller templates
-│   │
-│   ├── Textures/                      # Texture assets
-│   │
-│   ├── VR Body/                       # VR body/avatar scripts
-│   │   ├── AnimateOnInput.cs
-│   │   ├── IKFootSolver.cs
-│   │   └── IKTargetFollowVRRig.cs
-│   │
-│   ├── VRTemplateAssets/              # VR template utilities
-│   │
-│   ├── XR/                            # XR configuration
-│   │
-│   ├── XRI/                           # XR Interaction Toolkit config
-│   │
-│   └── _Recovery/                     # Recovery scene backups
-│
-├── Packages/                          # Unity package manifest
-├── ProjectSettings/                   # Unity project settings
-├── .gitignore
-├── .gitattributes
-└── LICENSE.txt
+        ├── Materials/
+    ├── Samples/
+        ├── Meta XR Interaction \342\200\213SDK/
+├── .gitattributes/
+    ├── ISSUE_TEMPLATE/
+    ├── workflows/
+├── .gitignore/
+├── .vsconfig/
+├── Assets/
+    ├── Animations/
+        ├── C1/
+    ├── Audio/
+        ├── C1/
+            ├── Master/
+            ├── SFX/
+            ├── VO/
+        ├── C2/
+            ├── Master/
+            ├── SFX/
+        ├── C3/
+        ├── C4/
+            ├── Master/
+        ├── C5/
+        ├── C6/
+            ├── Master/
+    ├── CompositionLayers/
+        ├── UserSettings/
+            ├── Resources/
+    ├── Custom Prefabs/
+    ├── InteractionSDK/
+    ├── InventoryPrefabs/
+        ├── Materials/
+    ├── Materials/
+        ├── C1_J2_Lobby/
+            ├── Materials/
+        ├── C4_J5/
+        ├── C6_SK1_The_Hold/
+        ├── Cell/
+        ├── Custom Shaders/
+            ├── C1_InventoryMats/
+            ├── C1_Prisoner_Direction/
+        ├── General/
+        ├── J1/
+            ├── Entrance room/
+        ├── MAIO_Tests/
+    ├── Media/
+        ├── Audio/
+        ├── Video/
+            ├── RIM Show and Tell/
+    ├── MetaXR/
+    ├── Models/
+        ├── 3D_Scans/
+            ├── OPTIMIZED/
+            ├── RAW/
+        ├── C1_J2_Lobby/
+            ├── 6-infinite-mirror-3december2019/
+            ├── Characters/
+            ├── Flag_Pole_Animated/
+            ├── SM_Mirror/
+            ├── Table/
+            ├── Temporary_Characters/
+            ├── opel-blitz-truck/
+            ├── picture-frame-11mb/
+        ├── C2_J3_J4_Cell/
+            ├── Lamp_iwanPlays/
+            ├── prison-bed/
+        ├── C4_J6_Black_Visitors_Room/
+            ├── folded-wrinkled-paper/
+        ├── C6_SK1_The_Hold/
+            ├── GrayBox/
+    ├── Oculus/
+    ├── Plugins/
+        ├── Android/
+    ├── Prefabs/
+    ├── Prisoner Shaders/
+    ├── RIM_jetty1_assets/
+        ├── 3dContent/
+            ├── Old_Scans_Polycam/
+        ├── Images/
+        ├── Material/
+        ├── Videos/
+        ├── scripts/
+    ├── Resources/
+    ├── Samples/
+        ├── Meta XR All-in-One SDK/
+        ├── Meta XR Audio SDK/
+        ├── Meta XR Movement SDK/
+        ├── Scriptable Render Pipeline Core/
+        ├── Shader Graph/
+        ├── XR Hands/
+        ├── XR Interaction Toolkit/
+    ├── Scenes/
+        ├── BasicScene/
+        ├── C1_J2_Warden_Experience/
+        ├── C2_J3_Cell/
+        ├── C4_J6_Black_Visitors_Room/
+        ├── C6_SK1_The_Hold/
+        ├── SampleScene/
+        ├── TestScenes/
+            ├── BlackWaitingRoomTest/
+            ├── C2_J3_Cell_Rec_Assets/
+            ├── MemoryProjectorTest/
+            ├── SortPrisonerTest/
+    ├── Scripts/
+        ├── InventoryTest/
+    ├── Settings/
+        ├── Build Profiles/
+        ├── Project Configuration/
+    ├── Starter Assets/
+        ├── Editor/
+        ├── Runtime/
+        ├── Sample/
+        ├── TutorialInfo/
+    ├── TextMesh Pro/
+        ├── Fonts/
+        ├── Resources/
+            ├── Fonts & Materials/
+            ├── Sprite Assets/
+            ├── Style Sheets/
+        ├── Shaders/
+        ├── Sprites/
+    ├── Textures/
+        ├── C1_J2/
+        ├── C2_J3/
+            ├── Fingerprints/
+            ├── Materials/
+        ├── Test Textures/
+    ├── VR Body/
+        ├── Animations/
+        ├── Ch32_nonPBR.fbm/
+        ├── Models/
+    ├── VRTemplateAssets/
+        ├── Android XR/
+        ├── Audio/
+        ├── Fonts/
+        ├── Graphics/
+        ├── Materials/
+        ├── Models/
+        ├── Prefabs/
+        ├── Scripts/
+        ├── Shaders/
+        ├── Sprites/
+        ├── Themes/
+        ├── Tutorial/
+        ├── Videos/
+    ├── XR/
+        ├── Loaders/
+        ├── Resources/
+        ├── Settings/
+        ├── UserSimulationSettings/
+            ├── Resources/
+    ├── XRI/
+        ├── Settings/
+            ├── Resources/
+├── LICENSE.txt/
+├── Packages/
+├── ProjectSettings/
+        ├── com.unity.learn.iet-framework/
+        ├── com.unity.testtools.codecoverage/
+├── README.md/
+├── RIM-Jetty1SusanKrugger-VR.slnx/
 ```
 <!-- AUTO-STRUCTURE-END -->
 
 ## Key Scripts
 
 <!-- AUTO-SCRIPTS-START -->
-### Core Interaction (`Assets/Scripts/`)
-| Script | Purpose |
+| Script | Path |
 |---|---|
-| `SequenceBrain.cs` | Master sequencer — orchestrates the order of interactions and narrative events |
-| `SequenceSignalRouter.cs` | Routes signals between interactions and the sequence brain |
-| `InteractionModuleBase.cs` | Base class for all interaction modules |
-| `InteractionCompleteListener.cs` | Listens for interaction completion to trigger next steps |
-| `FadeControllerScript.cs` | Fade-in/out transitions between interactions and scenes |
-
-### Gesture & Hand Interactions
-| Script | Purpose |
-|---|---|
-| `ClapDetector.cs` | Detects hand-clap gestures via Meta XR Hands |
-| `ClapConfirmationUI.cs` | UI confirmation feedback for clap detection |
-| `PalmGestureDetector.cs` | Detects open-palm gestures |
-| `HighFiveTrigger.cs` | Triggers events on high-five gesture |
-| `FingerprintTrigger.cs` | Fingerprint-based interaction trigger |
-| `FingerprintLockout.cs` | Lockout mechanic tied to fingerprint interaction |
-
-### Prisoner Experience
-| Script | Purpose |
-|---|---|
-| `PrisonerSortModule.cs` | Prisoner sorting interaction — historical classification re-enactment |
-| `PrisonerRoute.cs` | Defines prisoner movement routes through the space |
-| `SetNextPrisoner.cs` | Advances to the next prisoner in the sorting sequence |
-| `ReactivateRoutes.cs` | Re-enables routes after interaction completion |
-
-### Media & Projection
-| Script | Purpose |
-|---|---|
-| `ProjectionController.cs` | Controls projected content on in-scene surfaces |
-| `VideoProjectorController.cs` | Video playback on projected surfaces |
-| `MAIO_Vid_Controller.cs` | MAIO (Memory Archive Interactive Object) video controller |
-
-### Inventory System (`Assets/Scripts/InventoryTest/`)
-| Script | Purpose |
-|---|---|
-| `InventoryManager.cs` | Manages collected items and inventory state |
-| `InventoryModule.cs` | Interaction module for inventory pickup |
-| `EquippableItem.cs` | Items that can be equipped by the player |
-| `BodyAttachmentRig.cs` | Attaches items to the VR body rig |
-| `AvatarAttachmentPoint.cs` | Defines attachment points on the avatar |
-| `SimpleBodyAttachments.cs` | Simplified body attachment system |
-
-### Navigation & UI
-| Script | Purpose |
-|---|---|
-| `HighlightExit.cs` | Highlights exit points in the environment |
-| `HighlightExitManager.cs` | Manages multiple exit highlights |
-| `MirrorFollow.cs` | Mirror camera follows the player's movements |
-
-### VR Body (`Assets/VR Body/`)
-| Script | Purpose |
-|---|---|
-| `IKTargetFollowVRRig.cs` | IK targets follow the VR headset and controllers |
-| `IKFootSolver.cs` | Procedural foot placement using inverse kinematics |
-| `AnimateOnInput.cs` | Triggers body animations based on controller input |
+| `FootstepSMB.cs` | `Assets/FootstepSMB.cs` |
+| `ElapsedTtimer.cs` | `Assets/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
+| `SceneManager.cs` | `Assets/RIM_jetty1_assets/scripts/SceneManager.cs` |
+| `UISceneLoader.cs` | `Assets/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
+| `ClapConfirmationUI.cs` | `Assets/Scripts/ClapConfirmationUI.cs` |
+| `ClapDetector.cs` | `Assets/Scripts/ClapDetector.cs` |
+| `FadeControllerScript.cs` | `Assets/Scripts/FadeControllerScript.cs` |
+| `FingerprintLockout.cs` | `Assets/Scripts/FingerprintLockout.cs` |
+| `FingerprintTrigger.cs` | `Assets/Scripts/FingerprintTrigger.cs` |
+| `HighFiveTrigger.cs` | `Assets/Scripts/HighFiveTrigger.cs` |
+| `HighlightExit.cs` | `Assets/Scripts/HighlightExit.cs` |
+| `HighlightExitManager.cs` | `Assets/Scripts/HighlightExitManager.cs` |
+| `InteractionCompleteListener.cs` | `Assets/Scripts/InteractionCompleteListener.cs` |
+| `InteractionModuleBase.cs` | `Assets/Scripts/InteractionModuleBase.cs` |
+| `InventoryModule.cs` | `Assets/Scripts/InventoryModule.cs` |
+| `AvatarAttachmentPoint.cs` | `Assets/Scripts/InventoryTest/AvatarAttachmentPoint.cs` |
+| `BodyAttachmentRig.cs` | `Assets/Scripts/InventoryTest/BodyAttachmentRig.cs` |
+| `EquippableItem.cs` | `Assets/Scripts/InventoryTest/EquippableItem.cs` |
+| `InventoryManager.cs` | `Assets/Scripts/InventoryTest/InventoryManager.cs` |
+| `SimpleBodyAttachments.cs` | `Assets/Scripts/InventoryTest/SimpleBodyAttachments.cs` |
+| `MAIO_Vid_Controller.cs` | `Assets/Scripts/MAIO_Vid_Controller.cs` |
+| `MirrorFollow.cs` | `Assets/Scripts/MirrorFollow.cs` |
+| `PalmGestureDetector.cs` | `Assets/Scripts/PalmGestureDetector.cs` |
+| `PrisonerRoute.cs` | `Assets/Scripts/PrisonerRoute.cs` |
+| `PrisonerSortModule.cs` | `Assets/Scripts/PrisonerSortModule.cs` |
+| `ProjectionController.cs` | `Assets/Scripts/ProjectionController.cs` |
+| `ReactivateRoutes.cs` | `Assets/Scripts/ReactivateRoutes.cs` |
+| `SequenceBrain.cs` | `Assets/Scripts/SequenceBrain.cs` |
+| `SequenceSignalRouter.cs` | `Assets/Scripts/SequenceSignalRouter.cs` |
+| `SetNextPrisoner.cs` | `Assets/Scripts/SetNextPrisoner.cs` |
+| `VideoProjectorController.cs` | `Assets/Scripts/VideoProjectorController.cs` |
+| `AnimateOnInput.cs` | `Assets/VR Body/AnimateOnInput.cs` |
+| `IKFootSolver.cs` | `Assets/VR Body/IKFootSolver.cs` |
+| `IKTargetFollowVRRig.cs` | `Assets/VR Body/IKTargetFollowVRRig.cs` |
 <!-- AUTO-SCRIPTS-END -->
 
 ## Scenes & Chapters
