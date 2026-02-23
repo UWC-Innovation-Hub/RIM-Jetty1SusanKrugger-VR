@@ -19,6 +19,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 
 ## Repository Structure
 
+<!-- AUTO-STRUCTURE-START -->
 ```
 ├── .github/
 │   └── ISSUE_TEMPLATE/               # Issue templates for project management
@@ -169,9 +170,11 @@ Through VR, visitors can walk through historically significant locations on Robb
 ├── .gitattributes
 └── LICENSE.txt
 ```
+<!-- AUTO-STRUCTURE-END -->
 
 ## Key Scripts
 
+<!-- AUTO-SCRIPTS-START -->
 ### Core Interaction (`Assets/Scripts/`)
 | Script | Purpose |
 |---|---|
@@ -229,6 +232,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `IKTargetFollowVRRig.cs` | IK targets follow the VR headset and controllers |
 | `IKFootSolver.cs` | Procedural foot placement using inverse kinematics |
 | `AnimateOnInput.cs` | Triggers body animations based on controller input |
+<!-- AUTO-SCRIPTS-END -->
 
 ## Scenes & Chapters
 
