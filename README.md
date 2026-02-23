@@ -194,6 +194,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `ElapsedTtimer.cs` | `Assets/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
 | `SceneManager.cs` | `Assets/RIM_jetty1_assets/scripts/SceneManager.cs` |
 | `UISceneLoader.cs` | `Assets/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
+| `CargoDoorDriver.cs` | `Assets/Scripts/CargoDoorDriver.cs` |
 | `ClapConfirmationUI.cs` | `Assets/Scripts/ClapConfirmationUI.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/ClapDetector.cs` |
 | `FadeControllerScript.cs` | `Assets/Scripts/FadeControllerScript.cs` |
@@ -220,6 +221,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `SequenceBrain.cs` | `Assets/Scripts/SequenceBrain.cs` |
 | `SequenceSignalRouter.cs` | `Assets/Scripts/SequenceSignalRouter.cs` |
 | `SetNextPrisoner.cs` | `Assets/Scripts/SetNextPrisoner.cs` |
+| `TruckManager.cs` | `Assets/Scripts/TruckManager.cs` |
 | `VideoProjectorController.cs` | `Assets/Scripts/VideoProjectorController.cs` |
 | `AnimateOnInput.cs` | `Assets/VR Body/AnimateOnInput.cs` |
 | `IKFootSolver.cs` | `Assets/VR Body/IKFootSolver.cs` |
