@@ -163,7 +163,7 @@ jobs:
             -d @- <<PAYLOAD
           {
             "to": "infouih@uwc.ac.za",
-            "cc": ["ldelaroche-souvestre@uwc.ac.za", "rloubser@uwc.ac.za", "kfritz@uwc.ac.za", "zmbali@uwc.ac.za", "aboomgaard@uwc.ac.za", "kmarais@uwc.ac.za"],
+            "bcc": ["ldelaroche-souvestre@uwc.ac.za", "rloubser@uwc.ac.za", "kfritz@uwc.ac.za", "zmbali@uwc.ac.za", "aboomgaard@uwc.ac.za", "kmarais@uwc.ac.za"],
             "subject": "RIM VR Project — Daily Development Summary ($TODAY)",
             "html": $(echo "$HTML_BODY" | jq -Rs .),
             "fromName": "UWC Immersive Zone"
@@ -267,7 +267,7 @@ jobs:
             -d @- <<PAYLOAD
           {
             "to": "infouih@uwc.ac.za",
-            "cc": ["ldelaroche-souvestre@uwc.ac.za", "rloubser@uwc.ac.za", "kfritz@uwc.ac.za", "zmbali@uwc.ac.za", "aboomgaard@uwc.ac.za", "kmarais@uwc.ac.za"],
+            "bcc": ["ldelaroche-souvestre@uwc.ac.za", "rloubser@uwc.ac.za", "kfritz@uwc.ac.za", "zmbali@uwc.ac.za", "aboomgaard@uwc.ac.za", "kmarais@uwc.ac.za"],
             "subject": "RIM VR Project — Error Report",
             "html": $(echo "$HTML_BODY" | jq -Rs .),
             "fromName": "UWC Immersive Zone"
@@ -377,7 +377,7 @@ jobs:
             -d @- <<PAYLOAD
           {
             "to": "infouih@uwc.ac.za",
-            "cc": ["ldelaroche-souvestre@uwc.ac.za", "rloubser@uwc.ac.za", "kfritz@uwc.ac.za", "zmbali@uwc.ac.za", "aboomgaard@uwc.ac.za", "kmarais@uwc.ac.za"],
+            "bcc": ["ldelaroche-souvestre@uwc.ac.za", "rloubser@uwc.ac.za", "kfritz@uwc.ac.za", "zmbali@uwc.ac.za", "aboomgaard@uwc.ac.za", "kmarais@uwc.ac.za"],
             "subject": "RIM VR Project — Immediate Update Notification",
             "html": $(echo "$HTML_BODY" | jq -Rs .),
             "fromName": "UWC Immersive Zone"
