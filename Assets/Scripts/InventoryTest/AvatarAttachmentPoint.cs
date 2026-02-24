@@ -21,6 +21,10 @@ public class AvatarAttachmentPoint : MonoBehaviour
     [SerializeField] private string emissionStrengthProperty = "_EmissionStrength";
     [SerializeField] private float idleEmissionStrength = 0f;
     [SerializeField] private float guidedEmissionStrength = 2f;
+    [SerializeField] private bool lerpGuidanceEmission = true;
+    [SerializeField] private float guidanceLerpInHoldDuration = 0.2f;
+    [SerializeField] private float guidanceLerpInDuration = 0.35f;
+    [SerializeField] private float guidanceLerpOutDuration = 0.25f;
 
     // Attachment Points
     public enum AttachmentType
@@ -42,6 +46,12 @@ public class AvatarAttachmentPoint : MonoBehaviour
     private SphereCollider snapZone;
     private MeshRenderer visualizer;
     private bool ownsVisualizerMaterial;
+    private bool _isGuidanceLerping;
+    private float _guidanceLerpStart;
+    private float _guidanceLerpTarget;
+    private float _guidanceLerpDuration;
+    private float _guidanceLerpElapsed;
+    private float _guidanceHoldRemaining;
 
     public void ConfigureHighlightMaterial(Material material, bool instantiateMaterial)
     {
@@ -57,26 +67,59 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
     public void SetGuidanceHighlighted(bool highlighted)
     {
-        if (visualizer == null)
-        {
-            return;
-        }
-
-        Material visualMat = ownsVisualizerMaterial ? visualizer.material : visualizer.sharedMaterial;
+        Material visualMat = GetVisualizerMaterial();
         if (visualMat == null || !visualMat.HasProperty(emissionStrengthProperty))
         {
             return;
         }
 
-        visualMat.SetFloat(
-            emissionStrengthProperty,
-            highlighted ? guidedEmissionStrength : idleEmissionStrength
-        );
+        float target = highlighted ? guidedEmissionStrength : idleEmissionStrength;
+        if (!lerpGuidanceEmission)
+        {
+            _isGuidanceLerping = false;
+            _guidanceHoldRemaining = 0f;
+            visualMat.SetFloat(emissionStrengthProperty, target);
+            return;
+        }
+
+        float current;
+        float duration;
+        if (highlighted)
+        {
+            // Ensure we always sit at pure idle before the lerp begins.
+            visualMat.SetFloat(emissionStrengthProperty, idleEmissionStrength);
+            current = idleEmissionStrength;
+            duration = guidanceLerpInDuration;
+            _guidanceHoldRemaining = Mathf.Max(0f, guidanceLerpInHoldDuration);
+        }
+        else
+        {
+            current = visualMat.GetFloat(emissionStrengthProperty);
+            duration = guidanceLerpOutDuration;
+            _guidanceHoldRemaining = 0f;
+        }
+
+        if (Mathf.Approximately(current, target))
+        {
+            _isGuidanceLerping = false;
+            return;
+        }
+
+        _guidanceLerpTarget = target;
+        _guidanceLerpStart = current;
+        _guidanceLerpDuration = Mathf.Max(0.0001f, duration);
+        _guidanceLerpElapsed = 0f;
+        _isGuidanceLerping = true;
     }
 
     void Start()
     {
         SetupSnapZone();
+    }
+
+    void Update()
+    {
+        TickGuidanceLerp();
     }
 
     void SetupSnapZone()
@@ -168,6 +211,49 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
             ownsVisualizerMaterial = true;
             visualizer.material = mat;
+        }
+    }
+
+    private Material GetVisualizerMaterial()
+    {
+        if (visualizer == null)
+        {
+            return null;
+        }
+
+        return ownsVisualizerMaterial ? visualizer.material : visualizer.sharedMaterial;
+    }
+
+    private void TickGuidanceLerp()
+    {
+        if (!_isGuidanceLerping)
+        {
+            return;
+        }
+
+        Material visualMat = GetVisualizerMaterial();
+        if (visualMat == null || !visualMat.HasProperty(emissionStrengthProperty))
+        {
+            _isGuidanceLerping = false;
+            _guidanceHoldRemaining = 0f;
+            return;
+        }
+
+        if (_guidanceHoldRemaining > 0f)
+        {
+            _guidanceHoldRemaining -= Time.deltaTime;
+            visualMat.SetFloat(emissionStrengthProperty, idleEmissionStrength);
+            return;
+        }
+
+        _guidanceLerpElapsed += Time.deltaTime;
+        float t = Mathf.Clamp01(_guidanceLerpElapsed / Mathf.Max(0.0001f, _guidanceLerpDuration));
+        float next = Mathf.Lerp(_guidanceLerpStart, _guidanceLerpTarget, t);
+        visualMat.SetFloat(emissionStrengthProperty, next);
+
+        if (t >= 1f || Mathf.Approximately(next, _guidanceLerpTarget))
+        {
+            _isGuidanceLerping = false;
         }
     }
 

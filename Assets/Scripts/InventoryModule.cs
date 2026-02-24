@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Oculus.Interaction;
+using Oculus.Interaction.HandGrab;
 using UnityEngine;
 
 public class InventoryModule : InteractionModuleBase
@@ -15,6 +15,13 @@ public class InventoryModule : InteractionModuleBase
     {
         public EquippableItem item;
         public Material[] highlightMaterials;
+    }
+
+    [System.Serializable]
+    private class ItemAttachmentBinding
+    {
+        public EquippableItem item;
+        public AvatarAttachmentPoint[] targetAttachmentPoints;
     }
 
     [Header("Wiring")]
@@ -38,6 +45,7 @@ public class InventoryModule : InteractionModuleBase
     [SerializeField] private float highlightedEmissionStrength = 2f;
     [SerializeField] private float idleEmissionStrength = 0f;
     [SerializeField] private bool lerpHighlightIn = true;
+    [SerializeField] private float highlightLerpInHoldDuration = 0.2f;
     [SerializeField] private float highlightLerpDuration = 0.35f;
     [SerializeField] private bool lerpHighlightOut = true;
     [SerializeField] private float highlightOutLerpDuration = 0.25f;
@@ -45,6 +53,7 @@ public class InventoryModule : InteractionModuleBase
     [Header("Attachment Point Guidance")]
     [SerializeField] private bool highlightExpectedAttachmentPoints = true;
     [SerializeField] private bool autoFindAttachmentPoints = true;
+    [SerializeField] private List<ItemAttachmentBinding> itemAttachmentBindings = new List<ItemAttachmentBinding>();
     [SerializeField] private List<AvatarAttachmentPoint> attachmentPoints = new List<AvatarAttachmentPoint>();
 
     public int CorrectPlacedCount { get; private set; }
@@ -56,7 +65,10 @@ public class InventoryModule : InteractionModuleBase
     private bool _subscribed;
     private readonly List<Material> _highlightLerpMaterials = new List<Material>();
     private readonly Dictionary<Material, float> _highlightLerpTargets = new Dictionary<Material, float>();
-    private readonly Dictionary<Material, float> _highlightLerpSpeeds = new Dictionary<Material, float>();
+    private readonly Dictionary<Material, float> _highlightLerpStarts = new Dictionary<Material, float>();
+    private readonly Dictionary<Material, float> _highlightLerpDurations = new Dictionary<Material, float>();
+    private readonly Dictionary<Material, float> _highlightLerpElapsed = new Dictionary<Material, float>();
+    private readonly Dictionary<Material, float> _highlightLerpHolds = new Dictionary<Material, float>();
 
     private void Update()
     {
@@ -142,7 +154,7 @@ public class InventoryModule : InteractionModuleBase
         CorrectPlacedCount = _acceptedItems.Count;
         CurrentStepIndex = CorrectPlacedCount;
 
-        if (lockCorrectlyPlacedItems)
+        if (lockCorrectlyPlacedItems && ShouldLockItem(item))
         {
             SetItemLocked(item, true);
         }
@@ -380,11 +392,54 @@ public class InventoryModule : InteractionModuleBase
                 continue;
             }
 
-            if (IsAttachmentTypeCompatible(expectedItem.compatibleAttachmentPoint, point.attachmentType))
+            if (ShouldHighlightPointForExpectedItem(expectedItem, point))
             {
                 point.SetGuidanceHighlighted(true);
             }
         }
+    }
+
+    private bool ShouldHighlightPointForExpectedItem(EquippableItem expectedItem, AvatarAttachmentPoint point)
+    {
+        AvatarAttachmentPoint[] preferredPoints = GetExplicitAttachmentPoints(expectedItem);
+        if (preferredPoints != null && preferredPoints.Length > 0)
+        {
+            for (int i = 0; i < preferredPoints.Length; i++)
+            {
+                if (preferredPoints[i] == point)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return IsAttachmentTypeCompatible(expectedItem.compatibleAttachmentPoint, point.attachmentType);
+    }
+
+    private AvatarAttachmentPoint[] GetExplicitAttachmentPoints(EquippableItem expectedItem)
+    {
+        if (expectedItem == null || itemAttachmentBindings == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < itemAttachmentBindings.Count; i++)
+        {
+            ItemAttachmentBinding binding = itemAttachmentBindings[i];
+            if (binding == null || binding.item == null)
+            {
+                continue;
+            }
+
+            if (IsMatch(binding.item, expectedItem))
+            {
+                return binding.targetAttachmentPoints;
+            }
+        }
+
+        return null;
     }
 
     private void ClearAttachmentPointHighlights()
@@ -448,7 +503,8 @@ public class InventoryModule : InteractionModuleBase
                     mat,
                     highlightedEmissionStrength,
                     highlightLerpDuration,
-                    resetToIdleBeforeLerp: true
+                    resetToIdleBeforeLerp: true,
+                    holdBeforeLerp: highlightLerpInHoldDuration
                 );
             }
             else if (!highlighted && lerpHighlightOut)
@@ -457,7 +513,8 @@ public class InventoryModule : InteractionModuleBase
                     mat,
                     idleEmissionStrength,
                     highlightOutLerpDuration,
-                    resetToIdleBeforeLerp: false
+                    resetToIdleBeforeLerp: false,
+                    holdBeforeLerp: 0f
                 );
             }
             else
@@ -534,21 +591,52 @@ public class InventoryModule : InteractionModuleBase
                 !_highlightLerpTargets.ContainsKey(mat))
             {
                 _highlightLerpTargets.Remove(mat);
-                _highlightLerpSpeeds.Remove(mat);
+                _highlightLerpStarts.Remove(mat);
+                _highlightLerpDurations.Remove(mat);
+                _highlightLerpElapsed.Remove(mat);
+                _highlightLerpHolds.Remove(mat);
+                _highlightLerpMaterials.RemoveAt(i);
+                continue;
+            }
+
+            if (_highlightLerpHolds.ContainsKey(mat) && _highlightLerpHolds[mat] > 0f)
+            {
+                _highlightLerpHolds[mat] -= Time.deltaTime;
+                continue;
+            }
+
+            if (!_highlightLerpStarts.ContainsKey(mat) ||
+                !_highlightLerpDurations.ContainsKey(mat) ||
+                !_highlightLerpElapsed.ContainsKey(mat))
+            {
+                float immediateTarget = _highlightLerpTargets[mat];
+                mat.SetFloat(emissionStrengthProperty, immediateTarget);
+                _highlightLerpTargets.Remove(mat);
+                _highlightLerpStarts.Remove(mat);
+                _highlightLerpDurations.Remove(mat);
+                _highlightLerpElapsed.Remove(mat);
+                _highlightLerpHolds.Remove(mat);
                 _highlightLerpMaterials.RemoveAt(i);
                 continue;
             }
 
             float target = _highlightLerpTargets[mat];
-            float speed = _highlightLerpSpeeds.ContainsKey(mat) ? _highlightLerpSpeeds[mat] : 0f;
-            float current = mat.GetFloat(emissionStrengthProperty);
-            float next = Mathf.MoveTowards(current, target, speed * Time.deltaTime);
+            float start = _highlightLerpStarts[mat];
+            float duration = Mathf.Max(0.0001f, _highlightLerpDurations[mat]);
+            float elapsed = _highlightLerpElapsed[mat] + Time.deltaTime;
+            _highlightLerpElapsed[mat] = elapsed;
+
+            float t = Mathf.Clamp01(elapsed / duration);
+            float next = Mathf.Lerp(start, target, t);
             mat.SetFloat(emissionStrengthProperty, next);
 
-            if (Mathf.Approximately(next, target))
+            if (t >= 1f || Mathf.Approximately(next, target))
             {
                 _highlightLerpTargets.Remove(mat);
-                _highlightLerpSpeeds.Remove(mat);
+                _highlightLerpStarts.Remove(mat);
+                _highlightLerpDurations.Remove(mat);
+                _highlightLerpElapsed.Remove(mat);
+                _highlightLerpHolds.Remove(mat);
                 _highlightLerpMaterials.RemoveAt(i);
             }
         }
@@ -558,7 +646,8 @@ public class InventoryModule : InteractionModuleBase
         Material mat,
         float target,
         float duration,
-        bool resetToIdleBeforeLerp)
+        bool resetToIdleBeforeLerp,
+        float holdBeforeLerp)
     {
         if (mat == null || !mat.HasProperty(emissionStrengthProperty))
         {
@@ -578,15 +667,16 @@ public class InventoryModule : InteractionModuleBase
             return;
         }
 
-        float speed = Mathf.Abs(target - current) / Mathf.Max(0.0001f, duration);
-
         if (!_highlightLerpTargets.ContainsKey(mat))
         {
             _highlightLerpMaterials.Add(mat);
         }
 
         _highlightLerpTargets[mat] = target;
-        _highlightLerpSpeeds[mat] = speed;
+        _highlightLerpStarts[mat] = current;
+        _highlightLerpDurations[mat] = Mathf.Max(0.0001f, duration);
+        _highlightLerpElapsed[mat] = 0f;
+        _highlightLerpHolds[mat] = Mathf.Max(0f, holdBeforeLerp);
     }
 
     private void RemoveHighlightLerp(Material mat)
@@ -597,7 +687,10 @@ public class InventoryModule : InteractionModuleBase
         }
 
         _highlightLerpTargets.Remove(mat);
-        _highlightLerpSpeeds.Remove(mat);
+        _highlightLerpStarts.Remove(mat);
+        _highlightLerpDurations.Remove(mat);
+        _highlightLerpElapsed.Remove(mat);
+        _highlightLerpHolds.Remove(mat);
         _highlightLerpMaterials.Remove(mat);
     }
 
@@ -605,7 +698,10 @@ public class InventoryModule : InteractionModuleBase
     {
         _highlightLerpMaterials.Clear();
         _highlightLerpTargets.Clear();
-        _highlightLerpSpeeds.Clear();
+        _highlightLerpStarts.Clear();
+        _highlightLerpDurations.Clear();
+        _highlightLerpElapsed.Clear();
+        _highlightLerpHolds.Clear();
     }
 
     private bool ContainsExpectedItem(
@@ -688,10 +784,15 @@ public class InventoryModule : InteractionModuleBase
             return;
         }
 
-        Grabbable grabbable = item.GetComponentInChildren<Grabbable>(true);
-        if (grabbable != null)
+        HandGrabInteractable handGrabInteractable = item.GetComponent<HandGrabInteractable>();
+        if (handGrabInteractable != null)
         {
-            grabbable.enabled = !locked;
+            handGrabInteractable.enabled = !locked;
         }
+    }
+
+    private static bool ShouldLockItem(EquippableItem item)
+    {
+        return item != null && item.itemType != EquippableItem.ItemType.Baton;
     }
 }

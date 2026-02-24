@@ -27,8 +27,17 @@ public abstract class InteractionModuleBase : MonoBehaviour
     [Tooltip("Restore previous RenderSettings.fog value when this module deactivates.")]
     [SerializeField] private bool restoreFogOnDeactivate = true;
 
+    [Header("Optional Transition Fade")]
+    [SerializeField] private bool useTransitionFade = false;
+    [SerializeField] private float fadeOutDuration = 0.35f;
+    [SerializeField] private float fadeInDuration = 0.35f;
+
     private bool _previousFogState;
     private bool _hasFogStateSnapshot;
+
+    public bool UseTransitionFade => useTransitionFade;
+    public float FadeOutDuration => fadeOutDuration;
+    public float FadeInDuration => fadeInDuration;
 
     protected virtual void Awake()
     {
