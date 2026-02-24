@@ -22,7 +22,12 @@ public class FadeController : MonoBehaviour
         }
 
         _mat = fadeRenderer.material;
-        SetAlpha(0f);
+        SetAlpha(1f);
+    }
+
+    private void Start()
+    {
+        FadeIn();
     }
 
     public void FadeIn(float duration = -1f)   // Fade from black to clear
