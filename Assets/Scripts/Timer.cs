@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class Timer : MonoBehaviour
+public class TimerCountdown : MonoBehaviour
 {
     [Header("Settings")]
     public float duration = 10f;
