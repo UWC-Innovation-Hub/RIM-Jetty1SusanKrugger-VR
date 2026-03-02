@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.Events;
+using Oculus.Interaction;
 
 [DisallowMultipleComponent]
 public class PickUpUI : MonoBehaviour
@@ -29,6 +30,9 @@ public class PickUpUI : MonoBehaviour
     [Tooltip("Should the UI always face the camera?")]
     [SerializeField] private bool faceCamera = true;
 
+    [Header("Meta Interaction")]
+    [SerializeField] private Grabbable grabbable;
+    
     [Header("Events")]
     public UnityEvent onShow;
     public UnityEvent onHide;
@@ -63,6 +67,28 @@ public class PickUpUI : MonoBehaviour
     private void Start()
     {
         cameraTransform = Camera.main.transform;
+
+        if (grabbable == null)
+        {
+            grabbable = GetComponent<Grabbable>();
+        }
+
+        if (grabbable != null)
+        {
+            grabbable.WhenPointerEventRaised += HandleGrabEvent;
+        }
+        else
+        {
+            Debug.LogWarning("[PickUpUI] No Grabbable component found");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (grabbable != null)
+        {
+            grabbable.WhenPointerEventRaised -= HandleGrabEvent;
+        }
     }
 
     private void LateUpdate()
@@ -70,11 +96,6 @@ public class PickUpUI : MonoBehaviour
         if (!isHeld) return;
         {
             PositionUI();
-        }
-
-        if (faceCamera && cameraTransform != null)
-        {
-            FaceCamera();
         }
     }
 
@@ -86,9 +107,16 @@ public class PickUpUI : MonoBehaviour
         infoCanvas.transform.position = transform.position + transform.up * (halfHeight + heightOffset);
     }
 
-    private void FaceCamera()
+    private void HandleGrabEvent(PointerEvent evt)
     {
-        infoCanvas.transform.LookAt(infoCanvas.transform.position + cameraTransform.forward, Vector3.up);
+        if (evt.Type == PointerEventType.Select)
+        {
+            OnPickedUp();
+        }
+        else if (evt.Type == PointerEventType.Unselect)
+        {
+            OnReleased();
+        }
     }
 
     public void OnPickedUp()
