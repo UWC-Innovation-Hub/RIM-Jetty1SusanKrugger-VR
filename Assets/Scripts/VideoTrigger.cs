@@ -1,23 +1,43 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
-using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables;
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
-
+using Oculus.Interaction;
 public class VideoTrigger : MonoBehaviour
 {
     [SerializeField] private GameObject videoScreen;
     [SerializeField] private VideoPlayer videoPlayer;
 
-    private XRSimpleInteractable interactable;
+    [Header("Meta Interaction")]
+    [SerializeField] private InteractableUnityEventWrapper interactable;
 
     void Awake()
     {
-        interactable = GetComponent<XRSimpleInteractable>();
-        interactable.selectEntered.AddListener(OnPoked);
+        if (interactable == null)
+        {
+            interactable = GetComponent<InteractableUnityEventWrapper>();
+        }
+
+        if (interactable != null)
+        {
+            interactable.WhenSelect.AddListener(OnInteract);
+        }
+        else
+        {
+            Debug.LogWarning("[VideoTrigger] No InteractWrapper found");
+        }
+
         videoScreen.SetActive(false);
         videoPlayer.loopPointReached += OnVideoFinished;
+    }
+
+    private void OnDestroy()
+    {
+        if (interactable != null)
+        {
+            interactable.WhenSelect.RemoveListener(OnInteract);
+        }
+
+        videoPlayer.loopPointReached -= OnVideoFinished;
     }
 
     private void OnVideoFinished(VideoPlayer vp)
@@ -25,11 +45,12 @@ public class VideoTrigger : MonoBehaviour
         StartCoroutine(FadeOut());
     }
 
-    private void OnPoked(SelectEnterEventArgs args)
+    private void OnInteract()
     {
         videoScreen.SetActive(true);
         videoPlayer.Play();
         StartCoroutine(FadeIn());
+        Debug.Log("Video is playing");
     }
 
     private IEnumerator FadeIn()
@@ -56,7 +77,7 @@ public class VideoTrigger : MonoBehaviour
         float duration = 1f;
         float elpased = 0f;
 
-        Material mat = videoScreen.GetComponent <Renderer>().material;
+        Material mat = videoScreen.GetComponent<Renderer>().material;
         Color color = mat.color;
 
         while (elpased < duration)
