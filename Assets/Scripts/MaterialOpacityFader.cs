@@ -43,48 +43,61 @@ public class MaterialOpacityFader : MonoBehaviour
 
     public void BeginFade()
     {
-        if (!enabled || _materialInstances == null || _materialInstances.Length == 0)
-        {
-            return;
-        }
+        BeginFadeOut();
+    }
 
-        if (_fadeRoutine != null)
-        {
-            StopCoroutine(_fadeRoutine);
-        }
+    public void BeginFadeIn()
+    {
+        StartFade(hiddenOpacity: endOpacity, visibleOpacity: startOpacity,
+            hiddenOutlineOpacity: endOutlineOpacity, visibleOutlineOpacity: startOutlineOpacity);
+    }
 
-        _fadeRoutine = StartCoroutine(FadeRoutine());
+    public void BeginFadeOut()
+    {
+        StartFade(hiddenOpacity: startOpacity, visibleOpacity: endOpacity,
+            hiddenOutlineOpacity: startOutlineOpacity, visibleOutlineOpacity: endOutlineOpacity);
     }
 
     public void ResetFade()
     {
-        if (_fadeRoutine != null)
-        {
-            StopCoroutine(_fadeRoutine);
-            _fadeRoutine = null;
-        }
+        ShowInstant();
+    }
 
+    public void ShowInstant()
+    {
+        StopFadeRoutine();
         SetOpacity(startOpacity);
         SetOutlineOpacity(startOutlineOpacity);
     }
 
-    private IEnumerator FadeRoutine()
+    public void HideInstant()
     {
-        SetOpacity(startOpacity);
-        SetOutlineOpacity(startOutlineOpacity);
+        StopFadeRoutine();
+        SetOpacity(endOpacity);
+        SetOutlineOpacity(endOutlineOpacity);
+    }
+
+    private IEnumerator FadeRoutine(
+        float fromOpacity,
+        float toOpacity,
+        float fromOutlineOpacity,
+        float toOutlineOpacity)
+    {
+        SetOpacity(fromOpacity);
+        SetOutlineOpacity(fromOutlineOpacity);
 
         float elapsed = 0f;
         while (elapsed < fadeDuration)
         {
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / fadeDuration);
-            SetOpacity(Mathf.Lerp(startOpacity, endOpacity, t));
-            SetOutlineOpacity(Mathf.Lerp(startOutlineOpacity, endOutlineOpacity, t));
+            SetOpacity(Mathf.Lerp(fromOpacity, toOpacity, t));
+            SetOutlineOpacity(Mathf.Lerp(fromOutlineOpacity, toOutlineOpacity, t));
             yield return null;
         }
 
-        SetOpacity(endOpacity);
-        SetOutlineOpacity(endOutlineOpacity);
+        SetOpacity(toOpacity);
+        SetOutlineOpacity(toOutlineOpacity);
         _fadeRoutine = null;
     }
 
@@ -114,5 +127,33 @@ public class MaterialOpacityFader : MonoBehaviour
         }
 
         return _materialInstances[index];
+    }
+
+    private void StartFade(
+        float hiddenOpacity,
+        float visibleOpacity,
+        float hiddenOutlineOpacity,
+        float visibleOutlineOpacity)
+    {
+        if (!enabled || _materialInstances == null || _materialInstances.Length == 0)
+        {
+            return;
+        }
+
+        StopFadeRoutine();
+        _fadeRoutine = StartCoroutine(FadeRoutine(
+            hiddenOpacity,
+            visibleOpacity,
+            hiddenOutlineOpacity,
+            visibleOutlineOpacity));
+    }
+
+    private void StopFadeRoutine()
+    {
+        if (_fadeRoutine != null)
+        {
+            StopCoroutine(_fadeRoutine);
+            _fadeRoutine = null;
+        }
     }
 }
