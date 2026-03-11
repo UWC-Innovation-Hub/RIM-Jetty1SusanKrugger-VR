@@ -1,8 +1,11 @@
+using System;
 using UnityEngine;
 using UnityEngine.Video;
 
 public class FingerprintTrigger : MonoBehaviour
 {
+    public event Func<FingerprintTrigger, bool> SelectionRequested;
+
     [Header("Wiring")]
     [SerializeField] private ProjectorController projector;
     public ProjectorController proj;
@@ -21,6 +24,9 @@ public class FingerprintTrigger : MonoBehaviour
     private bool _armed = true;
 
     private AudioSource AS;
+
+    public VideoClip Clip => clip;
+    public bool IsArmed => _armed;
 
     private void Awake()
     {
@@ -61,20 +67,58 @@ public class FingerprintTrigger : MonoBehaviour
             //    FingerGlowMat.SetFloat("_EmissionStrength", 0f);
             //}
         }        
-    }  
+    }
+
+    public void SetVisible(bool visible)
+    {
+        if (gameObject.activeSelf == visible)
+        {
+            return;
+        }
+
+        gameObject.SetActive(visible);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        AS.Play();
         if (!_armed) return;
 
         if (!string.IsNullOrEmpty(requiredTag) && !other.CompareTag(requiredTag))
             return;
 
-        if (projector == null || clip == null) return;
+        if (clip == null) return;
 
-        // Only succeeds if projector is idle.
-        projector.TryPlay(clip);
+        bool handledByModule = false;
+        bool accepted = false;
+
+        if (SelectionRequested != null)
+        {
+            Delegate[] handlers = SelectionRequested.GetInvocationList();
+            for (int i = 0; i < handlers.Length; i++)
+            {
+                handledByModule = true;
+                accepted |= ((Func<FingerprintTrigger, bool>)handlers[i]).Invoke(this);
+            }
+        }
+
+        if (!handledByModule)
+        {
+            if (projector == null) return;
+            accepted = projector.TryPlay(clip);
+        }
+
+        if (accepted)
+        {
+            AS?.Play();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (_col != null && disableColliderWhenLocked)
+        {
+            _col.enabled = false;
+        }
     }
 
 
