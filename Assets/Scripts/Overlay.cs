@@ -1,62 +1,62 @@
-using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshRenderer))]
 public class Overlay : MonoBehaviour
 {
-    public float maxAlpha = 0.5f;
-    public float fadeIn = 0.5f;
-    public float hold = 0.2f;
-    public float fadeOut = 0.8f;
-    public float delay = 1.5f;
+    [Header("Vignette Material")]
+    public Material mat;
 
-    private Material mat;
-    private Color baseColor;
+    [Header("Meta Hands")]
+    public OVRHand leftHand;
+    public OVRHand rightHand;
 
-    void Awake()
+
+    [Header("Fade Settings")]
+    public float fadeSpeed = 3f;
+    public float fistThreshold = 0.8f;
+    public float maxAlpha = 0.8f;
+
+    float currentAlpha = 0f;
+    float targetAlpha = 0f;
+
+    void Update()
     {
-        mat = GetComponent<MeshRenderer>().material;
-        baseColor = mat.color;
-        baseColor.a = 0f;
-        mat.color = baseColor;
-    }
+        bool leftFist = IsHandFist(leftHand);
+        bool rightFist = IsHandFist(rightHand);
 
-    void Start()
-    {
-        StartCoroutine(Loop());
-    }
-
-    IEnumerator Loop()
-    {
-        while (true)
+        if (leftFist && rightFist)
         {
-            yield return FadeTo(maxAlpha, fadeIn);
-            yield return new WaitForSeconds(hold);
-            yield return FadeTo(0f, fadeOut);
-            yield return new WaitForSeconds(delay);
+            targetAlpha = maxAlpha;
         }
-    }
-
-    IEnumerator FadeTo(float targetAlpha, float duration)
-    {
-        float startAlpha = mat.color.a;
-        float timer = 0f;
-
-        while (timer < duration)
+        else
         {
-            timer += Time.deltaTime;
-            float alpha = Mathf.Lerp(startAlpha, targetAlpha, timer /  duration);
-            SetAlpha(alpha);
-            yield return null;
+            targetAlpha = 0f;
         }
 
-        SetAlpha(targetAlpha);
+        currentAlpha = Mathf.Lerp(currentAlpha, targetAlpha, Time.deltaTime * fadeSpeed);
+
+        MaterialAlpha(currentAlpha);
     }
 
-    void SetAlpha(float a)
+    bool IsHandFist(OVRHand hand)
     {
-        baseColor.a = a;
-        mat.color = baseColor;
+        if (hand == null || !hand.IsTracked)
+        {
+            return false;
+        }
+
+        bool index = hand.GetFingerIsPinching(OVRHand.HandFinger.Index);
+        Debug.Log("Index pinch: " + hand.GetFingerIsPinching(OVRHand.HandFinger.Index));
+        bool middle = hand.GetFingerIsPinching(OVRHand.HandFinger.Middle);
+        bool ring = hand.GetFingerIsPinching(OVRHand.HandFinger.Ring);
+        bool pinky = hand.GetFingerIsPinching(OVRHand.HandFinger.Pinky);
+
+        return index && middle && ring && pinky;
     }
-   
+
+    void MaterialAlpha(float alpha)
+    {
+        Color color = mat.color;
+        color.a = alpha;
+        mat.color = color;
+    }
 }
