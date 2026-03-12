@@ -167,6 +167,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Warder Cuffs/
             ├── Warder Holster/
             ├── Warder pistol/
+    ├── UI Script Prefabs/
     ├── VR Body/
         ├── Animations/
         ├── Ch32_nonPBR.fbm/
@@ -215,19 +216,23 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `UISceneLoader.cs` | `Assets/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
 | `BarShake.cs` | `Assets/Scripts/BarShake.cs` |
 | `Billboard.cs` | `Assets/Scripts/Billboard.cs` |
-| `BlinkingOverlay.cs` | `Assets/Scripts/BlinkingOverlay.cs` |
+| `ButtonScale.cs` | `Assets/Scripts/ButtonScale.cs` |
+| `CanvasFade.cs` | `Assets/Scripts/CanvasFade.cs` |
 | `CargoDoorDriver.cs` | `Assets/Scripts/CargoDoorDriver.cs` |
 | `ClapConfirmationUI.cs` | `Assets/Scripts/ClapConfirmationUI.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/ClapDetector.cs` |
+| `CountUpTimer.cs` | `Assets/Scripts/CountUpTimer.cs` |
 | `FadeControllerScript.cs` | `Assets/Scripts/FadeControllerScript.cs` |
 | `FingerprintLockout.cs` | `Assets/Scripts/FingerprintLockout.cs` |
 | `FingerprintTrigger.cs` | `Assets/Scripts/FingerprintTrigger.cs` |
 | `GazeIndicator.cs` | `Assets/Scripts/GazeIndicator.cs` |
+| `GazeRaycaster.cs` | `Assets/Scripts/GazeRaycaster.cs` |
 | `GazeTarget.cs` | `Assets/Scripts/GazeTarget.cs` |
 | `Headlock.cs` | `Assets/Scripts/Headlock.cs` |
 | `HighFiveTrigger.cs` | `Assets/Scripts/HighFiveTrigger.cs` |
 | `HighlightExit.cs` | `Assets/Scripts/HighlightExit.cs` |
 | `HighlightExitManager.cs` | `Assets/Scripts/HighlightExitManager.cs` |
+| `IGazeTarget.cs` | `Assets/Scripts/IGazeTarget.cs` |
 | `InteractionCompleteListener.cs` | `Assets/Scripts/InteractionCompleteListener.cs` |
 | `InteractionModuleBase.cs` | `Assets/Scripts/InteractionModuleBase.cs` |
 | `InventoryModule.cs` | `Assets/Scripts/InventoryModule.cs` |
@@ -236,11 +241,12 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `EquippableItem.cs` | `Assets/Scripts/InventoryTest/EquippableItem.cs` |
 | `InventoryManager.cs` | `Assets/Scripts/InventoryTest/InventoryManager.cs` |
 | `SimpleBodyAttachments.cs` | `Assets/Scripts/InventoryTest/SimpleBodyAttachments.cs` |
-| `LookAtUI.cs` | `Assets/Scripts/LookAtUI.cs` |
+| `LocationSelect.cs` | `Assets/Scripts/LocationSelect.cs` |
 | `MAIO_Vid_Controller.cs` | `Assets/Scripts/MAIO_Vid_Controller.cs` |
 | `MirrorFollow.cs` | `Assets/Scripts/MirrorFollow.cs` |
 | `Overlay.cs` | `Assets/Scripts/Overlay.cs` |
 | `PalmGestureDetector.cs` | `Assets/Scripts/PalmGestureDetector.cs` |
+| `PickUpUI.cs` | `Assets/Scripts/PickUpUI.cs` |
 | `PrisonerRoute.cs` | `Assets/Scripts/PrisonerRoute.cs` |
 | `PrisonerSortModule.cs` | `Assets/Scripts/PrisonerSortModule.cs` |
 | `ProjectionController.cs` | `Assets/Scripts/ProjectionController.cs` |
