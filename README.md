@@ -32,6 +32,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 ├── Assets/
     ├── Animations/
         ├── C1/
+        ├── J1/
     ├── Audio/
         ├── C1/
             ├── Master/
@@ -58,6 +59,9 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Materials/
         ├── C4_J5/
         ├── C6_SK1_The_Hold/
+        ├── Cargo space/
+        ├── Cargo space exterior/
+            ├── Silhouettes/
         ├── Cell/
         ├── Custom Shaders/
             ├── C1_InventoryMats/
@@ -66,6 +70,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── J1/
             ├── Entrance room/
         ├── MAIO_Tests/
+        ├── Warders/
     ├── Media/
         ├── Audio/
         ├── Video/
@@ -91,7 +96,11 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── folded-wrinkled-paper/
         ├── C6_SK1_The_Hold/
             ├── GrayBox/
+        ├── Cargo Space/
+        ├── Cargo Space exterior/
+        ├── Cell/
         ├── Textures/
+        ├── Warders/
     ├── Oculus/
     ├── Plugins/
         ├── Android/
@@ -119,6 +128,8 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C2_J3_Cell/
         ├── C4_J6_Black_Visitors_Room/
         ├── C6_SK1_The_Hold/
+        ├── JS_Testing/
+            ├── J1_Testing_lightbake_JS/
         ├── SampleScene/
         ├── TestScenes/
             ├── BlackWaitingRoomTest/
@@ -148,7 +159,14 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C2_J3/
             ├── Fingerprints/
             ├── Materials/
+        ├── Cargo Space/
+        ├── Cell/
+        ├── Silhouettes/
         ├── Test Textures/
+        ├── Warders/
+            ├── Warder Cuffs/
+            ├── Warder Holster/
+            ├── Warder pistol/
     ├── VR Body/
         ├── Animations/
         ├── Ch32_nonPBR.fbm/
