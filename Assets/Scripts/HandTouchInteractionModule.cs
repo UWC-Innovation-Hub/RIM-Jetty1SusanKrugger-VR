@@ -18,12 +18,16 @@ public class HandTouchInteractionModule : InteractionModuleBase
     [SerializeField] private float revealDelayBetweenHands = 0f;
 
     private Coroutine _sequenceRoutine;
+    private readonly HashSet<HandTouchStep> _consumedSteps = new HashSet<HandTouchStep>();
+    private HandTouchStep _currentSelection;
 
     public override void Activate()
     {
         base.Activate();
 
         ResetHands();
+        _consumedSteps.Clear();
+        _currentSelection = null;
 
         if (handSteps.Count == 0)
         {
@@ -32,7 +36,8 @@ public class HandTouchInteractionModule : InteractionModuleBase
             return;
         }
 
-        _sequenceRoutine = StartCoroutine(RunSequence());
+        ShowAvailableHands();
+        _sequenceRoutine = StartCoroutine(RunSelectionLoop());
     }
 
     public override void Deactivate()
@@ -43,6 +48,8 @@ public class HandTouchInteractionModule : InteractionModuleBase
             _sequenceRoutine = null;
         }
 
+        _currentSelection = null;
+
         if (hideHandsWhenInactive)
         {
             HideAllHands();
@@ -51,41 +58,101 @@ public class HandTouchInteractionModule : InteractionModuleBase
         base.Deactivate();
     }
 
-    private IEnumerator RunSequence()
+    private IEnumerator RunSelectionLoop()
     {
-        for (int i = 0; i < handSteps.Count; i++)
+        while (IsActive)
         {
-            HandTouchStep step = handSteps[i];
-            RevealHand(step);
+            if (AllHandsConsumed())
+            {
+                _sequenceRoutine = null;
+                Complete();
+                yield break;
+            }
 
-            yield return WaitForHandAudio(step);
-
+            yield return WaitForNextSelection();
             if (!IsActive)
             {
                 yield break;
             }
 
-            if (i < handSteps.Count - 1 && revealDelayBetweenHands > 0f)
+            if (_currentSelection == null)
+            {
+                if (AllHandsConsumed())
+                {
+                    _sequenceRoutine = null;
+                    Complete();
+                }
+
+                yield break;
+            }
+
+            yield return WaitForHandResponseToFinish(_currentSelection);
+            if (!IsActive || _currentSelection == null)
+            {
+                yield break;
+            }
+
+            HandTouchStep completedStep = _currentSelection;
+            _currentSelection = null;
+            _consumedSteps.Add(completedStep);
+
+            HideHand(completedStep);
+
+            if (revealDelayBetweenHands > 0f && !AllHandsConsumed())
             {
                 yield return new WaitForSeconds(revealDelayBetweenHands);
             }
+
+            ShowAvailableHands();
         }
 
         _sequenceRoutine = null;
-        Complete();
     }
 
-    private IEnumerator WaitForHandAudio(HandTouchStep step)
+    private IEnumerator WaitForNextSelection()
+    {
+        while (IsActive)
+        {
+            for (int i = 0; i < handSteps.Count; i++)
+            {
+                HandTouchStep step = handSteps[i];
+                if (!IsStepAvailable(step))
+                {
+                    continue;
+                }
+
+                if (step.testimonyAudio == null)
+                {
+                    Debug.LogWarning($"{name}: HandTouchInteractionModule step is missing its testimony AudioSource.");
+                    _consumedSteps.Add(step);
+                    HideHand(step);
+                    continue;
+                }
+
+                if (!step.testimonyAudio.isPlaying)
+                {
+                    continue;
+                }
+
+                _currentSelection = step;
+                HideNonSelectedHands(step);
+                yield break;
+            }
+
+            if (AllHandsConsumed())
+            {
+                yield break;
+            }
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator WaitForHandResponseToFinish(HandTouchStep step)
     {
         if (step == null || step.testimonyAudio == null)
         {
-            Debug.LogWarning($"{name}: HandTouchInteractionModule step is missing its testimony AudioSource.");
             yield break;
-        }
-
-        while (IsActive && !step.testimonyAudio.isPlaying)
-        {
-            yield return null;
         }
 
         while (IsActive && step.testimonyAudio.isPlaying)
@@ -122,19 +189,70 @@ public class HandTouchInteractionModule : InteractionModuleBase
     {
         for (int i = 0; i < handSteps.Count; i++)
         {
+            HideHand(handSteps[i]);
+        }
+    }
+
+    private void ShowAvailableHands()
+    {
+        for (int i = 0; i < handSteps.Count; i++)
+        {
             HandTouchStep step = handSteps[i];
-            if (step == null)
+            if (!IsStepAvailable(step))
             {
                 continue;
             }
 
-            ResetFaders(step);
+            RevealHand(step);
+        }
+    }
 
-            if (step.handRoot != null)
+    private void HideNonSelectedHands(HandTouchStep selectedStep)
+    {
+        for (int i = 0; i < handSteps.Count; i++)
+        {
+            HandTouchStep step = handSteps[i];
+            if (step == null || step == selectedStep || _consumedSteps.Contains(step))
             {
-                step.handRoot.SetActive(false);
+                continue;
+            }
+
+            HideHand(step);
+        }
+    }
+
+    private void HideHand(HandTouchStep step)
+    {
+        if (step == null)
+        {
+            return;
+        }
+
+        ResetFaders(step);
+
+        if (step.handRoot != null)
+        {
+            step.handRoot.SetActive(false);
+        }
+    }
+
+    private bool AllHandsConsumed()
+    {
+        for (int i = 0; i < handSteps.Count; i++)
+        {
+            HandTouchStep step = handSteps[i];
+            if (IsStepAvailable(step))
+            {
+                return false;
             }
         }
+
+        return true;
+    }
+
+    private bool IsStepAvailable(HandTouchStep step)
+    {
+        return step != null && !_consumedSteps.Contains(step);
     }
 
     private static void ResetFaders(HandTouchStep step)
