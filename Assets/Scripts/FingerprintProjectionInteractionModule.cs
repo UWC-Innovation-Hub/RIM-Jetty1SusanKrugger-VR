@@ -1,15 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.Video;
 
 public class FingerprintProjectionInteractionModule : InteractionModuleBase
 {
     [Header("Wiring")]
     [SerializeField] private FingerprintLockout lockout;
-    [SerializeField] private ProjectorController projector;
-    [SerializeField] private VideoPlayer videoPlayer;
 
     [Header("Visibility")]
     [SerializeField] private bool hideFingerprintsWhenInactive = true;
@@ -17,7 +13,6 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
     private readonly HashSet<FingerprintTrigger> _consumedFingerprints = new HashSet<FingerprintTrigger>();
     private Coroutine _completeSelectionRoutine;
     private FingerprintTrigger _currentSelection;
-    private FieldInfo _deactivateDurationField;
 
     private FingerprintTrigger[] Fingerprints => lockout != null ? lockout.Fingerprints : null;
 
@@ -43,13 +38,6 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
         base.Activate();
         ResolveDependencies();
 
-        if (projector == null || videoPlayer == null)
-        {
-            Debug.LogWarning($"{name}: FingerprintProjectionInteractionModule requires a ProjectorController and VideoPlayer.");
-            Complete();
-            return;
-        }
-
         FingerprintTrigger[] fingerprints = Fingerprints;
         if (fingerprints == null || fingerprints.Length == 0)
         {
@@ -67,12 +55,6 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
             _completeSelectionRoutine = null;
         }
 
-        videoPlayer.playOnAwake = false;
-        videoPlayer.isLooping = false;
-        videoPlayer.waitForFirstFrame = true;
-        videoPlayer.loopPointReached -= OnVideoLoopPointReached;
-        videoPlayer.loopPointReached += OnVideoLoopPointReached;
-
         SubscribeToFingerprints();
         ShowAvailableFingerprints();
     }
@@ -80,11 +62,6 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
     public override void Deactivate()
     {
         UnsubscribeFromFingerprints();
-
-        if (videoPlayer != null)
-        {
-            videoPlayer.loopPointReached -= OnVideoLoopPointReached;
-        }
 
         if (_completeSelectionRoutine != null)
         {
@@ -106,11 +83,6 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
     private void OnDisable()
     {
         UnsubscribeFromFingerprints();
-
-        if (videoPlayer != null)
-        {
-            videoPlayer.loopPointReached -= OnVideoLoopPointReached;
-        }
     }
 
     private bool OnFingerprintSelectionRequested(FingerprintTrigger fingerprint)
@@ -125,42 +97,38 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
             return false;
         }
 
-        if (projector == null || fingerprint.Clip == null)
+        AudioSource responseAudio = fingerprint.ResponseAudio;
+        if (responseAudio == null || responseAudio.clip == null)
         {
-            return false;
-        }
-
-        if (!projector.TryPlay(fingerprint.Clip))
-        {
+            Debug.LogWarning($"{name}: Fingerprint '{fingerprint.name}' is missing its response AudioSource clip.");
             return false;
         }
 
         _currentSelection = fingerprint;
         HideNonSelectedFingerprints(fingerprint);
-        return true;
-    }
-
-    private void OnVideoLoopPointReached(VideoPlayer player)
-    {
-        if (!IsActive || _currentSelection == null)
-        {
-            return;
-        }
 
         if (_completeSelectionRoutine != null)
         {
             StopCoroutine(_completeSelectionRoutine);
         }
 
-        _completeSelectionRoutine = StartCoroutine(FinalizeSelectionAfterProjectorClose());
+        _completeSelectionRoutine = StartCoroutine(FinalizeSelectionAfterAudio(responseAudio));
+        return true;
     }
 
-    private IEnumerator FinalizeSelectionAfterProjectorClose()
+    private IEnumerator FinalizeSelectionAfterAudio(AudioSource responseAudio)
     {
-        float closeDelay = GetProjectorDeactivateDuration();
-        if (closeDelay > 0f)
+        if (responseAudio != null)
         {
-            yield return new WaitForSeconds(closeDelay);
+            while (IsActive && _currentSelection != null && !responseAudio.isPlaying)
+            {
+                yield return null;
+            }
+
+            while (IsActive && _currentSelection != null && responseAudio.isPlaying)
+            {
+                yield return null;
+            }
         }
 
         if (!IsActive || _currentSelection == null)
@@ -333,47 +301,11 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
         }
     }
 
-    private float GetProjectorDeactivateDuration()
-    {
-        if (projector == null)
-        {
-            return 0f;
-        }
-
-        if (_deactivateDurationField == null)
-        {
-            _deactivateDurationField = typeof(ProjectorController).GetField("deactivateDuration", BindingFlags.Instance | BindingFlags.NonPublic);
-        }
-
-        if (_deactivateDurationField == null)
-        {
-            return 0f;
-        }
-
-        object value = _deactivateDurationField.GetValue(projector);
-        if (value is float duration)
-        {
-            return Mathf.Max(0f, duration);
-        }
-
-        return 0f;
-    }
-
     private void ResolveDependencies()
     {
         if (lockout == null)
         {
             lockout = GetComponent<FingerprintLockout>();
-        }
-
-        if (projector == null)
-        {
-            projector = FindFirstObjectByType<ProjectorController>();
-        }
-
-        if (videoPlayer == null && projector != null)
-        {
-            videoPlayer = projector.GetComponentInChildren<VideoPlayer>(true);
         }
     }
 }

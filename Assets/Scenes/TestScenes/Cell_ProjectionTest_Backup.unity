@@ -2408,7 +2408,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: bce3dfb747a752249898d1d6ae3e8510, type: 3}
+  m_Resource: {fileID: 8300000, guid: ce13d0957335a4c449f4ccbaa3f72f0b, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -3446,7 +3446,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: bce3dfb747a752249898d1d6ae3e8510, type: 3}
+  m_Resource: {fileID: 8300000, guid: 75eaadcf6fd814c4da72e0fed5bc68bb, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -8512,7 +8512,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: bce3dfb747a752249898d1d6ae3e8510, type: 3}
+  m_Resource: {fileID: 8300000, guid: 5a427e2b7c7f0a849b8cd94acae8a3c6, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -24607,8 +24607,6 @@ MonoBehaviour:
   fadeOutDuration: 0.35
   fadeInDuration: 0.35
   lockout: {fileID: 1419559899}
-  projector: {fileID: 6510963846403748471}
-  videoPlayer: {fileID: 3716354514181906124}
   hideFingerprintsWhenInactive: 1
 --- !u!1 &1420030191
 GameObject:
@@ -27197,6 +27195,10 @@ PrefabInstance:
       propertyPath: _fingerFeatureStateProvider
       value: 
       objectReference: {fileID: 1783121166}
+    - target: {fileID: 3486966389647857283, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3557768303603096183, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}
       propertyPath: _hand
       value: 
@@ -27271,7 +27273,7 @@ PrefabInstance:
       objectReference: {fileID: 682982125}
     - target: {fileID: 7485680796231675401, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7485680796231675402, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}
       propertyPath: m_LocalScale.x
@@ -27368,6 +27370,21 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1929441430}
   m_SourcePrefab: {fileID: 100100000, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}
+--- !u!135 &1602496263 stripped
+SphereCollider:
+  m_CorrespondingSourceObject: {fileID: 4828469639833310782, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}
+  m_PrefabInstance: {fileID: 1602496262}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &1602496264 stripped
+SphereCollider:
+  m_CorrespondingSourceObject: {fileID: 9168416299122165688, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}
+  m_PrefabInstance: {fileID: 1602496262}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &1602496265 stripped
+SphereCollider:
+  m_CorrespondingSourceObject: {fileID: 3486966389647857283, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}
+  m_PrefabInstance: {fileID: 1602496262}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1602496266 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3698423772839560050, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}
@@ -29741,7 +29758,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: bce3dfb747a752249898d1d6ae3e8510, type: 3}
+  m_Resource: {fileID: 8300000, guid: 75eaadcf6fd814c4da72e0fed5bc68bb, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -32611,20 +32628,31 @@ MonoBehaviour:
     testimonyAudio: {fileID: 1602496274}
     revealFaders:
     - {fileID: 1602496273}
+    selectionCollider: {fileID: 1602496265}
+    projectionClip: {fileID: 32900000, guid: 87c3da35a6c7185419939740bf97c0b0, type: 3}
   - handRoot: {fileID: 1602496272}
     testimonyAudio: {fileID: 1602496271}
     revealFaders:
     - {fileID: 1602496270}
+    selectionCollider: {fileID: 1602496264}
+    projectionClip: {fileID: 32900000, guid: 332d8835b22c87940aec779fc163a51a, type: 3}
   - handRoot: {fileID: 1602496269}
     testimonyAudio: {fileID: 1602496268}
     revealFaders:
     - {fileID: 1602496267}
+    selectionCollider: {fileID: 1602496263}
+    projectionClip: {fileID: 32900000, guid: 6a40faebcdf728140b66703dfb9c484f, type: 3}
   - handRoot: {fileID: 1276757171}
     testimonyAudio: {fileID: 1439806806}
     revealFaders:
     - {fileID: 1276757172}
+    selectionCollider: {fileID: 1276757173}
+    projectionClip: {fileID: 32900000, guid: 86621fd01985bb84a968a7b52a505b89, type: 3}
   hideHandsWhenInactive: 0
   revealDelayBetweenHands: 0
+  projector: {fileID: 6510963846403748471}
+  videoPlayer: {fileID: 3716354514181906124}
+  muteHandAudioWhileActive: 1
 --- !u!4 &1929441431 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8711704603539260034, guid: a082f98c5bdffa246b5f67de155de75b, type: 3}

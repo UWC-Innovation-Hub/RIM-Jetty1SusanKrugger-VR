@@ -27,6 +27,7 @@ public class FingerprintTrigger : MonoBehaviour
 
     public VideoClip Clip => clip;
     public bool IsArmed => _armed;
+    public AudioSource ResponseAudio => AS;
 
     private void Awake()
     {
@@ -86,8 +87,6 @@ public class FingerprintTrigger : MonoBehaviour
         if (!string.IsNullOrEmpty(requiredTag) && !other.CompareTag(requiredTag))
             return;
 
-        if (clip == null) return;
-
         bool handledByModule = false;
         bool accepted = false;
 
@@ -103,7 +102,7 @@ public class FingerprintTrigger : MonoBehaviour
 
         if (!handledByModule)
         {
-            if (projector == null) return;
+            if (clip == null || projector == null) return;
             accepted = projector.TryPlay(clip);
         }
 
