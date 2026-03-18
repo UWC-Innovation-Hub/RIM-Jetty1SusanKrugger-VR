@@ -167,7 +167,6 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Warder Cuffs/
             ├── Warder Holster/
             ├── Warder pistol/
-    ├── UI Script Prefabs/
     ├── VR Body/
         ├── Animations/
         ├── Ch32_nonPBR.fbm/

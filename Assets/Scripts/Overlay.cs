@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class Overlay : MonoBehaviour
 {
     [Header("Vignette Material")]
@@ -39,18 +40,20 @@ public class Overlay : MonoBehaviour
 
     bool IsHandFist(OVRHand hand)
     {
-        if (hand == null || !hand.IsTracked)
+        if (hand == null || !hand.IsTracked || !hand.IsPointerPoseValid)
         {
             return false;
         }
+        Debug.Log(Vector3.Distance(hand.PointerPose.position, hand.transform.position));
+        Transform pointer = hand.PointerPose;
 
-        bool index = hand.GetFingerIsPinching(OVRHand.HandFinger.Index);
-        Debug.Log("Index pinch: " + hand.GetFingerIsPinching(OVRHand.HandFinger.Index));
-        bool middle = hand.GetFingerIsPinching(OVRHand.HandFinger.Middle);
-        bool ring = hand.GetFingerIsPinching(OVRHand.HandFinger.Ring);
-        bool pinky = hand.GetFingerIsPinching(OVRHand.HandFinger.Pinky);
+        Vector3 palmPos = hand.transform.position;
 
-        return index && middle && ring && pinky;
+        float distance = Vector3.Distance(pointer.position, palmPos);
+
+        return distance < 0.06f;
+
+        
     }
 
     void MaterialAlpha(float alpha)

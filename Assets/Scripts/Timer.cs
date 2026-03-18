@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class TimerCountdown : MonoBehaviour
+public class Timer : MonoBehaviour
 {
     [Header("Settings")]
     public float duration = 10f;
@@ -11,8 +11,6 @@ public class TimerCountdown : MonoBehaviour
     [Header("References")]
     public TextMeshProUGUI timerText;
     public Image barFill;
-    public Image barBack;
-    public BarShake barShake;
 
     private float timeRemaining;
     private float fadeTimer = 0f;
@@ -68,14 +66,12 @@ public class TimerCountdown : MonoBehaviour
     {
         float fraction = time / duration;
         barFill.fillAmount = fraction;
-        barShake.UpdateShake(fraction);
     }
 
     void SetAlpha(float alpha)
     {
         timerText.alpha = alpha;
         SetImageAlpha(barFill, alpha);
-        SetImageAlpha(barBack, alpha);
     }
 
     void SetImageAlpha(Image img, float alpha)
