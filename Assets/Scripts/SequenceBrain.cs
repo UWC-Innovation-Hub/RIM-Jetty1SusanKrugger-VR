@@ -37,6 +37,9 @@ public class SequenceBrain : MonoBehaviour
     [SerializeField] private bool fadeOnStartup = false;
     [SerializeField] private float startupFadeInDuration = 0.5f;
 
+    [Header("Director Refresh")]
+    [SerializeField] private bool evaluateDirectorOnPauseResume = true;
+
     public SequenceState State { get; private set; } = SequenceState.InSequence;
 
     private Coroutine _startupEnforceRoutine;
@@ -213,12 +216,26 @@ public class SequenceBrain : MonoBehaviour
             if (pauseDirector)
             {
                 if (director.state == PlayState.Playing)
+                {
                     director.Pause();
+                }
+
+                if (evaluateDirectorOnPauseResume)
+                {
+                    director.Evaluate();
+                }
             }
             else
             {
                 if (director.state != PlayState.Playing)
+                {
                     director.Play();
+                }
+
+                if (evaluateDirectorOnPauseResume)
+                {
+                    director.Evaluate();
+                }
             }
         }
 
