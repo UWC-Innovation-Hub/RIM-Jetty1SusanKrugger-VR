@@ -33,6 +33,8 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Animations/
         ├── C1/
         ├── J1/
+    ├── Assets/
+        ├── RewardToken/
     ├── Audio/
         ├── C1/
             ├── Master/
@@ -136,6 +138,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── C2_J3_Cell_Rec_Assets/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
+    ├── Script Prefabs/
     ├── Scripts/
         ├── InventoryTest/
     ├── Settings/
@@ -167,6 +170,9 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Warder Cuffs/
             ├── Warder Holster/
             ├── Warder pistol/
+    ├── TokenTextures/
+        ├── Textures/
+    ├── UI Script Prefabs/
     ├── VR Body/
         ├── Animations/
         ├── Ch32_nonPBR.fbm/
@@ -209,6 +215,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 <!-- AUTO-SCRIPTS-START -->
 | Script | Path |
 |---|---|
+| `Coin emmision test.cs` | `Assets/Assets/RewardToken/Coin emmision test.cs` |
 | `FootstepSMB.cs` | `Assets/FootstepSMB.cs` |
 | `ElapsedTtimer.cs` | `Assets/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
 | `SceneManager.cs` | `Assets/RIM_jetty1_assets/scripts/SceneManager.cs` |
@@ -227,6 +234,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `GazeIndicator.cs` | `Assets/Scripts/GazeIndicator.cs` |
 | `GazeRaycaster.cs` | `Assets/Scripts/GazeRaycaster.cs` |
 | `GazeTarget.cs` | `Assets/Scripts/GazeTarget.cs` |
+| `HandGestureListener.cs` | `Assets/Scripts/HandGestureListener.cs` |
 | `Headlock.cs` | `Assets/Scripts/Headlock.cs` |
 | `HighFiveTrigger.cs` | `Assets/Scripts/HighFiveTrigger.cs` |
 | `HighlightExit.cs` | `Assets/Scripts/HighlightExit.cs` |
@@ -248,6 +256,9 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `PickUpUI.cs` | `Assets/Scripts/PickUpUI.cs` |
 | `PrisonerRoute.cs` | `Assets/Scripts/PrisonerRoute.cs` |
 | `PrisonerSortModule.cs` | `Assets/Scripts/PrisonerSortModule.cs` |
+| `ProgressBar.cs` | `Assets/Scripts/ProgressBar.cs` |
+| `ProgressObject.cs` | `Assets/Scripts/ProgressObject.cs` |
+| `ProgressTracker.cs` | `Assets/Scripts/ProgressTracker.cs` |
 | `ProjectionController.cs` | `Assets/Scripts/ProjectionController.cs` |
 | `ReactivateRoutes.cs` | `Assets/Scripts/ReactivateRoutes.cs` |
 | `RewardUI.cs` | `Assets/Scripts/RewardUI.cs` |
@@ -256,6 +267,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `SetNextPrisoner.cs` | `Assets/Scripts/SetNextPrisoner.cs` |
 | `Timer.cs` | `Assets/Scripts/Timer.cs` |
 | `TruckManager.cs` | `Assets/Scripts/TruckManager.cs` |
+| `VRTutorial.cs` | `Assets/Scripts/VRTutorial.cs` |
 | `VideoProjectorController.cs` | `Assets/Scripts/VideoProjectorController.cs` |
 | `VideoTrigger.cs` | `Assets/Scripts/VideoTrigger.cs` |
 | `AnimateOnInput.cs` | `Assets/VR Body/AnimateOnInput.cs` |
