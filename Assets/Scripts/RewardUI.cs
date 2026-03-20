@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.UI;
+using TMPro;
+using Oculus.Interaction;
 
 public class SpinningVRUIUniversal : MonoBehaviour, IPointerClickHandler
 {
@@ -13,22 +14,25 @@ public class SpinningVRUIUniversal : MonoBehaviour, IPointerClickHandler
 
     private bool isSpinning = false;
     private float spinTimer = 0f;
-    private XRSimpleInteractable xrInteractable;
+
+    private PointableUnityEventWrapper wrapper;
 
     private void Awake()
     {
         // Setup XR Interactable for hand poke
-        xrInteractable = GetComponent<XRSimpleInteractable>();
-        if (xrInteractable == null)
+        wrapper = GetComponent<PointableUnityEventWrapper>();
+        if (wrapper == null)
         {
-            xrInteractable = gameObject.AddComponent<XRSimpleInteractable>();
+            wrapper = gameObject.AddComponent<PointableUnityEventWrapper>();
         }
     }
 
     private void Start()
     {
-        // Listen for XR interactions (poke)
-        xrInteractable.selectEntered.AddListener(OnXRInteract);
+       if (wrapper != null)
+        {
+            wrapper.WhenSelect.AddListener(OnMetaInteract);
+        }
     }
 
     private void Update()
@@ -54,7 +58,7 @@ public class SpinningVRUIUniversal : MonoBehaviour, IPointerClickHandler
     }
 
     // For hand poke interaction
-    private void OnXRInteract(SelectEnterEventArgs args)
+    private void OnMetaInteract(PointerEvent pointerEvent)
     {
         StartSpinning();
     }
@@ -73,9 +77,9 @@ public class SpinningVRUIUniversal : MonoBehaviour, IPointerClickHandler
 
     private void OnDestroy()
     {
-        if (xrInteractable != null)
+        if (wrapper != null)
         {
-            xrInteractable.selectEntered.RemoveListener(OnXRInteract);
+            wrapper.WhenSelect.RemoveListener(OnMetaInteract);
         }
     }
 }

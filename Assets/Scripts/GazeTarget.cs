@@ -1,27 +1,37 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class GazeTarget : MonoBehaviour
+public class GazeTarget : MonoBehaviour, IGazeTarget
 {
     [Header("UI")]
-    public GameObject infoCanvas;
-    public GameObject indicator;
+    [Tooltip("World-space canvas shown on gaze")]
+    [SerializeField] private GameObject infoCanvas;
+
+    [Tooltip("Visual indicator hidden when gazed at.")]
+    [SerializeField] private GameObject indicator;
 
     [Header("Animation")]
-    public float animationDuration = 0.25f;
-    public AnimationCurve expandCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-    public AnimationCurve retractCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
+    [SerializeField] private float animationDuration = 0.25f;
+    [SerializeField] private AnimationCurve expandCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private AnimationCurve retractCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
+
+    [Header("Events")]
+    public UnityEvent onGazeEnter;
+    public UnityEvent onGazeExit;
+    public UnityEvent onGazeDwell;
 
     private Coroutine animationCoroutine;
-
     private Vector3 indicatorOriginalScale;
-
     private GazeIndicator indicatorScript;
 
-    void Start()
+    private void Awake()
     {
-        infoCanvas.transform.localScale = Vector3.zero;
-        infoCanvas.SetActive(false);
+        if (infoCanvas != null)
+        {
+            infoCanvas.transform.localScale = Vector3.zero;
+            infoCanvas.SetActive(false);
+        }
 
         if (indicator != null)
         {
@@ -32,13 +42,18 @@ public class GazeTarget : MonoBehaviour
 
     public void OnGazeEnter()
     {
+        onGazeEnter?.Invoke();
+
         if (animationCoroutine != null)
         {
             StopCoroutine(animationCoroutine);
         }
 
-        infoCanvas.SetActive(true);
-        animationCoroutine = StartCoroutine(AnimateScaleLinear(Vector3.zero, Vector3.one));
+        if (infoCanvas != null)
+        {
+            infoCanvas.SetActive(true);
+            animationCoroutine = StartCoroutine(AnimateScale(Vector3.zero, Vector3.one, expandCurve));
+        }
 
         if (indicator != null)
         {
@@ -46,23 +61,30 @@ public class GazeTarget : MonoBehaviour
             {
                 indicatorScript.enabled = false;
             }
+
             StartCoroutine(AnimateIndicator(indicator.transform.localScale, Vector3.zero));
         }
     }
 
     public void OnGazeExit()
     {
-        if (animationCoroutine == null)
+        onGazeExit?.Invoke();
+
+        if (animationCoroutine != null)
         {
             StopCoroutine(animationCoroutine);
         }
 
-        Vector3 currentScale = infoCanvas.transform.localScale;
-        animationCoroutine = StartCoroutine(AnimateScaleLinear(currentScale, Vector3.zero, disableOnComplete: true));
+        if (infoCanvas != null)
+        {
+            Vector3 currentScale = infoCanvas.transform.localScale;
+            animationCoroutine = StartCoroutine(AnimateScale(currentScale, Vector3.zero, retractCurve, true));
+        }
 
         if (indicator != null)
         {
             StartCoroutine(AnimateIndicator(Vector3.zero, indicatorOriginalScale));
+
             if (indicatorScript != null)
             {
                 indicatorScript.enabled = true;
@@ -72,35 +94,44 @@ public class GazeTarget : MonoBehaviour
 
     public void OnGazeDwell()
     {
-        Debug.Log("Interacting with object");
+        onGazeDwell?.Invoke();
     }
 
-   IEnumerator AnimateScaleLinear(Vector3 from, Vector3 to, bool disableOnComplete = false)
+    private IEnumerator AnimateScale(Vector3 from, Vector3 to, AnimationCurve curve, bool disableOnComplete = false)
     {
         float elapsed = 0f;
+
         while (elapsed < animationDuration)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed /  animationDuration;
-            infoCanvas.transform.localScale = Vector3.Lerp(from, to, t);
+            float t = elapsed / animationDuration;
+            float easedT = curve.Evaluate(t);
+
+            infoCanvas.transform.localScale = Vector3.Lerp(from, to, easedT);
             yield return null;
         }
+
         infoCanvas.transform.localScale = to;
-        if (disableOnComplete) infoCanvas.SetActive(false);
+
+        if (disableOnComplete)
+        {
+            infoCanvas.SetActive(false);
+        }
     }
 
-    IEnumerator AnimateIndicator(Vector3 from, Vector3 to)
+    private IEnumerator AnimateIndicator(Vector3 from, Vector3 to)
     {
         float elapsed = 0f;
-        float indicatorAnimDuration = 0.2f;
+        float duration = 0.2f;
 
-        while (elapsed < indicatorAnimDuration)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / indicatorAnimDuration;
+            float t = elapsed / duration;
             indicator.transform.localScale = Vector3.Lerp(from, to, t);
             yield return null;
         }
+
         indicator.transform.localScale = to;
     }
 }
