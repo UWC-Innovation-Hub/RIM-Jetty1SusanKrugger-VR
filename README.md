@@ -72,6 +72,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── J1/
             ├── Entrance room/
         ├── MAIO_Tests/
+        ├── Registration Office/
         ├── Warders/
     ├── Media/
         ├── Audio/
@@ -100,13 +101,18 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── GrayBox/
         ├── Cargo Space/
         ├── Cargo Space exterior/
+            ├── Animations/
         ├── Cell/
+        ├── NAACo/
+            ├── Warehouse_Pack_HD/
+        ├── Registration office/
         ├── Textures/
         ├── Warders/
     ├── Oculus/
     ├── Plugins/
         ├── Android/
     ├── Prefabs/
+        ├── Walking man/
     ├── Prisoner Shaders/
     ├── RIM_jetty1_assets/
         ├── 3dContent/
@@ -132,6 +138,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C6_SK1_The_Hold/
         ├── JS_Testing/
             ├── J1_Testing_lightbake_JS/
+            ├── Registration office setup/
         ├── SampleScene/
         ├── TestScenes/
             ├── BlackWaitingRoomTest/
@@ -220,6 +227,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `ElapsedTtimer.cs` | `Assets/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
 | `SceneManager.cs` | `Assets/RIM_jetty1_assets/scripts/SceneManager.cs` |
 | `UISceneLoader.cs` | `Assets/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
+| `Background_Character_Spawning.cs` | `Assets/Scripts/Background_Character_Spawning.cs` |
 | `BarShake.cs` | `Assets/Scripts/BarShake.cs` |
 | `Billboard.cs` | `Assets/Scripts/Billboard.cs` |
 | `ButtonScale.cs` | `Assets/Scripts/ButtonScale.cs` |
