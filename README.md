@@ -33,6 +33,8 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Animations/
         ├── C1/
         ├── J1/
+    ├── Assets/
+        ├── RewardToken/
     ├── Audio/
         ├── C1/
             ├── Master/
@@ -136,6 +138,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── C2_J3_Cell_Rec_Assets/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
+    ├── Script Prefabs/
     ├── Scripts/
         ├── InventoryTest/
     ├── Settings/
@@ -167,6 +170,9 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Warder Cuffs/
             ├── Warder Holster/
             ├── Warder pistol/
+    ├── TokenTextures/
+        ├── Textures/
+    ├── UI Script Prefabs/
     ├── VR Body/
         ├── Animations/
         ├── Ch32_nonPBR.fbm/
@@ -209,25 +215,31 @@ Through VR, visitors can walk through historically significant locations on Robb
 <!-- AUTO-SCRIPTS-START -->
 | Script | Path |
 |---|---|
+| `Coin emmision test.cs` | `Assets/Assets/RewardToken/Coin emmision test.cs` |
 | `FootstepSMB.cs` | `Assets/FootstepSMB.cs` |
 | `ElapsedTtimer.cs` | `Assets/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
 | `SceneManager.cs` | `Assets/RIM_jetty1_assets/scripts/SceneManager.cs` |
 | `UISceneLoader.cs` | `Assets/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
 | `BarShake.cs` | `Assets/Scripts/BarShake.cs` |
 | `Billboard.cs` | `Assets/Scripts/Billboard.cs` |
-| `BlinkingOverlay.cs` | `Assets/Scripts/BlinkingOverlay.cs` |
+| `ButtonScale.cs` | `Assets/Scripts/ButtonScale.cs` |
+| `CanvasFade.cs` | `Assets/Scripts/CanvasFade.cs` |
 | `CargoDoorDriver.cs` | `Assets/Scripts/CargoDoorDriver.cs` |
 | `ClapConfirmationUI.cs` | `Assets/Scripts/ClapConfirmationUI.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/ClapDetector.cs` |
+| `CountUpTimer.cs` | `Assets/Scripts/CountUpTimer.cs` |
 | `FadeControllerScript.cs` | `Assets/Scripts/FadeControllerScript.cs` |
 | `FingerprintLockout.cs` | `Assets/Scripts/FingerprintLockout.cs` |
 | `FingerprintTrigger.cs` | `Assets/Scripts/FingerprintTrigger.cs` |
 | `GazeIndicator.cs` | `Assets/Scripts/GazeIndicator.cs` |
+| `GazeRaycaster.cs` | `Assets/Scripts/GazeRaycaster.cs` |
 | `GazeTarget.cs` | `Assets/Scripts/GazeTarget.cs` |
+| `HandGestureListener.cs` | `Assets/Scripts/HandGestureListener.cs` |
 | `Headlock.cs` | `Assets/Scripts/Headlock.cs` |
 | `HighFiveTrigger.cs` | `Assets/Scripts/HighFiveTrigger.cs` |
 | `HighlightExit.cs` | `Assets/Scripts/HighlightExit.cs` |
 | `HighlightExitManager.cs` | `Assets/Scripts/HighlightExitManager.cs` |
+| `IGazeTarget.cs` | `Assets/Scripts/IGazeTarget.cs` |
 | `InteractionCompleteListener.cs` | `Assets/Scripts/InteractionCompleteListener.cs` |
 | `InteractionModuleBase.cs` | `Assets/Scripts/InteractionModuleBase.cs` |
 | `InventoryModule.cs` | `Assets/Scripts/InventoryModule.cs` |
@@ -236,13 +248,17 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `EquippableItem.cs` | `Assets/Scripts/InventoryTest/EquippableItem.cs` |
 | `InventoryManager.cs` | `Assets/Scripts/InventoryTest/InventoryManager.cs` |
 | `SimpleBodyAttachments.cs` | `Assets/Scripts/InventoryTest/SimpleBodyAttachments.cs` |
-| `LookAtUI.cs` | `Assets/Scripts/LookAtUI.cs` |
+| `LocationSelect.cs` | `Assets/Scripts/LocationSelect.cs` |
 | `MAIO_Vid_Controller.cs` | `Assets/Scripts/MAIO_Vid_Controller.cs` |
 | `MirrorFollow.cs` | `Assets/Scripts/MirrorFollow.cs` |
 | `Overlay.cs` | `Assets/Scripts/Overlay.cs` |
 | `PalmGestureDetector.cs` | `Assets/Scripts/PalmGestureDetector.cs` |
+| `PickUpUI.cs` | `Assets/Scripts/PickUpUI.cs` |
 | `PrisonerRoute.cs` | `Assets/Scripts/PrisonerRoute.cs` |
 | `PrisonerSortModule.cs` | `Assets/Scripts/PrisonerSortModule.cs` |
+| `ProgressBar.cs` | `Assets/Scripts/ProgressBar.cs` |
+| `ProgressObject.cs` | `Assets/Scripts/ProgressObject.cs` |
+| `ProgressTracker.cs` | `Assets/Scripts/ProgressTracker.cs` |
 | `ProjectionController.cs` | `Assets/Scripts/ProjectionController.cs` |
 | `ReactivateRoutes.cs` | `Assets/Scripts/ReactivateRoutes.cs` |
 | `RewardUI.cs` | `Assets/Scripts/RewardUI.cs` |
@@ -251,6 +267,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `SetNextPrisoner.cs` | `Assets/Scripts/SetNextPrisoner.cs` |
 | `Timer.cs` | `Assets/Scripts/Timer.cs` |
 | `TruckManager.cs` | `Assets/Scripts/TruckManager.cs` |
+| `VRTutorial.cs` | `Assets/Scripts/VRTutorial.cs` |
 | `VideoProjectorController.cs` | `Assets/Scripts/VideoProjectorController.cs` |
 | `VideoTrigger.cs` | `Assets/Scripts/VideoTrigger.cs` |
 | `AnimateOnInput.cs` | `Assets/VR Body/AnimateOnInput.cs` |
