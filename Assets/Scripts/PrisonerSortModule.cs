@@ -37,6 +37,7 @@ public class PrisonerSortModule : InteractionModuleBase
         _currentBatchFinished.Clear();
         ResolveDependencies();
         ResolveActiveSession();
+        SyncSessionVisibility();
 
         if (routeController != null)
             routeController.BindSession(ActiveSession);
@@ -131,6 +132,7 @@ public class PrisonerSortModule : InteractionModuleBase
     {
         activeSessionIndex = sessionIndex;
         ResolveActiveSession();
+        SyncSessionVisibility();
     }
 
     private void ResolveDependencies()
@@ -164,6 +166,31 @@ public class PrisonerSortModule : InteractionModuleBase
 
         if (prisonerRoute != null)
             prisonerRoute.SetActiveBatch(CurrentBatch);
+    }
+
+    private void SyncSessionVisibility()
+    {
+        if (sessions == null) return;
+
+        for (int sessionIndex = 0; sessionIndex < sessions.Length; sessionIndex++)
+        {
+            PrisonerSortSession session = sessions[sessionIndex];
+            bool active = session == ActiveSession;
+            if (session?.batches == null) continue;
+
+            for (int batchIndex = 0; batchIndex < session.batches.Length; batchIndex++)
+            {
+                PrisonerSortBatch batch = session.batches[batchIndex];
+                if (batch?.participants == null) continue;
+
+                for (int participantIndex = 0; participantIndex < batch.participants.Length; participantIndex++)
+                {
+                    GameObject root = batch.participants[participantIndex]?.root;
+                    if (root != null)
+                        root.SetActive(active);
+                }
+            }
+        }
     }
 
     private void RegisterLegacyArrival()
