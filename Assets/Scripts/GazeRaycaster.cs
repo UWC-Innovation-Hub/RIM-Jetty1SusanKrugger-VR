@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -18,8 +19,13 @@ public class GazeRaycaster : MonoBehaviour
     [Tooltip("Time (seconds) required to trigger a gaze action")]
     [SerializeField] private float dwellTime = 1f;
 
+    [Tooltip("Time (seconds) before the same target can be gazed again after exit.")]
+    [SerializeField] private float reentryCooldown = 2f;
+
     private IGazeTarget currentTarget;
     private float gazeTimer;
+    private bool hasTriggeredDwell;
+    private readonly Dictionary<IGazeTarget, float> blockedTargets = new Dictionary<IGazeTarget, float>();
 
     private void Reset()
     {
@@ -54,7 +60,7 @@ public class GazeRaycaster : MonoBehaviour
         {
             IGazeTarget target = hit.collider.GetComponent<IGazeTarget>();
 
-            if (target != null)
+            if (target != null && !IsTargetBlocked(target))
             {
                 HandleTarget(target);
                 return;
@@ -72,13 +78,15 @@ public class GazeRaycaster : MonoBehaviour
             currentTarget = newTarget;
             currentTarget.OnGazeEnter();
             gazeTimer = 0f;
+            hasTriggeredDwell = false;
         }
 
         gazeTimer += Time.deltaTime;
 
-        if (gazeTimer >= dwellTime)
+        if (!hasTriggeredDwell && gazeTimer >= dwellTime)
         {
             currentTarget.OnGazeDwell();
+            hasTriggeredDwell = true;
         }
     }
 
@@ -86,8 +94,26 @@ public class GazeRaycaster : MonoBehaviour
     {
         if (currentTarget == null) return;
 
+        blockedTargets[currentTarget] = Time.time + reentryCooldown;
         currentTarget.OnGazeExit();
         currentTarget = null;
         gazeTimer = 0f;
+        hasTriggeredDwell = false;
+    }
+
+    private bool IsTargetBlocked(IGazeTarget target)
+    {
+        if (!blockedTargets.TryGetValue(target, out float blockedUntil))
+        {
+            return false;
+        }
+
+        if (Time.time >= blockedUntil)
+        {
+            blockedTargets.Remove(target);
+            return false;
+        }
+
+        return true;
     }
 }

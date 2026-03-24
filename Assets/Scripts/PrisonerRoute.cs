@@ -5,6 +5,8 @@ public class PrisonerRoute : MonoBehaviour
     //public GameObject Prisoner;
     public Animator[] ChoiceAnimators;
     public Animator[] PrisonerWalkAnimators;
+
+    public Animator BoatGateAnimator;
     public string identifier;
     private int index;
     private PrisonerSortSession activeSession;
@@ -63,6 +65,7 @@ public class PrisonerRoute : MonoBehaviour
                 break;
             case "boat":
                 choiceAnimator.SetTrigger("GoToBoat");
+                BoatGateAnimator.SetTrigger("Open");
                 break;
             case "truck":
                 choiceAnimator.SetTrigger("GoToTruck");

@@ -837,6 +837,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 558134210522843506, guid: e44d61c93667ddb4991a24764603818b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 656744039051621708, guid: e44d61c93667ddb4991a24764603818b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -917,9 +921,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1801664801870234390, guid: e44d61c93667ddb4991a24764603818b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820287037424053187, guid: e44d61c93667ddb4991a24764603818b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4548803604018819653, guid: e44d61c93667ddb4991a24764603818b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6465536082307140661, guid: e44d61c93667ddb4991a24764603818b, type: 3}
       propertyPath: m_Name
       value: Player_Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6775962050491308698, guid: e44d61c93667ddb4991a24764603818b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6945244230495872448, guid: e44d61c93667ddb4991a24764603818b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7079498774331012153, guid: e44d61c93667ddb4991a24764603818b, type: 3}
       propertyPath: m_IsActive
@@ -1327,6 +1351,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  lingerDuration: 2
   onGazeEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -4451,6 +4476,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   dwellTime: 1
+  reentryCooldown: 2
 --- !u!1 &1778339430
 GameObject:
   m_ObjectHideFlags: 0
