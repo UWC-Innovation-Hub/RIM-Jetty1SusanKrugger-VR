@@ -113,6 +113,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Registration office/
         ├── Textures/
         ├── Warders/
+            ├── characters/
     ├── Oculus/
     ├── Plugins/
         ├── Android/
