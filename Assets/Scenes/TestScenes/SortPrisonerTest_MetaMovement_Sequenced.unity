@@ -31934,6 +31934,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: HighlightExit, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenUnselect:
     m_PersistentCalls:
       m_Calls: []
@@ -49968,15 +49980,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 787303929672122470, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -4.2731633
+      value: -76.160904
       objectReference: {fileID: 0}
     - target: {fileID: 787303929672122470, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0.000013698464
+      value: -179.9993
       objectReference: {fileID: 0}
     - target: {fileID: 787303929672122470, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -0.0000010206948
+      value: 179.99902
       objectReference: {fileID: 0}
     - target: {fileID: 2427734448182117797, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_Name
@@ -50024,15 +50036,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3392767396307663618, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -0.000018277235
+      value: -0.000018516512
       objectReference: {fileID: 0}
     - target: {fileID: 3392767396307663618, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0.000013660378
+      value: 0.000013533669
       objectReference: {fileID: 0}
     - target: {fileID: 3392767396307663618, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -4.3576323e-12
+      value: -4.70307e-12
       objectReference: {fileID: 0}
     - target: {fileID: 6890695283780566632, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_Enabled
@@ -50052,15 +50064,15 @@ PrefabInstance:
       objectReference: {fileID: 7400000, guid: 26d1e62039603904daf98c9e659f5263, type: 2}
     - target: {fileID: 8515880981194960109, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 86.603325
+      value: 49.038975
       objectReference: {fileID: 0}
     - target: {fileID: 8515880981194960109, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -2.2673654e-14
+      value: 49.033157
       objectReference: {fileID: 0}
     - target: {fileID: 8515880981194960109, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -7.194155e-14
+      value: 180.00215
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3037454173984897967, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
@@ -50070,6 +50082,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2427734448182117797, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1416439106}
+    - targetCorrespondingSourceObject: {fileID: 2427734448182117797, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1416439107}
   m_SourcePrefab: {fileID: 100100000, guid: 876d31401f2543b468c04e3daa4735eb, type: 3}
 --- !u!4 &1416439104 stripped
 Transform:
@@ -50103,6 +50118,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1416439107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1416439105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26afc0ef01dc8db44bbda624ca97b81e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
 --- !u!1 &1419790429
 GameObject:
   m_ObjectHideFlags: 0
@@ -54699,6 +54726,7 @@ MonoBehaviour:
   - {fileID: 690826037}
   - {fileID: 939938224}
   - {fileID: 1634308959}
+  BoatGateAnimator: {fileID: 0}
   identifier: cell
   AS: {fileID: 1520555853}
 --- !u!1 &1521578152
