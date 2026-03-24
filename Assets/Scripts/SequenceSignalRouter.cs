@@ -6,52 +6,34 @@ public class SequenceSignalRouter : MonoBehaviour
     [SerializeField] private SequenceBrain brain;
 
     [Header("Interaction Modules")]
-
-    ////C1
-    [SerializeField] private InteractionModuleBase inventoryInt;
-    [SerializeField] private InteractionModuleBase prisonerSort;
-
-    ////C2
-    //[SerializeField] private InteractionModuleBase fingerprint;
-
-    // Add more as needed:
-    // [SerializeField] private InteractionModuleBase doorLever;
-    // [SerializeField] private InteractionModuleBase dossierUI;
+    [SerializeField] private InteractionModuleBase[] interactionModules;
 
     private void Reset()
     {
         brain = FindFirstObjectByType<SequenceBrain>();
     }
 
-
-    //// Timeline signal calls THIS at the gate moment
-    public void EnterInteraction_Inventory()
+    // Timeline signal calls this at the gate moment.
+    public void EnterInteractionByIndex(int moduleIndex)
     {
         if (!brain) return;
-        brain.SetActiveInteraction(inventoryInt);
+
+        if (interactionModules == null || moduleIndex < 0 || moduleIndex >= interactionModules.Length)
+        {
+            Debug.LogWarning($"{name}: Invalid interaction module index {moduleIndex}.");
+            return;
+        }
+
+        InteractionModuleBase module = interactionModules[moduleIndex];
+        if (!module)
+        {
+            Debug.LogWarning($"{name}: Interaction module at index {moduleIndex} is not assigned.");
+            return;
+        }
+
+        brain.SetActiveInteraction(module);
         brain.EnterInteraction();
     }
-
-
-    // Timeline signal calls THIS at the gate moment
-    public void EnterInteraction_PrisonerSort()
-    {
-        if (!brain) return;
-        brain.SetActiveInteraction(prisonerSort);
-        brain.EnterInteraction();
-    }
-
-    //// Timeline signal calls THIS at the gate moment
-    //public void EnterInteraction_Fingerprint()
-    //{
-    //    if (!brain) return;
-    //    brain.SetActiveInteraction(fingerprint);
-    //    brain.EnterInteraction();
-    //}
-
-
-
-
 
     // Optional: if you want a generic exit signal (usually you won't)
     public void ExitInteraction_ResumeTimeline()
