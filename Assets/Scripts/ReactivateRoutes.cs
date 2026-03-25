@@ -23,6 +23,8 @@ public class ReactivateRoutes : MonoBehaviour
 
     //Increment prisoner for interaction end point detection.
     public PrisonerSortModule PrisonerSortModule;
+    private PrisonerSortSession activeSession;
+    private PrisonerSortBatch activeBatch;
 
 
     private void Awake()
@@ -33,7 +35,8 @@ public class ReactivateRoutes : MonoBehaviour
 
     public void ResetForBatch()
     {
-        identifier = 0;
+        if (activeBatch == null)
+            identifier = 0;
 
         SetRoutesActive(true);
 
@@ -44,12 +47,25 @@ public class ReactivateRoutes : MonoBehaviour
             Grabbed.grabbed = false;
 
         ResetMats();
+
+        if (activeBatch != null)
+        {
+            SetBatchParticipantsActive(activeBatch, true);
+            return;
+        }
+
         ResetPrisonersToStartState();
     }
 
 
     public void ReactivateRoute()
     {
+        if (activeBatch != null)
+        {
+            ResetForBatch();
+            return;
+        }
+
         SetRoutesActive(true);
 
         if (DistanceHandGrabInteractor != null)
@@ -100,6 +116,8 @@ public class ReactivateRoutes : MonoBehaviour
         if (Grabbed != null)
             Grabbed.grabbed = false;
 
+        if (activeBatch != null)
+            return;
 
         if (Prisoners == null) return;
 
@@ -120,6 +138,27 @@ public class ReactivateRoutes : MonoBehaviour
     {
         if (PrisonerSortModule != null)
             PrisonerSortModule.RegisterPrisonerArrived();
+    }
+
+    public void BindSession(PrisonerSortSession session)
+    {
+        activeSession = session;
+    }
+
+    public void SetActiveBatch(PrisonerSortBatch batch)
+    {
+        activeBatch = batch;
+    }
+
+    public void CompleteCurrentBatch()
+    {
+        if (activeBatch == null) return;
+
+        SetBatchParticipantsActive(activeBatch, false);
+        ResetMats();
+
+        if (Grabbed != null)
+            Grabbed.grabbed = false;
     }
 
 
@@ -203,6 +242,18 @@ public class ReactivateRoutes : MonoBehaviour
         {
             if (go != null)
                 go.SetActive(active);
+        }
+    }
+
+    private static void SetBatchParticipantsActive(PrisonerSortBatch batch, bool active)
+    {
+        if (batch == null || batch.participants == null) return;
+
+        for (int i = 0; i < batch.participants.Length; i++)
+        {
+            PrisonerSortParticipant participant = batch.participants[i];
+            if (participant?.root == null) continue;
+            participant.root.SetActive(active);
         }
     }
 
