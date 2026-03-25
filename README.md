@@ -35,6 +35,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C1/
         ├── J1/
     ├── Assets/
+        ├── Fonts/
         ├── RewardToken/
     ├── Audio/
         ├── C1/
@@ -77,7 +78,6 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Registration Office/
         ├── Warders/
     ├── Media/
-        ├── Audio/
         ├── Video/
             ├── C1/
             ├── RIM Show and Tell/
@@ -119,6 +119,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Android/
     ├── Prefabs/
         ├── Interactions/
+        ├── UI/
         ├── Walking man/
     ├── Prisoner Shaders/
     ├── RIM_jetty1_assets/
@@ -251,6 +252,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `CargoDoorDriver.cs` | `Assets/Scripts/CargoDoorDriver.cs` |
 | `ClapConfirmationUI.cs` | `Assets/Scripts/ClapConfirmationUI.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/ClapDetector.cs` |
+| `ControlBoatGate.cs` | `Assets/Scripts/ControlBoatGate.cs` |
 | `CountUpTimer.cs` | `Assets/Scripts/CountUpTimer.cs` |
 | `CountdownTimer.cs` | `Assets/Scripts/CountdownTimer.cs` |
 | `FadeControllerScript.cs` | `Assets/Scripts/FadeControllerScript.cs` |
@@ -283,6 +285,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `PalmGestureDetector.cs` | `Assets/Scripts/PalmGestureDetector.cs` |
 | `PickUpUI.cs` | `Assets/Scripts/PickUpUI.cs` |
 | `PrisonerRoute.cs` | `Assets/Scripts/PrisonerRoute.cs` |
+| `PrisonerSortData.cs` | `Assets/Scripts/PrisonerSortData.cs` |
 | `PrisonerSortModule.cs` | `Assets/Scripts/PrisonerSortModule.cs` |
 | `ProgressBar.cs` | `Assets/Scripts/ProgressBar.cs` |
 | `ProgressObject.cs` | `Assets/Scripts/ProgressObject.cs` |
