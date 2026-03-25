@@ -137,6 +137,14 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
             yield break;
         }
 
+        yield return _currentSelection.FadeOutInfoRoutine();
+
+        if (!IsActive || _currentSelection == null)
+        {
+            _completeSelectionRoutine = null;
+            yield break;
+        }
+
         FingerprintTrigger completedFingerprint = _currentSelection;
         _currentSelection = null;
         _consumedFingerprints.Add(completedFingerprint);
