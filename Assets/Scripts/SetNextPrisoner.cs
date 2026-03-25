@@ -9,6 +9,8 @@ public class SetNextPrisoner : MonoBehaviour
     //Increment prisoner for interaction end point detection.
     public PrisonerSortModule PrisonerSortModule;
 
+    public Animator BoatAnimator;
+
     public void ReactivateRoute()
     {
         if (PrisonerSortModule != null && PrisonerSortModule.UsesSessionBatches)
@@ -39,6 +41,7 @@ public class SetNextPrisoner : MonoBehaviour
         if (PrisonerSortModule != null && PrisonerSortModule.UsesSessionBatches)
         {
             PrisonerSortModule.RegisterParticipantArrived(ResolveParticipantId());
+            BoatAnimator.SetTrigger("Close");
             return;
         }
 

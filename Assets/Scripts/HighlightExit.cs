@@ -41,7 +41,7 @@ public class HighlightExit : MonoBehaviour
         //Highlight
         if (!grabbed)
         {
-            HM.HighLightMats[identifier].SetFloat("_EmissionStrength", 0f);
+            HM.HighLightMats[identifier].SetFloat("_EmissionStrength", 0.1f);
         }
         else
         {
