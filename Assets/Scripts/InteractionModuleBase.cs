@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public abstract class InteractionModuleBase : MonoBehaviour
 {
@@ -20,6 +21,18 @@ public abstract class InteractionModuleBase : MonoBehaviour
     [SerializeField] private GameObject[] inactiveWhenActive;
     [Tooltip("Force this module's local toggles OFF on scene load until Activate() is called.")]
     [SerializeField] private bool forceInactiveOnAwake = true;
+
+    [Header("Optional Interaction Timeline")]
+    [Tooltip("Optional interaction-specific PlayableDirector to play while this module is active.")]
+    [SerializeField] private PlayableDirector interactionTimelineDirector;
+    [Tooltip("Automatically find a child PlayableDirector when no explicit interaction timeline is assigned.")]
+    [SerializeField] private bool autoFindInteractionTimeline = true;
+    [Tooltip("Play the interaction timeline when Activate() is called.")]
+    [SerializeField] private bool playInteractionTimelineOnActivate = true;
+    [Tooltip("Stop and rewind the interaction timeline when Deactivate() is called.")]
+    [SerializeField] private bool stopInteractionTimelineOnDeactivate = true;
+    [Tooltip("Rewind the interaction timeline to the beginning before playing it on Activate().")]
+    [SerializeField] private bool rewindInteractionTimelineOnActivate = true;
 
     [Header("Optional Environment")]
     [Tooltip("When active, force RenderSettings.fog to this value.")]
@@ -43,6 +56,7 @@ public abstract class InteractionModuleBase : MonoBehaviour
     {
         IsActive = false;
         IsComplete = false;
+        ResetInteractionTimelineToStart();
 
         if (forceInactiveOnAwake)
         {
@@ -65,10 +79,20 @@ public abstract class InteractionModuleBase : MonoBehaviour
         SetActive(activeWhenActive, true);
         SetActive(inactiveWhenActive, false);
         RenderSettings.fog = enableFog;
+
+        if (playInteractionTimelineOnActivate)
+        {
+            PlayInteractionTimeline();
+        }
     }
 
     public virtual void Deactivate()
     {
+        if (stopInteractionTimelineOnDeactivate)
+        {
+            ResetInteractionTimelineToStart();
+        }
+
         IsActive = false;
         SetEnabled(enableWhenActive, false);
         SetEnabled(disableWhenActive, true);
@@ -79,6 +103,52 @@ public abstract class InteractionModuleBase : MonoBehaviour
         {
             RenderSettings.fog = _previousFogState;
         }
+    }
+
+    private void PlayInteractionTimeline()
+    {
+        PlayableDirector director = ResolveInteractionTimelineDirector();
+        if (director == null)
+        {
+            return;
+        }
+
+        if (rewindInteractionTimelineOnActivate)
+        {
+            director.time = 0d;
+            director.Evaluate();
+        }
+
+        director.Play();
+    }
+
+    private void ResetInteractionTimelineToStart()
+    {
+        PlayableDirector director = ResolveInteractionTimelineDirector();
+        if (director == null)
+        {
+            return;
+        }
+
+        director.Stop();
+        director.time = 0d;
+        director.Evaluate();
+    }
+
+    private PlayableDirector ResolveInteractionTimelineDirector()
+    {
+        if (interactionTimelineDirector != null)
+        {
+            return interactionTimelineDirector;
+        }
+
+        if (!autoFindInteractionTimeline)
+        {
+            return null;
+        }
+
+        interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
+        return interactionTimelineDirector;
     }
 
     protected void Complete()

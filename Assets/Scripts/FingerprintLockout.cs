@@ -4,6 +4,8 @@ public class FingerprintLockout : MonoBehaviour
 {
     [SerializeField] private FingerprintTrigger[] fingerprints;
 
+    public FingerprintTrigger[] Fingerprints => fingerprints;
+
     public void SetAllArmed(bool armed)
     {
         if (fingerprints == null) return;
