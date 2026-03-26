@@ -14193,6 +14193,14 @@ PrefabInstance:
       propertyPath: _transformFeatureStateProvider
       value: 
       objectReference: {fileID: 1783121165}
+    - target: {fileID: 6509387102351728290, guid: 243eff5df2c6b4f468bd5120770fd839, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6627995855450850472, guid: 243eff5df2c6b4f468bd5120770fd839, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6710445929493975841, guid: 243eff5df2c6b4f468bd5120770fd839, type: 3}
       propertyPath: _hand
       value: 
@@ -14212,6 +14220,28 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 832690249}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2062063261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b14164f8f23faae4293baeb84485b3d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &832690251 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1220697800900852993, guid: 243eff5df2c6b4f468bd5120770fd839, type: 3}
+  m_PrefabInstance: {fileID: 832690249}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b14164f8f23faae4293baeb84485b3d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &832690252 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1220697801734494362, guid: 243eff5df2c6b4f468bd5120770fd839, type: 3}
+  m_PrefabInstance: {fileID: 832690249}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b14164f8f23faae4293baeb84485b3d6, type: 3}
@@ -34488,14 +34518,16 @@ MonoBehaviour:
   fadeOutDuration: 0.35
   fadeInDuration: 0.35
   breathingAudioSourceOverride: {fileID: 1869748061}
-  leftBreatheOutState: {fileID: 209833478}
-  rightBreatheOutState: {fileID: 896573004}
-  minVolume: 0.05
-  maxVolume: 1
-  decreaseRate: 0.2
-  increaseRate: 0.2
-  completionVolumeThreshold: 0.1
-  completionHoldDuration: 10
+  leftInhalePoseState: {fileID: 209833478}
+  rightInhalePoseState: {fileID: 896573004}
+  leftExhalePoseState: {fileID: 832690252}
+  rightExhalePoseState: {fileID: 832690251}
+  inhaleClip: {fileID: 8300000, guid: 263f9927d9d2f1440837799de70d8227, type: 3}
+  exhaleClip: {fileID: 8300000, guid: 263f9927d9d2f1440837799de70d8227, type: 3}
+  breathsRequired: 3
+  poseEntryHoldTime: 0.15
+  completedBreathCount: 0
+  currentPhase: 0
 --- !u!1 &1871352125
 GameObject:
   m_ObjectHideFlags: 0

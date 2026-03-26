@@ -1,32 +1,53 @@
 using Oculus.Interaction;
 using Oculus.Interaction.PoseDetection;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(AudioSource))]
 public class BreathingInteractionModule : InteractionModuleBase
 {
+    public enum BreathingPhase
+    {
+        WaitingForInhale = 0,
+        WaitingForExhale = 1
+    }
+
     [Header("Wiring")]
     [SerializeField] private AudioSource breathingAudioSourceOverride;
-    [SerializeField] private MonoBehaviour leftBreatheOutState;
-    [SerializeField] private MonoBehaviour rightBreatheOutState;
+    [FormerlySerializedAs("leftBreatheOutState")]
+    [SerializeField] private MonoBehaviour leftInhalePoseState;
+    [FormerlySerializedAs("rightBreatheOutState")]
+    [SerializeField] private MonoBehaviour rightInhalePoseState;
+    [SerializeField] private MonoBehaviour leftExhalePoseState;
+    [SerializeField] private MonoBehaviour rightExhalePoseState;
 
-    [Header("Volume Response")]
-    [SerializeField] private float minVolume = 0.05f;
-    [SerializeField] private float maxVolume = 1.0f;
-    [SerializeField] private float decreaseRate = 0.2f;
-    [SerializeField] private float increaseRate = 0.2f;
+    [Header("Audio")]
+    [SerializeField] private AudioClip inhaleClip;
+    [SerializeField] private AudioClip exhaleClip;
 
-    [Header("Completion")]
-    [SerializeField] private float completionVolumeThreshold = 0.1f;
-    [SerializeField] private float completionHoldDuration = 10.0f;
+    [Header("Breath Count")]
+    [SerializeField] private int breathsRequired = 3;
+    [SerializeField] private float poseEntryHoldTime = 0.15f;
 
-    public float NormalizedBreathingValue { get; private set; } = 1f;
+    [Header("Debug")]
+    [SerializeField] private int completedBreathCount;
+    [SerializeField] private BreathingPhase currentPhase = BreathingPhase.WaitingForInhale;
+
+    public int CompletedBreathCount => completedBreathCount;
+    public BreathingPhase CurrentPhase => currentPhase;
 
     private AudioSource _breathingAudioSource;
-    private PoseSignal _leftPoseSignal;
-    private PoseSignal _rightPoseSignal;
-    private float _completionTimer;
+    private PoseSignal _leftInhalePoseSignal;
+    private PoseSignal _rightInhalePoseSignal;
+    private PoseSignal _leftExhalePoseSignal;
+    private PoseSignal _rightExhalePoseSignal;
+    private float _inhaleStableTime;
+    private float _exhaleStableTime;
+    private bool _inhaleLatched;
+    private bool _exhaleLatched;
+    private bool _warnedMissingInhaleClip;
+    private bool _warnedMissingExhaleClip;
 
     private void Reset()
     {
@@ -45,22 +66,25 @@ public class BreathingInteractionModule : InteractionModuleBase
         base.Activate();
 
         ResolveReferences();
+        ResetRuntimeState(stopPlayback: true);
+
         if (!ValidateDependencies())
         {
             Complete();
             return;
         }
 
-        GetVolumeBounds(out _, out float maxBound);
-        _completionTimer = 0f;
-        NormalizedBreathingValue = 1f;
+        _breathingAudioSource.loop = false;
+        _breathingAudioSource.volume = 1f;
 
-        _breathingAudioSource.loop = true;
-        _breathingAudioSource.volume = maxBound;
-
-        if (!_breathingAudioSource.isPlaying)
+        if (_breathingAudioSource.isPlaying)
         {
-            _breathingAudioSource.Play();
+            _breathingAudioSource.Stop();
+        }
+
+        if (Mathf.Max(0, breathsRequired) == 0)
+        {
+            Complete();
         }
     }
 
@@ -77,31 +101,113 @@ public class BreathingInteractionModule : InteractionModuleBase
 
     private void Update()
     {
-        if (!IsActive || IsComplete || _breathingAudioSource == null)
+        if (!IsActive || IsComplete)
         {
             return;
         }
 
-        GetVolumeBounds(out float minBound, out float maxBound);
-        bool anyFist = IsPoseActive(_leftPoseSignal) || IsPoseActive(_rightPoseSignal);
-        float targetVolume = anyFist ? minBound : maxBound;
-        float rate = anyFist ? Mathf.Max(0f, decreaseRate) : Mathf.Max(0f, increaseRate);
+        bool inhaleActive = IsPoseActive(_leftInhalePoseSignal) || IsPoseActive(_rightInhalePoseSignal);
+        bool exhaleActive = IsPoseActive(_leftExhalePoseSignal) || IsPoseActive(_rightExhalePoseSignal);
 
-        _breathingAudioSource.volume = Mathf.MoveTowards(_breathingAudioSource.volume, targetVolume, rate * Time.deltaTime);
-        NormalizedBreathingValue = Mathf.InverseLerp(minBound, maxBound, _breathingAudioSource.volume);
-
-        if (anyFist && _breathingAudioSource.volume < completionVolumeThreshold)
+        if (inhaleActive && exhaleActive)
         {
-            _completionTimer += Time.deltaTime;
-            if (_completionTimer >= completionHoldDuration)
+            ResetPoseEntryTracking();
+            return;
+        }
+
+        UpdateInhaleTracking(inhaleActive);
+        UpdateExhaleTracking(exhaleActive);
+    }
+
+    private void UpdateInhaleTracking(bool inhaleActive)
+    {
+        if (!inhaleActive)
+        {
+            _inhaleStableTime = 0f;
+            _inhaleLatched = false;
+            return;
+        }
+
+        _inhaleStableTime += Time.deltaTime;
+
+        if (_inhaleLatched || _inhaleStableTime < Mathf.Max(0f, poseEntryHoldTime))
+        {
+            return;
+        }
+
+        _inhaleLatched = true;
+        TryAcceptInhaleEntry();
+    }
+
+    private void UpdateExhaleTracking(bool exhaleActive)
+    {
+        if (!exhaleActive)
+        {
+            _exhaleStableTime = 0f;
+            _exhaleLatched = false;
+            return;
+        }
+
+        _exhaleStableTime += Time.deltaTime;
+
+        if (_exhaleLatched || _exhaleStableTime < Mathf.Max(0f, poseEntryHoldTime))
+        {
+            return;
+        }
+
+        _exhaleLatched = true;
+        TryAcceptExhaleEntry();
+    }
+
+    private void TryAcceptInhaleEntry()
+    {
+        if (currentPhase != BreathingPhase.WaitingForInhale)
+        {
+            return;
+        }
+
+        currentPhase = BreathingPhase.WaitingForExhale;
+        PlayPhaseClip(inhaleClip, nameof(inhaleClip), ref _warnedMissingInhaleClip);
+    }
+
+    private void TryAcceptExhaleEntry()
+    {
+        if (currentPhase != BreathingPhase.WaitingForExhale)
+        {
+            return;
+        }
+
+        completedBreathCount++;
+        PlayPhaseClip(exhaleClip, nameof(exhaleClip), ref _warnedMissingExhaleClip);
+
+        if (completedBreathCount >= Mathf.Max(1, breathsRequired))
+        {
+            Complete();
+            return;
+        }
+
+        currentPhase = BreathingPhase.WaitingForInhale;
+    }
+
+    private void PlayPhaseClip(AudioClip clip, string clipFieldName, ref bool warningLogged)
+    {
+        if (_breathingAudioSource == null)
+        {
+            return;
+        }
+
+        if (clip == null)
+        {
+            if (!warningLogged)
             {
-                Complete();
+                Debug.LogWarning($"{name}: BreathingInteractionModule is missing {clipFieldName}.");
+                warningLogged = true;
             }
+
+            return;
         }
-        else
-        {
-            _completionTimer = 0f;
-        }
+
+        _breathingAudioSource.PlayOneShot(clip);
     }
 
     private bool ValidateDependencies()
@@ -112,10 +218,12 @@ public class BreathingInteractionModule : InteractionModuleBase
             return false;
         }
 
-        if (_leftPoseSignal == null || !_leftPoseSignal.IsValid
-            || _rightPoseSignal == null || !_rightPoseSignal.IsValid)
+        if (_leftInhalePoseSignal == null || !_leftInhalePoseSignal.IsValid
+            || _rightInhalePoseSignal == null || !_rightInhalePoseSignal.IsValid
+            || _leftExhalePoseSignal == null || !_leftExhalePoseSignal.IsValid
+            || _rightExhalePoseSignal == null || !_rightExhalePoseSignal.IsValid)
         {
-            Debug.LogWarning($"{name}: BreathingInteractionModule requires both left and right BreatheOut active states.");
+            Debug.LogWarning($"{name}: BreathingInteractionModule requires inhale and exhale pose states for both hands.");
             return false;
         }
 
@@ -128,18 +236,35 @@ public class BreathingInteractionModule : InteractionModuleBase
             ? breathingAudioSourceOverride
             : GetComponent<AudioSource>();
 
-        if (leftBreatheOutState == null)
+        if (leftInhalePoseState == null)
         {
-            leftBreatheOutState = FindPoseRootState("breatheoutposeleft");
+            leftInhalePoseState = FindPoseRootState("breatheoutposeleft");
         }
 
-        if (rightBreatheOutState == null)
+        if (rightInhalePoseState == null)
         {
-            rightBreatheOutState = FindPoseRootState("breatheoutposeright");
+            rightInhalePoseState = FindPoseRootState("breatheoutposeright");
         }
 
-        _leftPoseSignal = BuildPoseSignal(leftBreatheOutState, "breatheoutposeleft");
-        _rightPoseSignal = BuildPoseSignal(rightBreatheOutState, "breatheoutposeright");
+        if (leftExhalePoseState == null)
+        {
+            leftExhalePoseState = FindPoseRootState("stopposeleft");
+        }
+
+        if (rightExhalePoseState == null)
+        {
+            rightExhalePoseState = FindPoseRootState("stopposeright");
+        }
+
+        if (inhaleClip == null && _breathingAudioSource != null)
+        {
+            inhaleClip = _breathingAudioSource.clip;
+        }
+
+        _leftInhalePoseSignal = BuildPoseSignal(leftInhalePoseState, "breatheoutposeleft");
+        _rightInhalePoseSignal = BuildPoseSignal(rightInhalePoseState, "breatheoutposeright");
+        _leftExhalePoseSignal = BuildPoseSignal(leftExhalePoseState, "stopposeleft");
+        _rightExhalePoseSignal = BuildPoseSignal(rightExhalePoseState, "stopposeright");
     }
 
     private MonoBehaviour FindPoseRootState(string normalizedPoseName)
@@ -223,16 +348,19 @@ public class BreathingInteractionModule : InteractionModuleBase
 
     private void ResetRuntimeState(bool stopPlayback)
     {
-        _completionTimer = 0f;
-        NormalizedBreathingValue = 1f;
+        completedBreathCount = 0;
+        currentPhase = BreathingPhase.WaitingForInhale;
+        ResetPoseEntryTracking();
+        _warnedMissingInhaleClip = false;
+        _warnedMissingExhaleClip = false;
 
         if (_breathingAudioSource == null)
         {
             return;
         }
 
-        GetVolumeBounds(out _, out float maxBound);
-        _breathingAudioSource.volume = maxBound;
+        _breathingAudioSource.loop = false;
+        _breathingAudioSource.volume = 1f;
 
         if (stopPlayback)
         {
@@ -240,15 +368,12 @@ public class BreathingInteractionModule : InteractionModuleBase
         }
     }
 
-    private void GetVolumeBounds(out float minBound, out float maxBound)
+    private void ResetPoseEntryTracking()
     {
-        minBound = Mathf.Clamp01(minVolume);
-        maxBound = Mathf.Clamp01(maxVolume);
-
-        if (maxBound < minBound)
-        {
-            maxBound = minBound;
-        }
+        _inhaleStableTime = 0f;
+        _exhaleStableTime = 0f;
+        _inhaleLatched = false;
+        _exhaleLatched = false;
     }
 
     private static bool IsPoseActive(PoseSignal poseSignal)
