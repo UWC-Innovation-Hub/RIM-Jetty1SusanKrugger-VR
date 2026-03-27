@@ -1,85 +1,155 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
-using TMPro;
-using Oculus.Interaction;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.Video;
+using System.Collections;
 
-public class SpinningVRUIUniversal : MonoBehaviour, IPointerClickHandler
+public class EndScreen : MonoBehaviour
 {
-    [Header("Spin Settings")]
-    [SerializeField] private float spinSpeed = 360f;
-    [SerializeField] private Vector3 spinAxis = Vector3.forward;
-    [SerializeField] private float spinDuration = 2f;
-    [SerializeField] private AnimationCurve spinCurve = AnimationCurve.EaseInOut(0, 1, 1, 0);
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+    [SerializeField] private string triggerName = "Play";
+    [SerializeField] private float animationDuration = 2f;
 
-    private bool isSpinning = false;
-    private float spinTimer = 0f;
+    [Header("Fade Settings")]
+    [SerializeField] private Renderer uiRenderer;
+    [SerializeField] private float uiFadeDuration = 1f;
 
-    private PointableUnityEventWrapper wrapper;
+    [Header("Video")]
+    [SerializeField] private VideoPlayer videoPlayer;
+    [SerializeField] private Renderer videoRenderer;
+    [SerializeField] private float videoFadeDuration = 1f;
+
+    private XRSimpleInteractable xrInteractable;
+    private bool hasBeenTriggered = false;
 
     private void Awake()
     {
-        // Setup XR Interactable for hand poke
-        wrapper = GetComponent<PointableUnityEventWrapper>();
-        if (wrapper == null)
+        xrInteractable = GetComponent<XRSimpleInteractable>();
+        if (xrInteractable == null)
         {
-            wrapper = gameObject.AddComponent<PointableUnityEventWrapper>();
+            xrInteractable = gameObject.AddComponent<XRSimpleInteractable>();
         }
     }
 
     private void Start()
     {
-       if (wrapper != null)
+        xrInteractable.selectEntered.AddListener(OnPoke);
+
+        SetAlpha(videoRenderer, 0f);
+
+        if (videoPlayer != null)
         {
-            wrapper.WhenSelect.AddListener(OnMetaInteract);
+            videoPlayer.playOnAwake = false;
+            videoPlayer.loopPointReached += OnVideoFinished;
         }
     }
 
-    private void Update()
+    private void OnPoke(SelectEnterEventArgs args)
     {
-        if (isSpinning)
+        if (hasBeenTriggered)
         {
-            spinTimer += Time.deltaTime;
-            float curveValue = spinCurve.Evaluate(Mathf.Clamp01(spinTimer / spinDuration));
+            return;
+        }
 
-            transform.Rotate(spinAxis, spinSpeed * curveValue * Time.deltaTime, Space.Self);
+        hasBeenTriggered = true;
 
-            if (spinTimer >= spinDuration)
-            {
-                StopSpinning();
-            }
+        if (animator != null)
+        {
+            animator.SetTrigger(triggerName);
+        }
+
+        StartCoroutine(PlaySequence());
+    }
+
+    private IEnumerator PlaySequence()
+    {
+        yield return new WaitForSeconds(animationDuration);
+
+        if (animator != null)
+        {
+            animator.enabled = false;
+        }
+
+        yield return StartCoroutine(Fade(uiRenderer, 1f, 0f, uiFadeDuration));
+
+        if (uiRenderer != null)
+        {
+            uiRenderer.enabled = false;
+        }
+        
+        if (xrInteractable != null)
+        {
+            xrInteractable.enabled = false;
+        }
+
+        yield return StartCoroutine(Fade(videoRenderer, 0f, 1f, videoFadeDuration));
+
+        if (videoPlayer != null)
+        {
+            videoPlayer.Play();
         }
     }
 
-    // For ray-based controller interaction
-    public void OnPointerClick(PointerEventData eventData)
+    private void OnVideoFinished(VideoPlayer vp)
     {
-        StartSpinning();
+        StartCoroutine(VideoFadeOut());
     }
 
-    // For hand poke interaction
-    private void OnMetaInteract(PointerEvent pointerEvent)
+    private IEnumerator VideoFadeOut()
     {
-        StartSpinning();
+        yield return StartCoroutine(Fade(videoRenderer, 1f, 0f, videoFadeDuration));
     }
 
-    private void StartSpinning()
+    private IEnumerator Fade(Renderer rend, float start, float end, float duration)
     {
-        isSpinning = true;
-        spinTimer = 0f;
+        if (rend == null)
+        {
+            yield break;
+        }
+
+        Material mat = rend.material;
+        Color color = mat.color;
+
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float alpha = Mathf.Lerp(start, end, timer / duration);
+
+            color.a = alpha;
+            mat.color = color;
+
+            yield return null;
+        }
+
+        color.a = end;
+        mat.color = color;
     }
 
-    private void StopSpinning()
+    private void SetAlpha(Renderer rend, float alpha)
     {
-        isSpinning = false;
-        spinTimer = 0f;
+        if (rend == null)
+        {
+            return;
+        }
+
+        Color c = rend.material.color;
+        c.a = alpha;
+        rend.material.color = c;
     }
 
     private void OnDestroy()
     {
-        if (wrapper != null)
+        if (xrInteractable != null)
         {
-            wrapper.WhenSelect.RemoveListener(OnMetaInteract);
+            xrInteractable.selectEntered.RemoveListener(OnPoke);
+        }
+
+        if (videoPlayer != null)
+        {
+            videoPlayer.loopPointReached -= OnVideoFinished;
         }
     }
 }
