@@ -82,6 +82,8 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── C1/
             ├── RIM Show and Tell/
     ├── MetaXR/
+    ├── Misc/
+        ├── Materials/
     ├── Models/
         ├── 3D_Scans/
             ├── OPTIMIZED/
@@ -277,6 +279,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `EquippableItem.cs` | `Assets/Scripts/InventoryTest/EquippableItem.cs` |
 | `InventoryManager.cs` | `Assets/Scripts/InventoryTest/InventoryManager.cs` |
 | `SimpleBodyAttachments.cs` | `Assets/Scripts/InventoryTest/SimpleBodyAttachments.cs` |
+| `LocationHighlight.cs` | `Assets/Scripts/LocationHighlight.cs` |
 | `LocationSelect.cs` | `Assets/Scripts/LocationSelect.cs` |
 | `MAIO_Vid_Controller.cs` | `Assets/Scripts/MAIO_Vid_Controller.cs` |
 | `MaterialOpacityFader.cs` | `Assets/Scripts/MaterialOpacityFader.cs` |
@@ -298,6 +301,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `SetNextPrisoner.cs` | `Assets/Scripts/SetNextPrisoner.cs` |
 | `TimelineBindingTransfer.cs` | `Assets/Scripts/TimelineBindingTransfer.cs` |
 | `TimelineVideoPlaybackController.cs` | `Assets/Scripts/TimelineVideoPlaybackController.cs` |
+| `TokenMove.cs` | `Assets/Scripts/TokenMove.cs` |
 | `TouchHandsPoseGate.cs` | `Assets/Scripts/TouchHandsPoseGate.cs` |
 | `TruckManager.cs` | `Assets/Scripts/TruckManager.cs` |
 | `VRTutorial.cs` | `Assets/Scripts/VRTutorial.cs` |
