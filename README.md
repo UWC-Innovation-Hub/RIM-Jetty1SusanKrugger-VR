@@ -156,7 +156,6 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
             ├── SortPrisonerTest_MetaMovement_Sequenced/
-    ├── Script Prefabs/
     ├── Scripts/
         ├── InventoryTest/
     ├── Settings/
@@ -271,6 +270,8 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `HighlightExit.cs` | `Assets/Scripts/HighlightExit.cs` |
 | `HighlightExitManager.cs` | `Assets/Scripts/HighlightExitManager.cs` |
 | `IGazeTarget.cs` | `Assets/Scripts/IGazeTarget.cs` |
+| `InstructionManager.cs` | `Assets/Scripts/InstructionManager.cs` |
+| `InstructionObject.cs` | `Assets/Scripts/InstructionObject.cs` |
 | `InteractionCompleteListener.cs` | `Assets/Scripts/InteractionCompleteListener.cs` |
 | `InteractionModuleBase.cs` | `Assets/Scripts/InteractionModuleBase.cs` |
 | `InventoryModule.cs` | `Assets/Scripts/InventoryModule.cs` |
