@@ -35,6 +35,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C1/
         ├── J1/
     ├── Assets/
+        ├── Fonts/
         ├── RewardToken/
     ├── Audio/
         ├── C1/
@@ -77,11 +78,12 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Registration Office/
         ├── Warders/
     ├── Media/
-        ├── Audio/
         ├── Video/
             ├── C1/
             ├── RIM Show and Tell/
     ├── MetaXR/
+    ├── Misc/
+        ├── Materials/
     ├── Models/
         ├── 3D_Scans/
             ├── OPTIMIZED/
@@ -119,6 +121,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Android/
     ├── Prefabs/
         ├── Interactions/
+        ├── UI/
         ├── Walking man/
     ├── Prisoner Shaders/
     ├── RIM_jetty1_assets/
@@ -152,7 +155,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── C2_J3_Cell_Rec_Assets/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
-    ├── Script Prefabs/
+            ├── SortPrisonerTest_MetaMovement_Sequenced/
     ├── Scripts/
         ├── InventoryTest/
     ├── Settings/
@@ -250,6 +253,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `CargoDoorDriver.cs` | `Assets/Scripts/CargoDoorDriver.cs` |
 | `ClapConfirmationUI.cs` | `Assets/Scripts/ClapConfirmationUI.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/ClapDetector.cs` |
+| `ControlBoatGate.cs` | `Assets/Scripts/ControlBoatGate.cs` |
 | `CountUpTimer.cs` | `Assets/Scripts/CountUpTimer.cs` |
 | `CountdownTimer.cs` | `Assets/Scripts/CountdownTimer.cs` |
 | `FadeControllerScript.cs` | `Assets/Scripts/FadeControllerScript.cs` |
@@ -266,6 +270,8 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `HighlightExit.cs` | `Assets/Scripts/HighlightExit.cs` |
 | `HighlightExitManager.cs` | `Assets/Scripts/HighlightExitManager.cs` |
 | `IGazeTarget.cs` | `Assets/Scripts/IGazeTarget.cs` |
+| `InstructionManager.cs` | `Assets/Scripts/InstructionManager.cs` |
+| `InstructionObject.cs` | `Assets/Scripts/InstructionObject.cs` |
 | `InteractionCompleteListener.cs` | `Assets/Scripts/InteractionCompleteListener.cs` |
 | `InteractionModuleBase.cs` | `Assets/Scripts/InteractionModuleBase.cs` |
 | `InventoryModule.cs` | `Assets/Scripts/InventoryModule.cs` |
@@ -274,6 +280,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `EquippableItem.cs` | `Assets/Scripts/InventoryTest/EquippableItem.cs` |
 | `InventoryManager.cs` | `Assets/Scripts/InventoryTest/InventoryManager.cs` |
 | `SimpleBodyAttachments.cs` | `Assets/Scripts/InventoryTest/SimpleBodyAttachments.cs` |
+| `LocationHighlight.cs` | `Assets/Scripts/LocationHighlight.cs` |
 | `LocationSelect.cs` | `Assets/Scripts/LocationSelect.cs` |
 | `MAIO_Vid_Controller.cs` | `Assets/Scripts/MAIO_Vid_Controller.cs` |
 | `MaterialOpacityFader.cs` | `Assets/Scripts/MaterialOpacityFader.cs` |
@@ -282,6 +289,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `PalmGestureDetector.cs` | `Assets/Scripts/PalmGestureDetector.cs` |
 | `PickUpUI.cs` | `Assets/Scripts/PickUpUI.cs` |
 | `PrisonerRoute.cs` | `Assets/Scripts/PrisonerRoute.cs` |
+| `PrisonerSortData.cs` | `Assets/Scripts/PrisonerSortData.cs` |
 | `PrisonerSortModule.cs` | `Assets/Scripts/PrisonerSortModule.cs` |
 | `ProgressBar.cs` | `Assets/Scripts/ProgressBar.cs` |
 | `ProgressObject.cs` | `Assets/Scripts/ProgressObject.cs` |
@@ -294,6 +302,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `SetNextPrisoner.cs` | `Assets/Scripts/SetNextPrisoner.cs` |
 | `TimelineBindingTransfer.cs` | `Assets/Scripts/TimelineBindingTransfer.cs` |
 | `TimelineVideoPlaybackController.cs` | `Assets/Scripts/TimelineVideoPlaybackController.cs` |
+| `TokenMove.cs` | `Assets/Scripts/TokenMove.cs` |
 | `TouchHandsPoseGate.cs` | `Assets/Scripts/TouchHandsPoseGate.cs` |
 | `TruckManager.cs` | `Assets/Scripts/TruckManager.cs` |
 | `VRTutorial.cs` | `Assets/Scripts/VRTutorial.cs` |
