@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -6,6 +7,9 @@ public class SceneManager : MonoBehaviour
     [Header("Scene Management")]
     [Tooltip("Name of the scene to load (must match exactly with scene name in Build Settings)")]
     public string sceneToLoad;
+
+    [Tooltip("Build index of the scene to load")]
+    public int sceneIndexToLoad = -1;
     
     [Header("Optional Settings")]
     [Tooltip("Delay before loading scene (in seconds)")]
@@ -14,12 +18,23 @@ public class SceneManager : MonoBehaviour
     [Tooltip("Enable this to load scene additively")]
     public bool loadAdditively = false;
 
+    [Header("Scene Fade")]
+    [Tooltip("Optional FadeController reference. If left empty, SceneManager will look for one in the scene.")]
+    [SerializeField] private FadeController fadeController;
+    [Tooltip("Duration used for fade-out before loading. Use -1 to use FadeController's default duration.")]
+    [SerializeField] private float fadeOutDuration = -1f;
+
+    private string pendingSceneName;
+    private int pendingSceneIndex = -1;
+    private bool useSceneIndex;
+    private Coroutine loadRoutine;
+
     private void Start()
     {
-        // Validate scene name on start
-        if (string.IsNullOrEmpty(sceneToLoad))
+        // Validate that at least one scene target has been provided.
+        if (string.IsNullOrEmpty(sceneToLoad) && sceneIndexToLoad < 0)
         {
-            Debug.LogWarning($"Scene name is empty on {gameObject.name}. Please specify a scene to load.");
+            Debug.LogWarning($"No scene target is set on {gameObject.name}. Please specify a scene name or build index.");
         }
     }
 
@@ -34,14 +49,7 @@ public class SceneManager : MonoBehaviour
             return;
         }
 
-        if (loadDelay > 0f)
-        {
-            Invoke(nameof(LoadSceneDelayed), loadDelay);
-        }
-        else
-        {
-            LoadSceneDelayed();
-        }
+        BeginSceneLoad(sceneToLoad);
     }
 
     /// <summary>
@@ -57,27 +65,64 @@ public class SceneManager : MonoBehaviour
         }
 
         sceneToLoad = sceneName;
-        LoadScene();
+        BeginSceneLoad(sceneName);
+    }
+
+    /// <summary>
+    /// Load scene using the inspector-assigned build index.
+    /// </summary>
+    public void LoadSceneByIndex()
+    {
+        if (sceneIndexToLoad < 0)
+        {
+            Debug.LogError("Scene index is invalid!");
+            return;
+        }
+
+        BeginSceneLoad(sceneIndexToLoad);
     }
 
     private void LoadSceneDelayed()
     {
         try
         {
-            if (loadAdditively)
+            if (useSceneIndex)
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Additive);
-                Debug.Log($"Loading scene '{sceneToLoad}' additively...");
+                if (loadAdditively)
+                {
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(pendingSceneIndex, LoadSceneMode.Additive);
+                    Debug.Log($"Loading scene at index {pendingSceneIndex} additively...");
+                }
+                else
+                {
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(pendingSceneIndex);
+                    Debug.Log($"Loading scene at index {pendingSceneIndex}...");
+                }
             }
             else
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneToLoad);
-                Debug.Log($"Loading scene '{sceneToLoad}'...");
+                if (loadAdditively)
+                {
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(pendingSceneName, LoadSceneMode.Additive);
+                    Debug.Log($"Loading scene '{pendingSceneName}' additively...");
+                }
+                else
+                {
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(pendingSceneName);
+                    Debug.Log($"Loading scene '{pendingSceneName}'...");
+                }
             }
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Failed to load scene '{sceneToLoad}': {e.Message}");
+            if (useSceneIndex)
+            {
+                Debug.LogError($"Failed to load scene at index {pendingSceneIndex}: {e.Message}");
+            }
+            else
+            {
+                Debug.LogError($"Failed to load scene '{pendingSceneName}': {e.Message}");
+            }
         }
     }
 
@@ -111,22 +156,66 @@ public class SceneManager : MonoBehaviour
     /// <param name="sceneIndex">Build index of the scene</param>
     public void LoadSceneByIndex(int sceneIndex)
     {
-        try
+        if (sceneIndex < 0)
         {
-            if (loadAdditively)
-            {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex, LoadSceneMode.Additive);
-            }
-            else
-            {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
-            }
-            Debug.Log($"Loading scene at index {sceneIndex}...");
+            Debug.LogError("Scene index is invalid!");
+            return;
         }
-        catch (System.Exception e)
+
+        sceneIndexToLoad = sceneIndex;
+        BeginSceneLoad(sceneIndex);
+    }
+
+    private void BeginSceneLoad(string sceneName)
+    {
+        useSceneIndex = false;
+        pendingSceneName = sceneName;
+        BeginSceneLoadRoutine();
+    }
+
+    private void BeginSceneLoad(int sceneIndex)
+    {
+        useSceneIndex = true;
+        pendingSceneIndex = sceneIndex;
+        BeginSceneLoadRoutine();
+    }
+
+    private void BeginSceneLoadRoutine()
+    {
+        if (loadRoutine != null)
         {
-            Debug.LogError($"Failed to load scene at index {sceneIndex}: {e.Message}");
+            StopCoroutine(loadRoutine);
         }
+
+        loadRoutine = StartCoroutine(LoadSceneWithFadeRoutine());
+    }
+
+    private IEnumerator LoadSceneWithFadeRoutine()
+    {
+        if (loadDelay > 0f)
+        {
+            yield return new WaitForSeconds(loadDelay);
+        }
+
+        FadeController controller = GetFadeController();
+        if (controller != null)
+        {
+            yield return controller.FadeOutRoutine(fadeOutDuration);
+        }
+
+        LoadSceneDelayed();
+        loadRoutine = null;
+    }
+
+    private FadeController GetFadeController()
+    {
+        if (fadeController != null)
+        {
+            return fadeController;
+        }
+
+        fadeController = FindFirstObjectByType<FadeController>();
+        return fadeController;
     }
 
     // Click detection for 3D objects
