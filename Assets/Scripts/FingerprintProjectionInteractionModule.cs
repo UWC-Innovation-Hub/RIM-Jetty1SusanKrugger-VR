@@ -238,9 +238,18 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
                 continue;
             }
 
-            bool shouldStayVisible = fingerprint == selectedFingerprint && !_consumedFingerprints.Contains(fingerprint);
+            bool isSelected = fingerprint == selectedFingerprint;
+            bool shouldStayVisible = isSelected && !_consumedFingerprints.Contains(fingerprint);
+
+            if (isSelected)
+            {
+                // Keep the chosen print visually active until its response audio completes.
+                fingerprint.SetVisible(shouldStayVisible);
+                continue;
+            }
+
             fingerprint.SetArmed(false);
-            fingerprint.SetVisible(shouldStayVisible);
+            fingerprint.SetVisible(false);
         }
     }
 

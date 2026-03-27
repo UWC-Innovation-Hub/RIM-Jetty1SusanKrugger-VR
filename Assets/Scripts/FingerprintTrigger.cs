@@ -64,17 +64,6 @@ public class FingerprintTrigger : MonoBehaviour
         {
             _col.enabled = armed;
             //_mesh.enabled = armed;
-
-            if (armed)
-            {
-                _meshMat.EnableKeyword("_EMISSION");
-                //FingerGlowMat.SetFloat("_EmissionStrength", 0.2f);
-            }
-            else
-            {
-                _meshMat.DisableKeyword("_EMISSION");
-                //FingerGlowMat.SetFloat("_EmissionStrength", 0f);
-            }                
             _Glowmesh.enabled = armed;
 
             ////FADE SOLUTION
@@ -181,11 +170,6 @@ public class FingerprintTrigger : MonoBehaviour
         }
     }
 
-
-    private void OnApplicationQuit()
-    {
-        _meshMat.EnableKeyword("_EMISSION");
-    }
 
     private void ResolveInfoUIReferences()
     {
