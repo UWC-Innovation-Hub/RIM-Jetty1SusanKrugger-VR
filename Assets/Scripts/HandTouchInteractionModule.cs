@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
 using UnityEngine.Video;
 
 public class HandTouchInteractionModule : InteractionModuleBase
@@ -26,12 +28,20 @@ public class HandTouchInteractionModule : InteractionModuleBase
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private bool muteHandAudioWhileActive = true;
 
+    [Header("Light Restore")]
+    [SerializeField] private Light sceneLightOverride;
+    [SerializeField] private float restoredLightIntensity = 0.5f;
+    [SerializeField] private float lightRestoreDuration = 1f;
+    [SerializeField] private bool disableInteractionTimelineDuringLightRestore = true;
+
     private Coroutine _sequenceRoutine;
     private readonly HashSet<HandTouchStep> _consumedSteps = new HashSet<HandTouchStep>();
     private readonly Dictionary<AudioSource, bool> _originalMuteStates = new Dictionary<AudioSource, bool>();
     private HandTouchStep _currentSelection;
     private bool _projectionFinished;
     private FieldInfo _deactivateDurationField;
+    private PlayableDirector _interactionTimelineDirector;
+    private Light _resolvedSceneLight;
 
     private void Reset()
     {
@@ -48,6 +58,7 @@ public class HandTouchInteractionModule : InteractionModuleBase
 
     public override void Activate()
     {
+        EnsureInteractionTimelineDirectorEnabled();
         base.Activate();
 
         ResolveDependencies();
@@ -155,6 +166,14 @@ public class HandTouchInteractionModule : InteractionModuleBase
             _consumedSteps.Add(completedStep);
 
             HideHand(completedStep);
+
+            if (AllHandsConsumed())
+            {
+                yield return RestoreSceneLightBeforeComplete();
+                _sequenceRoutine = null;
+                Complete();
+                yield break;
+            }
 
             if (revealDelayBetweenHands > 0f && !AllHandsConsumed())
             {
@@ -490,6 +509,16 @@ public class HandTouchInteractionModule : InteractionModuleBase
         {
             videoPlayer = projector.GetComponentInChildren<VideoPlayer>(true);
         }
+
+        if (_interactionTimelineDirector == null)
+        {
+            _interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
+        }
+
+        if (_resolvedSceneLight == null)
+        {
+            _resolvedSceneLight = ResolveSceneLight();
+        }
     }
 
     private void ResolveStepDependencies()
@@ -547,6 +576,145 @@ public class HandTouchInteractionModule : InteractionModuleBase
             {
                 fader.BeginFadeIn();
             }
+        }
+    }
+
+    private IEnumerator RestoreSceneLightBeforeComplete()
+    {
+        Light targetLight = ResolveSceneLight();
+        if (targetLight == null)
+        {
+            yield break;
+        }
+
+        if (disableInteractionTimelineDuringLightRestore)
+        {
+            DisableInteractionTimelineIfBoundTo(targetLight);
+        }
+
+        if (lightRestoreDuration <= 0f)
+        {
+            targetLight.intensity = restoredLightIntensity;
+            yield break;
+        }
+
+        float startIntensity = targetLight.intensity;
+        if (Mathf.Approximately(startIntensity, restoredLightIntensity))
+        {
+            targetLight.intensity = restoredLightIntensity;
+            yield break;
+        }
+
+        float elapsed = 0f;
+        while (IsActive && elapsed < lightRestoreDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / lightRestoreDuration);
+            float eased = t * t * (3f - 2f * t);
+            targetLight.intensity = Mathf.Lerp(startIntensity, restoredLightIntensity, eased);
+            yield return null;
+        }
+
+        targetLight.intensity = restoredLightIntensity;
+    }
+
+    private void EnsureInteractionTimelineDirectorEnabled()
+    {
+        if (_interactionTimelineDirector == null)
+        {
+            _interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
+        }
+
+        if (_interactionTimelineDirector != null && !_interactionTimelineDirector.enabled)
+        {
+            _interactionTimelineDirector.enabled = true;
+        }
+    }
+
+    private void DisableInteractionTimelineIfBoundTo(Light targetLight)
+    {
+        if (targetLight == null)
+        {
+            return;
+        }
+
+        if (_interactionTimelineDirector == null)
+        {
+            _interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
+        }
+
+        if (_interactionTimelineDirector == null || !_interactionTimelineDirector.enabled)
+        {
+            return;
+        }
+
+        Light boundLight = TryResolveLightFromTimelineBinding(_interactionTimelineDirector);
+        if (boundLight == targetLight)
+        {
+            _interactionTimelineDirector.enabled = false;
+        }
+    }
+
+    private Light ResolveSceneLight()
+    {
+        if (sceneLightOverride != null)
+        {
+            return sceneLightOverride;
+        }
+
+        if (_resolvedSceneLight != null)
+        {
+            return _resolvedSceneLight;
+        }
+
+        if (_interactionTimelineDirector == null)
+        {
+            _interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
+        }
+
+        _resolvedSceneLight = TryResolveLightFromTimelineBinding(_interactionTimelineDirector);
+        return _resolvedSceneLight;
+    }
+
+    private static Light TryResolveLightFromTimelineBinding(PlayableDirector director)
+    {
+        if (director == null)
+        {
+            return null;
+        }
+
+        if (!(director.playableAsset is TimelineAsset timelineAsset))
+        {
+            return null;
+        }
+
+        foreach (TrackAsset track in timelineAsset.GetOutputTracks())
+        {
+            Object binding = director.GetGenericBinding(track);
+            Light boundLight = TryGetLightFromBinding(binding);
+            if (boundLight != null)
+            {
+                return boundLight;
+            }
+        }
+
+        return null;
+    }
+
+    private static Light TryGetLightFromBinding(Object binding)
+    {
+        switch (binding)
+        {
+            case Light light:
+                return light;
+            case Animator animator:
+                return animator.GetComponent<Light>();
+            case GameObject gameObject:
+                return gameObject.GetComponent<Light>();
+            case Component component:
+                return component.GetComponent<Light>();
+            default:
+                return null;
         }
     }
 }

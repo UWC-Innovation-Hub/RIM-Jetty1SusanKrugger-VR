@@ -42,6 +42,11 @@ public class BreathingInteractionModule : InteractionModuleBase
     [Header("Vignette Wiring")]
     [SerializeField] private Renderer vignetteRenderer;
 
+    [Header("HUD Messaging")]
+    [SerializeField] private HeadLockedHud headLockedHud;
+    [SerializeField] private string breathCounterLabel = "Breath Counter";
+    [SerializeField] private bool fadeHudOnComplete = true;
+
     [Header("Breathing Goals")]
     [Min(1)]
     [SerializeField] private int breathsRequired = 3;
@@ -57,6 +62,8 @@ public class BreathingInteractionModule : InteractionModuleBase
     [SerializeField] private float mediumPulseDuration = 1.45f;
     [Min(0.05f)]
     [SerializeField] private float calmPulseDuration = 1.9f;
+    [Min(0f)]
+    [SerializeField] private float finalCalmHoldDuration = 1.9f;
     [Min(0.05f)]
     [SerializeField] private float finalFadeDuration = 0.6f;
 
@@ -96,6 +103,8 @@ public class BreathingInteractionModule : InteractionModuleBase
 
     private float _pulseClock;
     private float _finishElapsed;
+    private float _finalCalmHoldElapsed;
+    private bool _completionHudShown;
 
     private bool _isCrossfading;
     private AudioSource _crossfadeFromSource;
@@ -132,6 +141,7 @@ public class BreathingInteractionModule : InteractionModuleBase
 
         _runtimeState = RuntimeState.Running;
         ApplyVignette(exhaleRadius, 1f);
+        UpdateBreathCounterHud();
     }
 
     public override void Deactivate()
@@ -146,6 +156,7 @@ public class BreathingInteractionModule : InteractionModuleBase
 
         ApplyHiddenVignette();
         _runtimeState = RuntimeState.Idle;
+        ClearHudMessage();
 
         base.Deactivate();
     }
@@ -252,16 +263,21 @@ public class BreathingInteractionModule : InteractionModuleBase
         currentPhase = BreathingPhase.WaitingForInhale;
         currentCalmStage = Mathf.Clamp(completedBreathCount, 0, 2);
         StartLoopStage(currentCalmStage, immediate: false);
+        UpdateBreathCounterHud();
     }
 
     private void BeginFinalFade()
     {
-        currentCalmStage = Mathf.Clamp(breathsRequired - 1, 0, 2);
+        currentCalmStage = Mathf.Clamp(completedBreathCount - 1, 0, 2);
         currentPhase = BreathingPhase.WaitingForInhale;
         _runtimeState = RuntimeState.Finishing;
         _finishElapsed = 0f;
+        _finalCalmHoldElapsed = 0f;
+        _completionHudShown = false;
         _pulseClock = 0f;
         ApplyVignette(exhaleRadius, 1f);
+        StartLoopStage(currentCalmStage, immediate: false);
+        UpdateBreathCounterHud();
     }
 
     private void UpdatePulse(float deltaTime)
@@ -275,6 +291,25 @@ public class BreathingInteractionModule : InteractionModuleBase
 
     private void UpdateFinishing(float deltaTime)
     {
+        if (!_completionHudShown)
+        {
+            _finalCalmHoldElapsed += deltaTime;
+            UpdatePulse(deltaTime);
+
+            if (_finalCalmHoldElapsed < finalCalmHoldDuration)
+            {
+                return;
+            }
+
+            _completionHudShown = true;
+            _finishElapsed = 0f;
+
+            if (fadeHudOnComplete && headLockedHud != null)
+            {
+                headLockedHud.FadeOutText(finalFadeDuration);
+            }
+        }
+
         _finishElapsed += deltaTime;
         float normalized = finalFadeDuration <= 0f ? 1f : Mathf.Clamp01(_finishElapsed / finalFadeDuration);
         float loopLevel = Mathf.Lerp(loopVolume, 0f, normalized);
@@ -451,6 +486,8 @@ public class BreathingInteractionModule : InteractionModuleBase
 
         _pulseClock = 0f;
         _finishElapsed = 0f;
+        _finalCalmHoldElapsed = 0f;
+        _completionHudShown = false;
 
         _isCrossfading = false;
         _crossfadeElapsed = 0f;
@@ -714,6 +751,26 @@ public class BreathingInteractionModule : InteractionModuleBase
         _vignettePropertyBlock.SetFloat(InnerRadiusPropertyId, radius);
         _vignettePropertyBlock.SetFloat(OpacityPropertyId, opacity);
         vignetteRenderer.SetPropertyBlock(_vignettePropertyBlock);
+    }
+
+    private void UpdateBreathCounterHud()
+    {
+        if (headLockedHud == null)
+        {
+            return;
+        }
+
+        headLockedHud.SetMessage($"{breathCounterLabel}\n{completedBreathCount}", makeVisible: true);
+    }
+
+    private void ClearHudMessage()
+    {
+        if (headLockedHud == null)
+        {
+            return;
+        }
+
+        headLockedHud.ClearMessage(hide: true);
     }
 
     private sealed class PoseSignal
