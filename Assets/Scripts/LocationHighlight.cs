@@ -9,9 +9,6 @@ public class LocationHighlight : MonoBehaviour
     [Header("Hatch Overlay")]
     public Renderer hatchRenderer;
 
-    [Header("Fade Settings")]
-    public float fadeSpeed = 5f;
-
     [Header("Pointer")]
     public Transform pointer;
 
@@ -19,15 +16,21 @@ public class LocationHighlight : MonoBehaviour
     public float rayDistance = 10f;
     public LayerMask interactLayer;
 
+    [Header("Fade Settings")]
+    public float fadeSpeed = 5f;
+
     private float currentAlpha = 0f;
     private float targetAlpha = 0f;
 
     private bool isHovered = false;
-
+    private bool hasSelected = false;
 
     void Start()
     {
-        hatchRenderer.material = new Material(hatchRenderer.material);
+        if (hatchRenderer != null)
+        {
+            hatchRenderer.material = new Material(hatchRenderer.material);
+        }
     }
 
     void Update()
@@ -37,8 +40,9 @@ public class LocationHighlight : MonoBehaviour
         currentAlpha = Mathf.Lerp(currentAlpha, targetAlpha, Time.deltaTime * fadeSpeed);
         ApplyAlpha();
 
-        if (isHovered && IsSelectPressed())
+        if (isHovered && !hasSelected && IsTriggerPressed())
         {
+            hasSelected = true;
             LoadScene();
         }
     }
@@ -68,7 +72,7 @@ public class LocationHighlight : MonoBehaviour
         }
     }
 
-    bool IsSelectPressed()
+    bool IsTriggerPressed()
     {
         return OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger);
     }
