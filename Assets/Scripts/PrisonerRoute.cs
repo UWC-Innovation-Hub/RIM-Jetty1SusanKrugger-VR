@@ -65,7 +65,7 @@ public class PrisonerRoute : MonoBehaviour
                 break;
             case "boat":
                 choiceAnimator.SetTrigger("GoToBoat");
-                BoatGateAnimator.SetTrigger("Open");
+                //BoatGateAnimator.SetTrigger("Open");
                 break;
             case "truck":
                 choiceAnimator.SetTrigger("GoToTruck");
