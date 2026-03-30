@@ -10506,6 +10506,7 @@ GameObject:
   m_Component:
   - component: {fileID: 374723506}
   - component: {fileID: 374723507}
+  - component: {fileID: 374723508}
   m_Layer: 0
   m_Name: P3
   m_TagString: Untagged
@@ -10551,6 +10552,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &374723508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 374723505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b2c111b4571dfe46b18f7cf12c6b9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PrisonerActorController
+  walkAnimator: {fileID: 1462688855}
+  choiceAnimator: {fileID: 150406359}
 --- !u!1 &382596815
 GameObject:
   m_ObjectHideFlags: 0
@@ -12412,6 +12427,7 @@ GameObject:
   m_Component:
   - component: {fileID: 412287420}
   - component: {fileID: 412287421}
+  - component: {fileID: 412287422}
   m_Layer: 0
   m_Name: P5
   m_TagString: Untagged
@@ -12457,6 +12473,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &412287422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 412287419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b2c111b4571dfe46b18f7cf12c6b9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PrisonerActorController
+  walkAnimator: {fileID: 509866094}
+  choiceAnimator: {fileID: 1066993697}
 --- !u!1 &413216871
 GameObject:
   m_ObjectHideFlags: 0
@@ -33663,6 +33693,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1018407828}
   - component: {fileID: 1018407829}
+  - component: {fileID: 1018407830}
   m_Layer: 0
   m_Name: P6
   m_TagString: Untagged
@@ -33708,6 +33739,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1018407830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018407827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b2c111b4571dfe46b18f7cf12c6b9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PrisonerActorController
+  walkAnimator: {fileID: 1237562990}
+  choiceAnimator: {fileID: 1647357466}
 --- !u!1 &1020606637
 GameObject:
   m_ObjectHideFlags: 0
@@ -38509,6 +38554,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1155945065}
   - component: {fileID: 1155945066}
+  - component: {fileID: 1155945067}
   m_Layer: 0
   m_Name: P2
   m_TagString: Untagged
@@ -38554,6 +38600,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1155945067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1155945064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b2c111b4571dfe46b18f7cf12c6b9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PrisonerActorController
+  walkAnimator: {fileID: 51009591}
+  choiceAnimator: {fileID: 85775163}
 --- !u!1 &1156001177
 GameObject:
   m_ObjectHideFlags: 0
@@ -44704,7 +44764,7 @@ Transform:
   m_GameObject: {fileID: 1293325737}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -57907,6 +57967,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1705547349}
   - component: {fileID: 1705547350}
+  - component: {fileID: 1705547351}
   m_Layer: 0
   m_Name: P1
   m_TagString: Untagged
@@ -57952,6 +58013,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1705547351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705547348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b2c111b4571dfe46b18f7cf12c6b9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  walkAnimator: {fileID: 5217614667243106785}
+  choiceAnimator: {fileID: 539777490}
 --- !u!1 &1707029114
 GameObject:
   m_ObjectHideFlags: 0
@@ -79237,6 +79312,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2090257937}
   - component: {fileID: 2090257938}
+  - component: {fileID: 2090257939}
   m_Layer: 0
   m_Name: P4
   m_TagString: Untagged
@@ -79282,6 +79358,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2090257939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2090257936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b2c111b4571dfe46b18f7cf12c6b9fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PrisonerActorController
+  walkAnimator: {fileID: 1437168313}
+  choiceAnimator: {fileID: 272786787}
 --- !u!1 &2091497086
 GameObject:
   m_ObjectHideFlags: 0
