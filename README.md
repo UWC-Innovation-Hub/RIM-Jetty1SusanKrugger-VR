@@ -43,6 +43,8 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── SFX/
             ├── VO/
         ├── C2/
+            ├── Breathing_Temp/
+            ├── Fingerprint_Audio/
             ├── Master/
             ├── SFX/
             ├── VO/
@@ -62,6 +64,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Materials/
         ├── C1_J2_Lobby/
             ├── Materials/
+        ├── C2_J3_J4_Cell/
         ├── C4_J5/
         ├── C6_SK1_The_Hold/
         ├── Cargo space/
@@ -97,14 +100,9 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── OPTIMIZED/
             ├── RAW/
         ├── C1_J2_Lobby/
-            ├── 6-infinite-mirror-3december2019/
             ├── Characters/
-            ├── Flag_Pole_Animated/
-            ├── SM_Mirror/
-            ├── Table/
+            ├── Environment/
             ├── Temporary_Characters/
-            ├── opel-blitz-truck/
-            ├── picture-frame-11mb/
         ├── C2_J3_J4_Cell/
             ├── Lamp_iwanPlays/
             ├── prison-bed/
@@ -121,6 +119,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Prisoners/
         ├── Props_1st_Pass/
             ├── Props/
+            ├── ToiletPaperWithWriting3DModel/
         ├── Registration office/
         ├── Textures/
         ├── Warders/
@@ -163,6 +162,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── TestScenes/
             ├── BlackWaitingRoomTest/
             ├── C2_J3_Cell_Rec_Assets/
+            ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
             ├── SortPrisonerTest_MetaMovement_Sequenced/
@@ -275,6 +275,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `GazeTarget.cs` | `Assets/Scripts/GazeTarget.cs` |
 | `HandGestureListener.cs` | `Assets/Scripts/HandGestureListener.cs` |
 | `HandTouchInteractionModule.cs` | `Assets/Scripts/HandTouchInteractionModule.cs` |
+| `HeadLockedHud.cs` | `Assets/Scripts/HeadLockedHud.cs` |
 | `Headlock.cs` | `Assets/Scripts/Headlock.cs` |
 | `HighFiveTrigger.cs` | `Assets/Scripts/HighFiveTrigger.cs` |
 | `HighlightExit.cs` | `Assets/Scripts/HighlightExit.cs` |
