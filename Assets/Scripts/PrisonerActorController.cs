@@ -26,15 +26,15 @@ public class PrisonerActorController : MonoBehaviour
     public void ExitCar()
     {
         if(!walkAnimator) return;
-        walkAnimator.ResetTrigger(ShouldIdleTrigger);
+        //walkAnimator.ResetTrigger(ShouldIdleTrigger);
         walkAnimator.SetTrigger(ExitTruck);
     }
 
        public void EnterCar()
     {
         if(!walkAnimator) return;
-        walkAnimator.ResetTrigger(ExitTruck);
-        walkAnimator.SetTrigger(ExitTruck);
+        //walkAnimator.ResetTrigger(ExitTruck);
+        walkAnimator.SetTrigger(EnterTruck);
     }
 
     public void Idle()
