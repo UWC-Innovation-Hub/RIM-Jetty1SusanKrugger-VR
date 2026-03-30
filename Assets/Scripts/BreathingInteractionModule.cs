@@ -1,349 +1,883 @@
-using Oculus.Interaction;
-using Oculus.Interaction.PoseDetection;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-[DisallowMultipleComponent]
-[RequireComponent(typeof(AudioSource))]
 public class BreathingInteractionModule : InteractionModuleBase
 {
-    [Header("Wiring")]
-    [SerializeField] private AudioSource breathingAudioSourceOverride;
-    [SerializeField] private MonoBehaviour leftBreatheOutState;
-    [SerializeField] private MonoBehaviour rightBreatheOutState;
-
-    [Header("Volume Response")]
-    [SerializeField] private float minVolume = 0.05f;
-    [SerializeField] private float maxVolume = 1.0f;
-    [SerializeField] private float decreaseRate = 0.2f;
-    [SerializeField] private float increaseRate = 0.2f;
-
-    [Header("Completion")]
-    [SerializeField] private float completionVolumeThreshold = 0.1f;
-    [SerializeField] private float completionHoldDuration = 10.0f;
-
-    public float NormalizedBreathingValue { get; private set; } = 1f;
-
-    private AudioSource _breathingAudioSource;
-    private PoseSignal _leftPoseSignal;
-    private PoseSignal _rightPoseSignal;
-    private float _completionTimer;
-
-    private void Reset()
+    public enum BreathingPhase
     {
-        ResolveReferences();
+        WaitingForInhale = 0,
+        WaitingForExhale = 1
     }
+
+    private enum RuntimeState
+    {
+        Idle = 0,
+        Running = 1,
+        Finishing = 2
+    }
+
+    [Header("Pose Wiring")]
+    [FormerlySerializedAs("leftBreatheOutState")]
+    [SerializeField] private MonoBehaviour leftInhalePoseState;
+    [FormerlySerializedAs("rightBreatheOutState")]
+    [SerializeField] private MonoBehaviour rightInhalePoseState;
+    [SerializeField] private MonoBehaviour leftExhalePoseState;
+    [SerializeField] private MonoBehaviour rightExhalePoseState;
+
+    [Header("Audio Wiring")]
+    [FormerlySerializedAs("breathingAudioSourceOverride")]
+    [SerializeField] private AudioSource cueAudioSourceOverride;
+    [SerializeField] private AudioSource loopAudioSourceA;
+    [SerializeField] private AudioSource loopAudioSourceB;
+    [SerializeField] private AudioClip fastLoopClip;
+    [SerializeField] private AudioClip mediumLoopClip;
+    [SerializeField] private AudioClip calmLoopClip;
+    [SerializeField] private bool playGestureCueClips = true;
+    [SerializeField] private AudioClip inhaleClip;
+    [SerializeField] private AudioClip exhaleClip;
+
+    [Header("Vignette Wiring")]
+    [SerializeField] private Renderer vignetteRenderer;
+
+    [Header("HUD Messaging")]
+    [SerializeField] private HeadLockedHud headLockedHud;
+    [SerializeField] private string breathCounterLabel = "Breath Counter";
+    [SerializeField] private bool fadeHudOnComplete = true;
+
+    [Header("Breathing Goals")]
+    [Min(1)]
+    [SerializeField] private int breathsRequired = 3;
+    [Min(0f)]
+    [SerializeField] private float poseEntryHoldTime = 0.15f;
+
+    [Header("Vignette Motion")]
+    [SerializeField] private float inhaleRadius = 0.16f;
+    [SerializeField] private float exhaleRadius = 0.30f;
+    [Min(0.05f)]
+    [SerializeField] private float fastPulseDuration = 1.0f;
+    [Min(0.05f)]
+    [SerializeField] private float mediumPulseDuration = 1.45f;
+    [Min(0.05f)]
+    [SerializeField] private float calmPulseDuration = 1.9f;
+    [Min(0f)]
+    [SerializeField] private float finalCalmHoldDuration = 1.9f;
+    [Min(0.05f)]
+    [SerializeField] private float finalFadeDuration = 0.6f;
+
+    [Header("Audio Motion")]
+    [Min(0.05f)]
+    [SerializeField] private float loopCrossfadeDuration = 0.75f;
+    [Range(0f, 1f)]
+    [SerializeField] private float loopVolume = 0.8f;
+    [Range(0f, 1f)]
+    [SerializeField] private float cueVolume = 0.35f;
+
+    [Header("Runtime Debug")]
+    [SerializeField] private int completedBreathCount;
+    [SerializeField] private BreathingPhase currentPhase = BreathingPhase.WaitingForInhale;
+    [SerializeField] private int currentCalmStage;
+    [SerializeField] private bool inhalePoseActive;
+    [SerializeField] private bool exhalePoseActive;
+
+    private static readonly int InnerRadiusPropertyId = Shader.PropertyToID("_InnerRadius");
+    private static readonly int OpacityPropertyId = Shader.PropertyToID("_Opacity");
+
+    private PoseSignal _leftInhaleSignal;
+    private PoseSignal _rightInhaleSignal;
+    private PoseSignal _leftExhaleSignal;
+    private PoseSignal _rightExhaleSignal;
+
+    private RuntimeState _runtimeState = RuntimeState.Idle;
+    private MaterialPropertyBlock _vignettePropertyBlock;
+    private AudioSource _cueAudioSource;
+    private AudioSource _currentLoopSource;
+    private AudioSource _inactiveLoopSource;
+
+    private float _inhaleStableTime;
+    private float _exhaleStableTime;
+    private bool _inhaleEntryLatched;
+    private bool _exhaleEntryLatched;
+
+    private float _pulseClock;
+    private float _finishElapsed;
+    private float _finalCalmHoldElapsed;
+    private bool _completionHudShown;
+
+    private bool _isCrossfading;
+    private AudioSource _crossfadeFromSource;
+    private AudioSource _crossfadeToSource;
+    private float _crossfadeElapsed;
+
+    private bool _warnedMissingLoopSource;
+    private bool _warnedMissingVignette;
 
     protected override void Awake()
     {
         base.Awake();
-        ResolveReferences();
-        ResetRuntimeState(stopPlayback: true);
+        EnsureRuntimeReferences();
+        RebuildPoseSignals();
+        ApplyHiddenVignette();
+        StopAllLoopAudio();
+    }
+
+    private void Reset()
+    {
+        AutoResolveSceneReferences();
     }
 
     public override void Activate()
     {
         base.Activate();
 
-        ResolveReferences();
-        if (!ValidateDependencies())
-        {
-            Complete();
-            return;
-        }
+        EnsureRuntimeReferences();
+        RebuildPoseSignals();
+        ResetRuntimeState();
 
-        GetVolumeBounds(out _, out float maxBound);
-        _completionTimer = 0f;
-        NormalizedBreathingValue = 1f;
+        PrepareCueSource();
+        StartLoopStage(0, immediate: true);
 
-        _breathingAudioSource.loop = true;
-        _breathingAudioSource.volume = maxBound;
-
-        if (!_breathingAudioSource.isPlaying)
-        {
-            _breathingAudioSource.Play();
-        }
+        _runtimeState = RuntimeState.Running;
+        ApplyVignette(exhaleRadius, 1f);
+        UpdateBreathCounterHud();
     }
 
     public override void Deactivate()
     {
-        ResetRuntimeState(stopPlayback: true);
-        base.Deactivate();
-    }
+        ResetRuntimeState();
+        StopAllLoopAudio();
 
-    private void OnDisable()
-    {
-        ResetRuntimeState(stopPlayback: true);
+        if (_cueAudioSource != null)
+        {
+            _cueAudioSource.Stop();
+        }
+
+        ApplyHiddenVignette();
+        _runtimeState = RuntimeState.Idle;
+        ClearHudMessage();
+
+        base.Deactivate();
     }
 
     private void Update()
     {
-        if (!IsActive || IsComplete || _breathingAudioSource == null)
+        if (!IsActive || IsComplete)
         {
             return;
         }
 
-        GetVolumeBounds(out float minBound, out float maxBound);
-        bool anyFist = IsPoseActive(_leftPoseSignal) || IsPoseActive(_rightPoseSignal);
-        float targetVolume = anyFist ? minBound : maxBound;
-        float rate = anyFist ? Mathf.Max(0f, decreaseRate) : Mathf.Max(0f, increaseRate);
+        float deltaTime = Time.deltaTime;
+        UpdateLoopCrossfade(deltaTime);
 
-        _breathingAudioSource.volume = Mathf.MoveTowards(_breathingAudioSource.volume, targetVolume, rate * Time.deltaTime);
-        NormalizedBreathingValue = Mathf.InverseLerp(minBound, maxBound, _breathingAudioSource.volume);
-
-        if (anyFist && _breathingAudioSource.volume < completionVolumeThreshold)
+        if (_runtimeState == RuntimeState.Finishing)
         {
-            _completionTimer += Time.deltaTime;
-            if (_completionTimer >= completionHoldDuration)
-            {
-                Complete();
-            }
+            UpdateFinishing(deltaTime);
+            return;
+        }
+
+        if (_runtimeState != RuntimeState.Running)
+        {
+            return;
+        }
+
+        UpdateGestureState(deltaTime);
+        UpdatePulse(deltaTime);
+    }
+
+    private void UpdateGestureState(float deltaTime)
+    {
+        inhalePoseActive = _leftInhaleSignal.IsActive() || _rightInhaleSignal.IsActive();
+        exhalePoseActive = _leftExhaleSignal.IsActive() || _rightExhaleSignal.IsActive();
+
+        bool ambiguous = inhalePoseActive && exhalePoseActive;
+
+        if (inhalePoseActive)
+        {
+            _inhaleStableTime += deltaTime;
         }
         else
         {
-            _completionTimer = 0f;
+            _inhaleStableTime = 0f;
+            _inhaleEntryLatched = false;
+        }
+
+        if (exhalePoseActive)
+        {
+            _exhaleStableTime += deltaTime;
+        }
+        else
+        {
+            _exhaleStableTime = 0f;
+            _exhaleEntryLatched = false;
+        }
+
+        if (ambiguous)
+        {
+            return;
+        }
+
+        if (currentPhase == BreathingPhase.WaitingForInhale && CanAcceptInhaleEntry())
+        {
+            AcceptInhale();
+            return;
+        }
+
+        if (currentPhase == BreathingPhase.WaitingForExhale && CanAcceptExhaleEntry())
+        {
+            AcceptExhale();
         }
     }
 
-    private bool ValidateDependencies()
+    private bool CanAcceptInhaleEntry()
     {
-        if (_breathingAudioSource == null)
+        return inhalePoseActive && !_inhaleEntryLatched && _inhaleStableTime >= poseEntryHoldTime;
+    }
+
+    private bool CanAcceptExhaleEntry()
+    {
+        return exhalePoseActive && !_exhaleEntryLatched && _exhaleStableTime >= poseEntryHoldTime;
+    }
+
+    private void AcceptInhale()
+    {
+        _inhaleEntryLatched = true;
+        currentPhase = BreathingPhase.WaitingForExhale;
+        PlayCue(inhaleClip, "inhale");
+    }
+
+    private void AcceptExhale()
+    {
+        _exhaleEntryLatched = true;
+        PlayCue(exhaleClip, "exhale");
+
+        completedBreathCount++;
+
+        if (completedBreathCount >= breathsRequired)
         {
-            Debug.LogWarning($"{name}: BreathingInteractionModule requires an AudioSource.");
+            BeginFinalFade();
+            return;
+        }
+
+        currentPhase = BreathingPhase.WaitingForInhale;
+        currentCalmStage = Mathf.Clamp(completedBreathCount, 0, 2);
+        StartLoopStage(currentCalmStage, immediate: false);
+        UpdateBreathCounterHud();
+    }
+
+    private void BeginFinalFade()
+    {
+        currentCalmStage = Mathf.Clamp(completedBreathCount - 1, 0, 2);
+        currentPhase = BreathingPhase.WaitingForInhale;
+        _runtimeState = RuntimeState.Finishing;
+        _finishElapsed = 0f;
+        _finalCalmHoldElapsed = 0f;
+        _completionHudShown = false;
+        _pulseClock = 0f;
+        ApplyVignette(exhaleRadius, 1f);
+        StartLoopStage(currentCalmStage, immediate: false);
+        UpdateBreathCounterHud();
+    }
+
+    private void UpdatePulse(float deltaTime)
+    {
+        _pulseClock += deltaTime;
+        float duration = GetPulseDurationForStage(currentCalmStage);
+        float normalized = 0.5f + (0.5f * Mathf.Cos(Mathf.PI * 2f * (_pulseClock / duration)));
+        float radius = Mathf.Lerp(inhaleRadius, exhaleRadius, normalized);
+        ApplyVignette(radius, 1f);
+    }
+
+    private void UpdateFinishing(float deltaTime)
+    {
+        if (!_completionHudShown)
+        {
+            _finalCalmHoldElapsed += deltaTime;
+            UpdatePulse(deltaTime);
+
+            if (_finalCalmHoldElapsed < finalCalmHoldDuration)
+            {
+                return;
+            }
+
+            _completionHudShown = true;
+            _finishElapsed = 0f;
+
+            if (fadeHudOnComplete && headLockedHud != null)
+            {
+                headLockedHud.FadeOutText(finalFadeDuration);
+            }
+        }
+
+        _finishElapsed += deltaTime;
+        float normalized = finalFadeDuration <= 0f ? 1f : Mathf.Clamp01(_finishElapsed / finalFadeDuration);
+        float loopLevel = Mathf.Lerp(loopVolume, 0f, normalized);
+        float vignetteOpacity = Mathf.Lerp(1f, 0f, normalized);
+
+        if (_currentLoopSource != null)
+        {
+            _currentLoopSource.volume = loopLevel;
+        }
+
+        if (_inactiveLoopSource != null)
+        {
+            _inactiveLoopSource.volume = 0f;
+        }
+
+        ApplyVignette(exhaleRadius, vignetteOpacity);
+
+        if (normalized >= 1f)
+        {
+            Complete();
+        }
+    }
+
+    private void StartLoopStage(int calmStage, bool immediate)
+    {
+        AudioClip targetClip = GetLoopClipForStage(calmStage);
+        if (targetClip == null)
+        {
+            Debug.LogWarning($"{name}: No breathing loop clip is assigned for calm stage {calmStage}.");
+            return;
+        }
+
+        if (_currentLoopSource == null)
+        {
+            if (!TryResolveLoopSources())
+            {
+                if (!_warnedMissingLoopSource)
+                {
+                    Debug.LogWarning($"{name}: Breathing loop sources are not assigned. Loop bed playback is disabled.");
+                    _warnedMissingLoopSource = true;
+                }
+
+                return;
+            }
+        }
+
+        if (_currentLoopSource.clip == targetClip && _currentLoopSource.isPlaying)
+        {
+            _currentLoopSource.volume = loopVolume;
+            return;
+        }
+
+        if (immediate || _inactiveLoopSource == null)
+        {
+            _currentLoopSource.Stop();
+            _currentLoopSource.clip = targetClip;
+            _currentLoopSource.loop = true;
+            _currentLoopSource.volume = loopVolume;
+            _currentLoopSource.Play();
+
+            if (_inactiveLoopSource != null)
+            {
+                _inactiveLoopSource.Stop();
+                _inactiveLoopSource.volume = 0f;
+            }
+
+            _isCrossfading = false;
+            return;
+        }
+
+        _inactiveLoopSource.Stop();
+        _inactiveLoopSource.clip = targetClip;
+        _inactiveLoopSource.loop = true;
+        _inactiveLoopSource.volume = 0f;
+        _inactiveLoopSource.Play();
+
+        _crossfadeFromSource = _currentLoopSource;
+        _crossfadeToSource = _inactiveLoopSource;
+        _crossfadeElapsed = 0f;
+        _isCrossfading = true;
+    }
+
+    private void UpdateLoopCrossfade(float deltaTime)
+    {
+        if (!_isCrossfading || _crossfadeFromSource == null || _crossfadeToSource == null)
+        {
+            return;
+        }
+
+        _crossfadeElapsed += deltaTime;
+        float normalized = loopCrossfadeDuration <= 0f ? 1f : Mathf.Clamp01(_crossfadeElapsed / loopCrossfadeDuration);
+
+        _crossfadeFromSource.volume = Mathf.Lerp(loopVolume, 0f, normalized);
+        _crossfadeToSource.volume = Mathf.Lerp(0f, loopVolume, normalized);
+
+        if (normalized < 1f)
+        {
+            return;
+        }
+
+        _crossfadeFromSource.Stop();
+        _crossfadeFromSource.volume = 0f;
+
+        AudioSource oldCurrent = _crossfadeFromSource;
+        _currentLoopSource = _crossfadeToSource;
+        _inactiveLoopSource = oldCurrent;
+
+        _crossfadeFromSource = null;
+        _crossfadeToSource = null;
+        _crossfadeElapsed = 0f;
+        _isCrossfading = false;
+    }
+
+    private AudioClip GetLoopClipForStage(int calmStage)
+    {
+        switch (Mathf.Clamp(calmStage, 0, 2))
+        {
+            case 0:
+                return fastLoopClip;
+            case 1:
+                return mediumLoopClip;
+            default:
+                return calmLoopClip;
+        }
+    }
+
+    private float GetPulseDurationForStage(int calmStage)
+    {
+        switch (Mathf.Clamp(calmStage, 0, 2))
+        {
+            case 0:
+                return fastPulseDuration;
+            case 1:
+                return mediumPulseDuration;
+            default:
+                return calmPulseDuration;
+        }
+    }
+
+    private void PlayCue(AudioClip clip, string cueName)
+    {
+        if (!playGestureCueClips)
+        {
+            return;
+        }
+
+        if (clip == null)
+        {
+            Debug.LogWarning($"{name}: Missing {cueName} cue clip.");
+            return;
+        }
+
+        if (_cueAudioSource == null)
+        {
+            Debug.LogWarning($"{name}: Missing cue AudioSource.");
+            return;
+        }
+
+        _cueAudioSource.PlayOneShot(clip, cueVolume);
+    }
+
+    private void ResetRuntimeState()
+    {
+        completedBreathCount = 0;
+        currentPhase = BreathingPhase.WaitingForInhale;
+        currentCalmStage = 0;
+        inhalePoseActive = false;
+        exhalePoseActive = false;
+
+        _inhaleStableTime = 0f;
+        _exhaleStableTime = 0f;
+        _inhaleEntryLatched = false;
+        _exhaleEntryLatched = false;
+
+        _pulseClock = 0f;
+        _finishElapsed = 0f;
+        _finalCalmHoldElapsed = 0f;
+        _completionHudShown = false;
+
+        _isCrossfading = false;
+        _crossfadeElapsed = 0f;
+        _crossfadeFromSource = null;
+        _crossfadeToSource = null;
+    }
+
+    private void PrepareCueSource()
+    {
+        if (_cueAudioSource == null)
+        {
+            return;
+        }
+
+        _cueAudioSource.Stop();
+        _cueAudioSource.loop = false;
+        _cueAudioSource.playOnAwake = false;
+    }
+
+    private void StopAllLoopAudio()
+    {
+        if (loopAudioSourceA != null)
+        {
+            loopAudioSourceA.Stop();
+            loopAudioSourceA.volume = 0f;
+        }
+
+        if (loopAudioSourceB != null)
+        {
+            loopAudioSourceB.Stop();
+            loopAudioSourceB.volume = 0f;
+        }
+    }
+
+    private void EnsureRuntimeReferences()
+    {
+        AutoResolveSceneReferences();
+        _cueAudioSource = cueAudioSourceOverride != null ? cueAudioSourceOverride : GetComponent<AudioSource>();
+        TryResolveLoopSources();
+
+        if (_vignettePropertyBlock == null)
+        {
+            _vignettePropertyBlock = new MaterialPropertyBlock();
+        }
+    }
+
+    private void AutoResolveSceneReferences()
+    {
+        if (cueAudioSourceOverride == null)
+        {
+            cueAudioSourceOverride = GetComponent<AudioSource>();
+        }
+
+        if (leftInhalePoseState == null)
+        {
+            leftInhalePoseState = FindPoseRootState("BreatheOutPoseLeft");
+        }
+
+        if (rightInhalePoseState == null)
+        {
+            rightInhalePoseState = FindPoseRootState("BreatheOutPoseRight");
+        }
+
+        if (leftExhalePoseState == null)
+        {
+            leftExhalePoseState = FindPoseRootState("StopPoseLeft");
+        }
+
+        if (rightExhalePoseState == null)
+        {
+            rightExhalePoseState = FindPoseRootState("StopPoseRight");
+        }
+
+        if (vignetteRenderer == null)
+        {
+            GameObject vignetteObject = GameObject.Find("Breathing_Vignette");
+            if (vignetteObject != null)
+            {
+                vignetteRenderer = vignetteObject.GetComponent<Renderer>();
+            }
+        }
+    }
+
+    private bool TryResolveLoopSources()
+    {
+        if (loopAudioSourceA != null && loopAudioSourceB != null)
+        {
+            PrepareLoopSource(loopAudioSourceA);
+            PrepareLoopSource(loopAudioSourceB);
+            _currentLoopSource = loopAudioSourceA;
+            _inactiveLoopSource = loopAudioSourceB;
+            return true;
+        }
+
+        AudioSource[] sources = GetComponents<AudioSource>();
+        if (sources == null || sources.Length == 0)
+        {
             return false;
         }
 
-        if (_leftPoseSignal == null || !_leftPoseSignal.IsValid
-            || _rightPoseSignal == null || !_rightPoseSignal.IsValid)
+        List<AudioSource> candidates = new List<AudioSource>();
+        for (int i = 0; i < sources.Length; i++)
         {
-            Debug.LogWarning($"{name}: BreathingInteractionModule requires both left and right BreatheOut active states.");
-            return false;
-        }
-
-        return true;
-    }
-
-    private void ResolveReferences()
-    {
-        _breathingAudioSource = breathingAudioSourceOverride != null
-            ? breathingAudioSourceOverride
-            : GetComponent<AudioSource>();
-
-        if (leftBreatheOutState == null)
-        {
-            leftBreatheOutState = FindPoseRootState("breatheoutposeleft");
-        }
-
-        if (rightBreatheOutState == null)
-        {
-            rightBreatheOutState = FindPoseRootState("breatheoutposeright");
-        }
-
-        _leftPoseSignal = BuildPoseSignal(leftBreatheOutState, "breatheoutposeleft");
-        _rightPoseSignal = BuildPoseSignal(rightBreatheOutState, "breatheoutposeright");
-    }
-
-    private MonoBehaviour FindPoseRootState(string normalizedPoseName)
-    {
-        MonoBehaviour[] components = GetComponentsInChildren<MonoBehaviour>(true);
-        for (int i = 0; i < components.Length; i++)
-        {
-            MonoBehaviour component = components[i];
-            if (component == null || !(component is ActiveStateGroup))
+            if (sources[i] == null || sources[i] == cueAudioSourceOverride)
             {
                 continue;
             }
 
-            string normalizedName = NormalizeName(component.gameObject.name);
-            if (normalizedName.Contains(normalizedPoseName))
-            {
-                return component;
-            }
+            candidates.Add(sources[i]);
         }
 
-        return null;
+        if (loopAudioSourceA == null && candidates.Count > 0)
+        {
+            loopAudioSourceA = candidates[0];
+        }
+
+        if (loopAudioSourceB == null && candidates.Count > 1)
+        {
+            loopAudioSourceB = candidates[1];
+        }
+
+        if (loopAudioSourceA == null)
+        {
+            return false;
+        }
+
+        _currentLoopSource = loopAudioSourceA;
+        _inactiveLoopSource = loopAudioSourceB;
+
+        PrepareLoopSource(loopAudioSourceA);
+        PrepareLoopSource(loopAudioSourceB);
+        return true;
     }
 
-    private PoseSignal BuildPoseSignal(MonoBehaviour poseReference, string normalizedPoseName)
+    private static void PrepareLoopSource(AudioSource source)
     {
-        Transform poseRoot = FindPoseRoot(poseReference, normalizedPoseName);
-        if (poseRoot == null)
-        {
-            return PoseSignal.Invalid;
-        }
-
-        ShapeRecognizerActiveState[] shapeStates = poseRoot.GetComponentsInChildren<ShapeRecognizerActiveState>(true);
-        TransformRecognizerActiveState[] transformStates = poseRoot.GetComponentsInChildren<TransformRecognizerActiveState>(true);
-
-        if (shapeStates.Length == 0 && transformStates.Length == 0)
-        {
-            IActiveState fallbackState = poseReference as IActiveState;
-            return fallbackState != null
-                ? new PoseSignal(fallbackState)
-                : PoseSignal.Invalid;
-        }
-
-        return new PoseSignal(shapeStates, transformStates);
-    }
-
-    private Transform FindPoseRoot(MonoBehaviour poseReference, string normalizedPoseName)
-    {
-        if (poseReference != null)
-        {
-            Transform current = poseReference.transform;
-            while (current != null)
-            {
-                if (NormalizeName(current.name).Contains(normalizedPoseName))
-                {
-                    return current;
-                }
-
-                if (current == transform)
-                {
-                    break;
-                }
-
-                current = current.parent;
-            }
-
-            return poseReference.transform;
-        }
-
-        Transform[] transforms = GetComponentsInChildren<Transform>(true);
-        for (int i = 0; i < transforms.Length; i++)
-        {
-            Transform candidate = transforms[i];
-            if (NormalizeName(candidate.name).Contains(normalizedPoseName))
-            {
-                return candidate;
-            }
-        }
-
-        return null;
-    }
-
-    private void ResetRuntimeState(bool stopPlayback)
-    {
-        _completionTimer = 0f;
-        NormalizedBreathingValue = 1f;
-
-        if (_breathingAudioSource == null)
+        if (source == null)
         {
             return;
         }
 
-        GetVolumeBounds(out _, out float maxBound);
-        _breathingAudioSource.volume = maxBound;
-
-        if (stopPlayback)
-        {
-            _breathingAudioSource.Stop();
-        }
+        source.playOnAwake = false;
+        source.loop = true;
+        source.volume = 0f;
     }
 
-    private void GetVolumeBounds(out float minBound, out float maxBound)
+    private void RebuildPoseSignals()
     {
-        minBound = Mathf.Clamp01(minVolume);
-        maxBound = Mathf.Clamp01(maxVolume);
-
-        if (maxBound < minBound)
-        {
-            maxBound = minBound;
-        }
+        _leftInhaleSignal = BuildPoseSignal(leftInhalePoseState);
+        _rightInhaleSignal = BuildPoseSignal(rightInhalePoseState);
+        _leftExhaleSignal = BuildPoseSignal(leftExhalePoseState);
+        _rightExhaleSignal = BuildPoseSignal(rightExhalePoseState);
     }
 
-    private static bool IsPoseActive(PoseSignal poseSignal)
+    private MonoBehaviour FindPoseRootState(string poseName)
     {
-        return poseSignal != null && poseSignal.IsActive;
+        Transform[] transforms = GetComponentsInChildren<Transform>(true);
+        string normalizedPoseName = NormalizeName(poseName);
+
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            Transform candidate = transforms[i];
+            if (NormalizeName(candidate.name) != normalizedPoseName)
+            {
+                continue;
+            }
+
+            MonoBehaviour[] components = candidate.GetComponents<MonoBehaviour>();
+            for (int j = 0; j < components.Length; j++)
+            {
+                if (components[j] == null)
+                {
+                    continue;
+                }
+
+                if (HasReadableActiveFlag(components[j]))
+                {
+                    return components[j];
+                }
+            }
+        }
+
+        return null;
     }
 
     private static string NormalizeName(string value)
     {
-        if (string.IsNullOrEmpty(value))
+        return string.IsNullOrEmpty(value) ? string.Empty : value.Replace(" ", string.Empty);
+    }
+
+    private static PoseSignal BuildPoseSignal(MonoBehaviour anchor)
+    {
+        if (anchor == null)
         {
-            return string.Empty;
+            return PoseSignal.Empty;
         }
 
-        char[] buffer = new char[value.Length];
-        int index = 0;
-        for (int i = 0; i < value.Length; i++)
+        Transform root = anchor.transform;
+        MonoBehaviour[] components = root.GetComponentsInChildren<MonoBehaviour>(true);
+        List<ActiveAccessor> recognizers = new List<ActiveAccessor>();
+
+        for (int i = 0; i < components.Length; i++)
         {
-            char character = value[i];
-            if (char.IsLetterOrDigit(character))
+            MonoBehaviour component = components[i];
+            if (component == null)
             {
-                buffer[index++] = char.ToLowerInvariant(character);
+                continue;
+            }
+
+            string typeName = component.GetType().Name;
+            if (typeName != "ShapeRecognizerActiveState" && typeName != "TransformRecognizerActiveState")
+            {
+                continue;
+            }
+
+            ActiveAccessor recognizer = ActiveAccessor.Create(component);
+            if (recognizer != null)
+            {
+                recognizers.Add(recognizer);
             }
         }
 
-        return new string(buffer, 0, index);
+        if (recognizers.Count > 0)
+        {
+            return new PoseSignal(recognizers, null);
+        }
+
+        ActiveAccessor fallback = ActiveAccessor.Create(anchor);
+        return new PoseSignal(new List<ActiveAccessor>(), fallback);
+    }
+
+    private static bool HasReadableActiveFlag(MonoBehaviour component)
+    {
+        return ActiveAccessor.Create(component) != null;
+    }
+
+    private void ApplyHiddenVignette()
+    {
+        ApplyVignette(exhaleRadius, 0f);
+    }
+
+    private void ApplyVignette(float radius, float opacity)
+    {
+        if (vignetteRenderer == null)
+        {
+            if (!_warnedMissingVignette)
+            {
+                Debug.LogWarning($"{name}: Breathing vignette renderer is not assigned. Vignette animation is disabled.");
+                _warnedMissingVignette = true;
+            }
+
+            return;
+        }
+
+        if (_vignettePropertyBlock == null)
+        {
+            _vignettePropertyBlock = new MaterialPropertyBlock();
+        }
+
+        vignetteRenderer.GetPropertyBlock(_vignettePropertyBlock);
+        _vignettePropertyBlock.SetFloat(InnerRadiusPropertyId, radius);
+        _vignettePropertyBlock.SetFloat(OpacityPropertyId, opacity);
+        vignetteRenderer.SetPropertyBlock(_vignettePropertyBlock);
+    }
+
+    private void UpdateBreathCounterHud()
+    {
+        if (headLockedHud == null)
+        {
+            return;
+        }
+
+        headLockedHud.SetMessage($"{breathCounterLabel}\n{completedBreathCount}", makeVisible: true);
+    }
+
+    private void ClearHudMessage()
+    {
+        if (headLockedHud == null)
+        {
+            return;
+        }
+
+        headLockedHud.ClearMessage(hide: true);
     }
 
     private sealed class PoseSignal
     {
-        public static readonly PoseSignal Invalid = new PoseSignal();
+        public static readonly PoseSignal Empty = new PoseSignal(new List<ActiveAccessor>(), null);
 
-        private readonly ShapeRecognizerActiveState[] _shapeStates;
-        private readonly TransformRecognizerActiveState[] _transformStates;
-        private readonly IActiveState _fallbackState;
+        private readonly List<ActiveAccessor> _recognizers;
+        private readonly ActiveAccessor _fallback;
 
-        public bool IsValid =>
-            (_shapeStates != null && _shapeStates.Length > 0)
-            || (_transformStates != null && _transformStates.Length > 0)
-            || _fallbackState != null;
-
-        public bool IsActive
+        public PoseSignal(List<ActiveAccessor> recognizers, ActiveAccessor fallback)
         {
-            get
+            _recognizers = recognizers;
+            _fallback = fallback;
+        }
+
+        public bool IsActive()
+        {
+            if (_recognizers.Count > 0)
             {
-                if (!IsValid)
+                for (int i = 0; i < _recognizers.Count; i++)
                 {
-                    return false;
-                }
-
-                bool hasRecognizers = false;
-
-                if (_shapeStates != null && _shapeStates.Length > 0)
-                {
-                    hasRecognizers = true;
-                    for (int i = 0; i < _shapeStates.Length; i++)
+                    if (!_recognizers[i].TryRead(out bool active) || !active)
                     {
-                        if (_shapeStates[i] == null || !_shapeStates[i].Active)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
 
-                if (_transformStates != null && _transformStates.Length > 0)
-                {
-                    hasRecognizers = true;
-                    for (int i = 0; i < _transformStates.Length; i++)
-                    {
-                        if (_transformStates[i] == null || !_transformStates[i].Active)
-                        {
-                            return false;
-                        }
-                    }
-                }
-
-                return hasRecognizers || (_fallbackState != null && _fallbackState.Active);
+                return true;
             }
+
+            if (_fallback != null && _fallback.TryRead(out bool fallbackActive))
+            {
+                return fallbackActive;
+            }
+
+            return false;
+        }
+    }
+
+    private sealed class ActiveAccessor
+    {
+        private readonly MonoBehaviour _component;
+        private readonly PropertyInfo _propertyInfo;
+        private readonly FieldInfo _fieldInfo;
+
+        private ActiveAccessor(MonoBehaviour component, PropertyInfo propertyInfo, FieldInfo fieldInfo)
+        {
+            _component = component;
+            _propertyInfo = propertyInfo;
+            _fieldInfo = fieldInfo;
         }
 
-        private PoseSignal()
+        public static ActiveAccessor Create(MonoBehaviour component)
         {
+            if (component == null)
+            {
+                return null;
+            }
+
+            Type type = component.GetType();
+            PropertyInfo propertyInfo = type.GetProperty("Active", BindingFlags.Instance | BindingFlags.Public);
+            if (propertyInfo != null && propertyInfo.PropertyType == typeof(bool))
+            {
+                return new ActiveAccessor(component, propertyInfo, null);
+            }
+
+            FieldInfo fieldInfo = type.GetField("Active", BindingFlags.Instance | BindingFlags.Public);
+            if (fieldInfo != null && fieldInfo.FieldType == typeof(bool))
+            {
+                return new ActiveAccessor(component, null, fieldInfo);
+            }
+
+            return null;
         }
 
-        public PoseSignal(IActiveState fallbackState)
+        public bool TryRead(out bool value)
         {
-            _fallbackState = fallbackState;
-        }
+            value = false;
 
-        public PoseSignal(
-            ShapeRecognizerActiveState[] shapeStates,
-            TransformRecognizerActiveState[] transformStates)
-        {
-            _shapeStates = shapeStates;
-            _transformStates = transformStates;
+            if (_component == null)
+            {
+                return false;
+            }
+
+            if (_propertyInfo != null)
+            {
+                object propertyValue = _propertyInfo.GetValue(_component, null);
+                if (propertyValue is bool boolValue)
+                {
+                    value = boolValue;
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (_fieldInfo != null)
+            {
+                object fieldValue = _fieldInfo.GetValue(_component);
+                if (fieldValue is bool boolValue)
+                {
+                    value = boolValue;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

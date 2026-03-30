@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
 
 public class FingerprintProjectionInteractionModule : InteractionModuleBase
 {
@@ -10,9 +12,17 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
     [Header("Visibility")]
     [SerializeField] private bool hideFingerprintsWhenInactive = true;
 
+    [Header("Light Restore")]
+    [SerializeField] private Light sceneLightOverride;
+    [SerializeField] private float restoredLightIntensity = 0.5f;
+    [SerializeField] private float lightRestoreDuration = 1f;
+    [SerializeField] private bool disableInteractionTimelineDuringLightRestore = true;
+
     private readonly HashSet<FingerprintTrigger> _consumedFingerprints = new HashSet<FingerprintTrigger>();
     private Coroutine _completeSelectionRoutine;
     private FingerprintTrigger _currentSelection;
+    private PlayableDirector _interactionTimelineDirector;
+    private Light _resolvedSceneLight;
 
     private FingerprintTrigger[] Fingerprints => lockout != null ? lockout.Fingerprints : null;
 
@@ -35,6 +45,7 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
 
     public override void Activate()
     {
+        EnsureInteractionTimelineDirectorEnabled();
         base.Activate();
         ResolveDependencies();
 
@@ -137,6 +148,14 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
             yield break;
         }
 
+        yield return _currentSelection.FadeOutInfoRoutine();
+
+        if (!IsActive || _currentSelection == null)
+        {
+            _completeSelectionRoutine = null;
+            yield break;
+        }
+
         FingerprintTrigger completedFingerprint = _currentSelection;
         _currentSelection = null;
         _consumedFingerprints.Add(completedFingerprint);
@@ -146,6 +165,7 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
 
         if (AllFingerprintsConsumed())
         {
+            yield return RestoreSceneLightBeforeComplete();
             _completeSelectionRoutine = null;
             Complete();
             yield break;
@@ -218,9 +238,18 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
                 continue;
             }
 
-            bool shouldStayVisible = fingerprint == selectedFingerprint && !_consumedFingerprints.Contains(fingerprint);
+            bool isSelected = fingerprint == selectedFingerprint;
+            bool shouldStayVisible = isSelected && !_consumedFingerprints.Contains(fingerprint);
+
+            if (isSelected)
+            {
+                // Keep the chosen print visually active until its response audio completes.
+                fingerprint.SetVisible(shouldStayVisible);
+                continue;
+            }
+
             fingerprint.SetArmed(false);
-            fingerprint.SetVisible(shouldStayVisible);
+            fingerprint.SetVisible(false);
         }
     }
 
@@ -306,6 +335,155 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
         if (lockout == null)
         {
             lockout = GetComponent<FingerprintLockout>();
+        }
+
+        if (_interactionTimelineDirector == null)
+        {
+            _interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
+        }
+
+        if (_resolvedSceneLight == null)
+        {
+            _resolvedSceneLight = ResolveSceneLight();
+        }
+    }
+
+    private IEnumerator RestoreSceneLightBeforeComplete()
+    {
+        Light targetLight = ResolveSceneLight();
+        if (targetLight == null)
+        {
+            yield break;
+        }
+
+        if (disableInteractionTimelineDuringLightRestore)
+        {
+            DisableInteractionTimelineIfBoundTo(targetLight);
+        }
+
+        if (lightRestoreDuration <= 0f)
+        {
+            targetLight.intensity = restoredLightIntensity;
+            yield break;
+        }
+
+        float startIntensity = targetLight.intensity;
+        if (Mathf.Approximately(startIntensity, restoredLightIntensity))
+        {
+            targetLight.intensity = restoredLightIntensity;
+            yield break;
+        }
+
+        float elapsed = 0f;
+        while (IsActive && elapsed < lightRestoreDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / lightRestoreDuration);
+            float eased = t * t * (3f - 2f * t);
+            targetLight.intensity = Mathf.Lerp(startIntensity, restoredLightIntensity, eased);
+            yield return null;
+        }
+
+        targetLight.intensity = restoredLightIntensity;
+    }
+
+    private void EnsureInteractionTimelineDirectorEnabled()
+    {
+        if (_interactionTimelineDirector == null)
+        {
+            _interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
+        }
+
+        if (_interactionTimelineDirector != null && !_interactionTimelineDirector.enabled)
+        {
+            _interactionTimelineDirector.enabled = true;
+        }
+    }
+
+    private void DisableInteractionTimelineIfBoundTo(Light targetLight)
+    {
+        if (targetLight == null)
+        {
+            return;
+        }
+
+        if (_interactionTimelineDirector == null)
+        {
+            _interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
+        }
+
+        if (_interactionTimelineDirector == null || !_interactionTimelineDirector.enabled)
+        {
+            return;
+        }
+
+        Light boundLight = TryResolveLightFromTimelineBinding(_interactionTimelineDirector);
+        if (boundLight == targetLight)
+        {
+            _interactionTimelineDirector.enabled = false;
+        }
+    }
+
+    private Light ResolveSceneLight()
+    {
+        if (sceneLightOverride != null)
+        {
+            return sceneLightOverride;
+        }
+
+        if (_resolvedSceneLight != null)
+        {
+            return _resolvedSceneLight;
+        }
+
+        if (_interactionTimelineDirector == null)
+        {
+            _interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
+        }
+
+        _resolvedSceneLight = TryResolveLightFromTimelineBinding(_interactionTimelineDirector);
+        return _resolvedSceneLight;
+    }
+
+    private static Light TryResolveLightFromTimelineBinding(PlayableDirector director)
+    {
+        if (director == null)
+        {
+            return null;
+        }
+
+        if (!(director.playableAsset is TimelineAsset timelineAsset))
+        {
+            return null;
+        }
+
+        foreach (TrackAsset track in timelineAsset.GetOutputTracks())
+        {
+            Object binding = director.GetGenericBinding(track);
+            Light boundLight = TryGetLightFromBinding(binding);
+            if (boundLight != null)
+            {
+                return boundLight;
+            }
+        }
+
+        return null;
+    }
+
+    private static Light TryGetLightFromBinding(Object binding)
+    {
+        switch (binding)
+        {
+            case Light light:
+                return light;
+            case Animator animator:
+                return animator.GetComponent<Light>();
+            case GameObject gameObject:
+                return gameObject.GetComponent<Light>();
+            case Component component:
+                return component.GetComponent<Light>();
+            default:
+                return null;
         }
     }
 }
