@@ -11,6 +11,8 @@ public class PrisonerActorController : MonoBehaviour
     private const string GoToCellTrigger = "GoToCell";
     private const string GoToBoatTrigger = "GoToBoat";
     private const string GoToTruckTrigger = "GoToTruck";
+    private const string ExitTruck = "Exit";
+    private const string EnterTruck = "Enter";
 
     public void Walk()
     {
@@ -18,6 +20,21 @@ public class PrisonerActorController : MonoBehaviour
 
         walkAnimator.ResetTrigger(ShouldIdleTrigger);
         walkAnimator.SetTrigger(ShouldWalkTrigger);
+    }
+
+
+    public void ExitCar()
+    {
+        if(!walkAnimator) return;
+        walkAnimator.ResetTrigger(ShouldIdleTrigger);
+        walkAnimator.SetTrigger(ExitTruck);
+    }
+
+       public void EnterCar()
+    {
+        if(!walkAnimator) return;
+        walkAnimator.ResetTrigger(ExitTruck);
+        walkAnimator.SetTrigger(ExitTruck);
     }
 
     public void Idle()
