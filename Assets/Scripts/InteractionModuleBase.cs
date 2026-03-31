@@ -34,6 +34,14 @@ public abstract class InteractionModuleBase : MonoBehaviour
     [Tooltip("Rewind the interaction timeline to the beginning before playing it on Activate().")]
     [SerializeField] private bool rewindInteractionTimelineOnActivate = true;
 
+    [Header("Optional Tutorial Video")]
+    [Tooltip("Optional tutorial video controller that preloads the tutorial clip for this interaction before its timeline starts.")]
+    [SerializeField] private TutorialVideoController tutorialVideoController;
+    [Tooltip("Tutorial clip index to preload on Activate(). Use -1 to skip tutorial preload for this interaction.")]
+    [SerializeField] private int tutorialClipIndex = -1;
+    [Tooltip("Stop the tutorial video when Deactivate() is called.")]
+    [SerializeField] private bool stopTutorialVideoOnDeactivate = true;
+
     [Header("Optional Environment")]
     [Tooltip("When active, force RenderSettings.fog to this value.")]
     [SerializeField] private bool enableFog = false;
@@ -79,6 +87,7 @@ public abstract class InteractionModuleBase : MonoBehaviour
         SetActive(activeWhenActive, true);
         SetActive(inactiveWhenActive, false);
         RenderSettings.fog = enableFog;
+        PreloadTutorialVideo();
 
         if (playInteractionTimelineOnActivate)
         {
@@ -88,6 +97,11 @@ public abstract class InteractionModuleBase : MonoBehaviour
 
     public virtual void Deactivate()
     {
+        if (stopTutorialVideoOnDeactivate && tutorialVideoController != null)
+        {
+            tutorialVideoController.StopTutorial();
+        }
+
         if (stopInteractionTimelineOnDeactivate)
         {
             ResetInteractionTimelineToStart();
@@ -149,6 +163,16 @@ public abstract class InteractionModuleBase : MonoBehaviour
 
         interactionTimelineDirector = GetComponentInChildren<PlayableDirector>(true);
         return interactionTimelineDirector;
+    }
+
+    private void PreloadTutorialVideo()
+    {
+        if (tutorialVideoController == null || tutorialClipIndex < 0)
+        {
+            return;
+        }
+
+        tutorialVideoController.SelectTutorialClip(tutorialClipIndex);
     }
 
     protected void Complete()
