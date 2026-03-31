@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class PrisonerRoute : MonoBehaviour
-{
+{ 
     //public GameObject Prisoner;
     public Animator[] ChoiceAnimators;
     public Animator[] PrisonerWalkAnimators;
@@ -114,7 +114,7 @@ public class PrisonerRoute : MonoBehaviour
                     break;
                 case "boat":
                     choiceAnimator.SetTrigger("GoToBoat");
-                    BoatGateAnimator.SetTrigger("Open");
+                    //BoatGateAnimator.SetTrigger("Open");
                     break;
                 case "truck":
                     choiceAnimator.SetTrigger("GoToTruck");
