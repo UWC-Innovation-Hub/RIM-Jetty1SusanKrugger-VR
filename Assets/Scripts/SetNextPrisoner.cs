@@ -41,12 +41,24 @@ public class SetNextPrisoner : MonoBehaviour
         if (PrisonerSortModule != null && PrisonerSortModule.UsesSessionBatches)
         {
             PrisonerSortModule.RegisterParticipantArrived(ResolveParticipantId());
-            BoatAnimator.SetTrigger("Close");
+            //BoatAnimator.SetTrigger("Close");
             return;
         }
 
         RR?.IncrementSorter();
     }
+
+    public void ActivateBoatDoor()
+    {
+        BoatAnimator.SetTrigger("Open");
+    }
+
+ public void CloseBoatDoor()
+    {
+        BoatAnimator.SetTrigger("Close");
+    }
+
+
 
 
     //Possibly a double call here (repeated in ReactivateRoutes).
