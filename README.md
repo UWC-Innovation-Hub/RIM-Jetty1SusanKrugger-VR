@@ -45,6 +45,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C2/
             ├── Breathing_Temp/
             ├── Fingerprint_Audio/
+            ├── Freedom Songs/
             ├── Master/
             ├── SFX/
             ├── VO/
@@ -79,6 +80,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Entrance room/
         ├── MAIO_Tests/
         ├── Registration Office/
+        ├── Susan Kruger/
         ├── Warders/
             ├── Warder materials/
         ├── prisoners/
@@ -91,7 +93,9 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Media/
         ├── Video/
             ├── C1/
+            ├── C2/
             ├── RIM Show and Tell/
+            ├── Video Tuts/
     ├── MetaXR/
     ├── Misc/
         ├── Materials/
@@ -117,10 +121,13 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── NAACo/
             ├── Warehouse_Pack_HD/
         ├── Prisoners/
+            ├── Animation Controllers/
+            ├── Animations/
         ├── Props_1st_Pass/
             ├── Props/
             ├── ToiletPaperWithWriting3DModel/
         ├── Registration office/
+        ├── Susan Kruger/
         ├── Textures/
         ├── Warders/
             ├── characters/
@@ -129,6 +136,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Android/
     ├── Prefabs/
         ├── Characters V001/
+            ├── Organization/
         ├── Interactions/
         ├── UI/
         ├── Walking man/
@@ -299,6 +307,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `Overlay.cs` | `Assets/Scripts/Overlay.cs` |
 | `PalmGestureDetector.cs` | `Assets/Scripts/PalmGestureDetector.cs` |
 | `PickUpUI.cs` | `Assets/Scripts/PickUpUI.cs` |
+| `PrisonerActorController.cs` | `Assets/Scripts/PrisonerActorController.cs` |
 | `PrisonerRoute.cs` | `Assets/Scripts/PrisonerRoute.cs` |
 | `PrisonerSortData.cs` | `Assets/Scripts/PrisonerSortData.cs` |
 | `PrisonerSortModule.cs` | `Assets/Scripts/PrisonerSortModule.cs` |
@@ -316,6 +325,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `TokenMove.cs` | `Assets/Scripts/TokenMove.cs` |
 | `TouchHandsPoseGate.cs` | `Assets/Scripts/TouchHandsPoseGate.cs` |
 | `TruckManager.cs` | `Assets/Scripts/TruckManager.cs` |
+| `TutorialVideoController.cs` | `Assets/Scripts/TutorialVideoController.cs` |
 | `VRTutorial.cs` | `Assets/Scripts/VRTutorial.cs` |
 | `VideoProjectorController.cs` | `Assets/Scripts/VideoProjectorController.cs` |
 | `VideoTrigger.cs` | `Assets/Scripts/VideoTrigger.cs` |
