@@ -112,21 +112,36 @@ public class TimelineVideoPlaybackController : MonoBehaviour
         }
 
         VideoClip selectedClip = availableClips[clipIndex];
-        if (selectedClip == null)
+        SetVideoClip(selectedClip);
+    }
+
+    public void SetVideoClip(VideoClip clip)
+    {
+        if (!TryGetVideoPlayer(out VideoPlayer player))
         {
-            Debug.LogWarning($"{name}: No VideoClip is assigned at index {clipIndex}.", this);
+            return;
+        }
+
+        if (clip == null)
+        {
+            Debug.LogWarning($"{name}: Cannot assign a null VideoClip.", this);
             return;
         }
 
         player.Stop();
-        Debug.Log("HELLLO");
         player.source = VideoSource.VideoClip;
-        player.clip = selectedClip;
+        player.clip = clip;
 
         if (prepareClipOnChange)
         {
             player.Prepare();
         }
+    }
+
+    public void SetAndPlayVideoClip(int clipIndex)
+    {
+        SetVideoClip(clipIndex);
+        PlayFromStart();
     }
 
     public void PlayFromStart()
