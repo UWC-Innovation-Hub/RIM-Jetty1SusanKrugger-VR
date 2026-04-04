@@ -198,11 +198,13 @@ public class ReactivateRoutes : MonoBehaviour
     {
         if (RouteMats == null) return;
 
+        float idleStrength = PrisonerSortModule != null && PrisonerSortModule.IsActive ? 0.1f : 0f;
+
         foreach (Material mat in RouteMats)
         {
             if (mat == null) continue;
             mat.SetColor("_EmissionColor", new Color(1f, 0.8509f, 0.2980f));
-            mat.SetFloat("_EmissionStrength", 0.1f);
+            mat.SetFloat("_EmissionStrength", idleStrength);
         }
     }
 

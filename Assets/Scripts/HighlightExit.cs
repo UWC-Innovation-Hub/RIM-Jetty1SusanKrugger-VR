@@ -98,7 +98,8 @@ public class HighlightExit : MonoBehaviour
         foreach (Material mat in RouteMats)
         {
             mat.SetColor("_EmissionColor", new Color(1f, 0.8509f, 0.2980f));
-            mat.SetFloat("_EmissionStrength", 0.1f);
+            float idleStrength = PSort != null && PSort.IsActive ? 0.1f : 0f;
+            mat.SetFloat("_EmissionStrength", idleStrength);
         }
     }
 

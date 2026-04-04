@@ -46,6 +46,7 @@ public class RouteHoldSelector : MonoBehaviour
 
     [Header("Route Highlight")]
     [SerializeField] private Color idleEmissionColor = new Color(1f, 0.8509f, 0.2980f);
+    [SerializeField] private float inactiveEmissionStrength = 0f;
     [SerializeField] private float idleEmissionStrength = 0.1f;
     [SerializeField] private float hoverEmissionStrength = 1f;
     [SerializeField] private Color selectedEmissionColor = Color.red;
@@ -560,6 +561,8 @@ public class RouteHoldSelector : MonoBehaviour
 
     private void ResetRouteMaterials()
     {
+        float targetIdleStrength = ResolveIdleEmissionStrength();
+
         for (int i = 0; i < routes.Length; i++)
         {
             Material mat = routes[i]?.routeMaterial;
@@ -567,7 +570,7 @@ public class RouteHoldSelector : MonoBehaviour
                 continue;
 
             mat.SetColor("_EmissionColor", idleEmissionColor);
-            mat.SetFloat("_EmissionStrength", idleEmissionStrength);
+            mat.SetFloat("_EmissionStrength", targetIdleStrength);
         }
     }
 
@@ -632,6 +635,12 @@ public class RouteHoldSelector : MonoBehaviour
         }
 
         return string.Empty;
+    }
+
+    private float ResolveIdleEmissionStrength()
+    {
+        bool moduleActive = prisonerSortModule != null && prisonerSortModule.IsActive;
+        return moduleActive ? idleEmissionStrength : inactiveEmissionStrength;
     }
 
     private Transform FindTransformByName(string targetName)
