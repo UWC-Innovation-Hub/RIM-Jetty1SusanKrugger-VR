@@ -11,10 +11,13 @@ public class PrisonerRoute : MonoBehaviour
     private int index;
     private PrisonerSortSession activeSession;
     private PrisonerSortBatch activeBatch;
+    [SerializeField] private RouteHoldSelector routeHoldSelector;
+    private string authorizedRouteId;
 
 
     private void Awake()
     {
+        ResolveHoldSelector();
         ResetForBatch();
     }
 
@@ -23,6 +26,7 @@ public class PrisonerRoute : MonoBehaviour
     public void ResetForBatch()
     {
         index = 0;
+        authorizedRouteId = null;
 
         if (activeSession != null)
         {
@@ -39,6 +43,16 @@ public class PrisonerRoute : MonoBehaviour
         activeSession = session;
     }
 
+    public void BindHoldSelector(RouteHoldSelector selector)
+    {
+        routeHoldSelector = selector;
+    }
+
+    public void AuthorizeRouteSelection(string routeId)
+    {
+        authorizedRouteId = routeId;
+    }
+
     public void SetActiveBatch(PrisonerSortBatch batch)
     {
         activeBatch = batch;
@@ -46,6 +60,12 @@ public class PrisonerRoute : MonoBehaviour
 
     public void SelectRoute(string identifier)
     {
+        if (!ConsumeAuthorizedSelection(identifier))
+        {
+            Debug.Log($"[PrisonerRoute] Ignored unauthorised route selection for '{identifier}'.");
+            return;
+        }
+
         if (activeBatch != null)
         {
             SelectBatchRoute(identifier);
@@ -146,6 +166,33 @@ public class PrisonerRoute : MonoBehaviour
         choiceAnimator = ChoiceAnimators[index];
         walkAnimator = PrisonerWalkAnimators[index];
         return choiceAnimator != null && walkAnimator != null;
+    }
+
+    private void ResolveHoldSelector()
+    {
+        if (routeHoldSelector == null)
+            routeHoldSelector = GetComponent<RouteHoldSelector>();
+
+        if (routeHoldSelector == null)
+            routeHoldSelector = FindFirstObjectByType<RouteHoldSelector>();
+    }
+
+    private bool ConsumeAuthorizedSelection(string routeId)
+    {
+        ResolveHoldSelector();
+
+        if (routeHoldSelector == null)
+            return true;
+
+        if (string.IsNullOrWhiteSpace(authorizedRouteId))
+            return false;
+
+        bool matches = string.Equals(authorizedRouteId, routeId, System.StringComparison.OrdinalIgnoreCase);
+        if (!matches)
+            return false;
+
+        authorizedRouteId = null;
+        return true;
     }
 
     private static void ResetAnimators(Animator[] animators)
