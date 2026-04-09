@@ -6,6 +6,7 @@ public class ReactivateRoutes : MonoBehaviour
     public GameObject[] Routes;
     public Material[] RouteMats;
     public HighlightExit Grabbed;
+    [SerializeField] private RouteHoldSelector routeSelection;
     public Animator[] PrisonerWalkAnimator;
     public GameObject DistanceHandGrabInteractor;
 
@@ -31,17 +32,21 @@ public class ReactivateRoutes : MonoBehaviour
     {
         CacheInitialPrisonerTransforms();
         identifier = 0;
+        ResolveRouteSelection();
     }
 
     public void ResetForBatch()
     {
+        ResolveRouteSelection();
+
         if (activeBatch == null)
             identifier = 0;
 
         SetRoutesActive(true);
 
-        if (DistanceHandGrabInteractor != null)
-            DistanceHandGrabInteractor.SetActive(true);
+        routeSelection?.ResetSelectionState();
+
+        SetDistanceHandGrabInteractorActive(true);
 
         if (Grabbed != null)
             Grabbed.grabbed = false;
@@ -60,6 +65,8 @@ public class ReactivateRoutes : MonoBehaviour
 
     public void ReactivateRoute()
     {
+        ResolveRouteSelection();
+
         if (activeBatch != null)
         {
             ResetForBatch();
@@ -68,9 +75,9 @@ public class ReactivateRoutes : MonoBehaviour
 
         SetRoutesActive(true);
 
-        if (DistanceHandGrabInteractor != null)
-            DistanceHandGrabInteractor.SetActive(true);
+        SetDistanceHandGrabInteractorActive(true);
 
+        routeSelection?.ResetSelectionState();
 
         ResetMats();
 
@@ -106,10 +113,12 @@ public class ReactivateRoutes : MonoBehaviour
 
     public void EndPrisonerSortInteraction()
     {
+        ResolveRouteSelection();
         SetRoutesActive(false);
 
-        if (DistanceHandGrabInteractor != null)
-            DistanceHandGrabInteractor.SetActive(false);
+        routeSelection?.SetInteractionEnabled(false);
+
+        SetDistanceHandGrabInteractorActive(false);
 
         ResetMats();
 
@@ -155,6 +164,8 @@ public class ReactivateRoutes : MonoBehaviour
         if (activeBatch == null) return;
 
         SetBatchParticipantsActive(activeBatch, false);
+        ResolveRouteSelection();
+        routeSelection?.ResetSelectionState();
         ResetMats();
 
         if (Grabbed != null)
@@ -167,16 +178,33 @@ public class ReactivateRoutes : MonoBehaviour
         ResetMats();
     }
 
+    private void ResolveRouteSelection()
+    {
+        if (routeSelection == null)
+            routeSelection = GetComponentInChildren<RouteHoldSelector>(true);
+
+        if (routeSelection == null)
+            routeSelection = FindFirstObjectByType<RouteHoldSelector>();
+    }
+
+    public void SetDistanceHandGrabInteractorActive(bool active)
+    {
+        if (DistanceHandGrabInteractor != null)
+            DistanceHandGrabInteractor.SetActive(active);
+    }
+
 
     public void ResetMats()
     {
         if (RouteMats == null) return;
 
+        float idleStrength = PrisonerSortModule != null && PrisonerSortModule.IsActive ? 0.1f : 0f;
+
         foreach (Material mat in RouteMats)
         {
             if (mat == null) continue;
             mat.SetColor("_EmissionColor", new Color(1f, 0.8509f, 0.2980f));
-            mat.SetFloat("_EmissionStrength", 0f);
+            mat.SetFloat("_EmissionStrength", idleStrength);
         }
     }
 

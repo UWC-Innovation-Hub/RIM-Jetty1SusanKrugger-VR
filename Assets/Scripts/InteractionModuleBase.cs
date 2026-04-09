@@ -34,6 +34,21 @@ public abstract class InteractionModuleBase : MonoBehaviour
     [Tooltip("Rewind the interaction timeline to the beginning before playing it on Activate().")]
     [SerializeField] private bool rewindInteractionTimelineOnActivate = true;
 
+    [Header("Optional Tutorial Video")]
+    [Tooltip("Optional tutorial video controller that preloads the tutorial clip for this interaction before its timeline starts.")]
+    [SerializeField] private TutorialVideoController tutorialVideoController;
+    [Tooltip("Tutorial clip index to preload on Activate(). Use -1 to skip tutorial preload for this interaction.")]
+    [SerializeField] private int tutorialClipIndex = -1;
+    [Tooltip("Stop the tutorial video when Deactivate() is called.")]
+    [SerializeField] private bool stopTutorialVideoOnDeactivate = true;
+
+    [Header("Optional Interaction Timeout")]
+    [Tooltip("When enabled, automatically complete this interaction if the player does not finish it before the timeout threshold.")]
+    [SerializeField] private bool enableInteractionTimeout = false;
+    [Tooltip("How long this interaction can remain active before it auto-completes.")]
+    [Min(0f)]
+    [SerializeField] private float interactionTimeoutSeconds = 30f;
+
     [Header("Optional Environment")]
     [Tooltip("When active, force RenderSettings.fog to this value.")]
     [SerializeField] private bool enableFog = false;
@@ -47,6 +62,7 @@ public abstract class InteractionModuleBase : MonoBehaviour
 
     private bool _previousFogState;
     private bool _hasFogStateSnapshot;
+    private Coroutine _interactionTimeoutRoutine;
 
     public bool UseTransitionFade => useTransitionFade;
     public float FadeOutDuration => fadeOutDuration;
@@ -79,6 +95,8 @@ public abstract class InteractionModuleBase : MonoBehaviour
         SetActive(activeWhenActive, true);
         SetActive(inactiveWhenActive, false);
         RenderSettings.fog = enableFog;
+        PreloadTutorialVideo();
+        BeginInteractionTimeoutIfNeeded();
 
         if (playInteractionTimelineOnActivate)
         {
@@ -88,6 +106,13 @@ public abstract class InteractionModuleBase : MonoBehaviour
 
     public virtual void Deactivate()
     {
+        StopInteractionTimeout();
+
+        if (stopTutorialVideoOnDeactivate && tutorialVideoController != null)
+        {
+            tutorialVideoController.StopTutorial();
+        }
+
         if (stopInteractionTimelineOnDeactivate)
         {
             ResetInteractionTimelineToStart();
@@ -151,12 +176,67 @@ public abstract class InteractionModuleBase : MonoBehaviour
         return interactionTimelineDirector;
     }
 
+    private void PreloadTutorialVideo()
+    {
+        if (tutorialVideoController == null || tutorialClipIndex < 0)
+        {
+            return;
+        }
+
+        tutorialVideoController.SelectTutorialClip(tutorialClipIndex);
+    }
+
     protected void Complete()
     {
         if (!IsActive || IsComplete) return;
 
+        StopInteractionTimeout();
         IsComplete = true;
         Completed?.Invoke();
+    }
+
+    private void BeginInteractionTimeoutIfNeeded()
+    {
+        StopInteractionTimeout();
+
+        if (!enableInteractionTimeout)
+        {
+            return;
+        }
+
+        _interactionTimeoutRoutine = StartCoroutine(InteractionTimeoutRoutine());
+    }
+
+    private void StopInteractionTimeout()
+    {
+        if (_interactionTimeoutRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(_interactionTimeoutRoutine);
+        _interactionTimeoutRoutine = null;
+    }
+
+    private System.Collections.IEnumerator InteractionTimeoutRoutine()
+    {
+        float elapsed = 0f;
+
+        while (IsActive && !IsComplete && elapsed < interactionTimeoutSeconds)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        _interactionTimeoutRoutine = null;
+
+        if (!IsActive || IsComplete)
+        {
+            yield break;
+        }
+
+        Debug.Log($"[{name}] Interaction timed out after {interactionTimeoutSeconds:0.##} seconds. Completing automatically.");
+        Complete();
     }
 
     private static void SetEnabled(Behaviour[] behaviours, bool enabled)
