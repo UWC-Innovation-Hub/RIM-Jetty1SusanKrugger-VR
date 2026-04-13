@@ -4,7 +4,7 @@ using UnityEngine;
 public class FadeController : MonoBehaviour
 {
     [SerializeField] private Renderer fadeRenderer;
-    [SerializeField] private float defaultFadeDuration = 0.5f;
+    [SerializeField] private float defaultFadeDuration = 2.5f;
 
     private Material _mat;
     private int _fadeRequestId;
