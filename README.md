@@ -106,6 +106,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C1_J2_Lobby/
             ├── Characters/
             ├── Environment/
+            ├── PoliceBadge/
             ├── Temporary_Characters/
         ├── C2_J3_J4_Cell/
             ├── Lamp_iwanPlays/
@@ -317,6 +318,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `ProjectionController.cs` | `Assets/Scripts/ProjectionController.cs` |
 | `ReactivateRoutes.cs` | `Assets/Scripts/ReactivateRoutes.cs` |
 | `RewardUI.cs` | `Assets/Scripts/RewardUI.cs` |
+| `RouteHoldSelector.cs` | `Assets/Scripts/RouteHoldSelector.cs` |
 | `SequenceBrain.cs` | `Assets/Scripts/SequenceBrain.cs` |
 | `SequenceSignalRouter.cs` | `Assets/Scripts/SequenceSignalRouter.cs` |
 | `SetNextPrisoner.cs` | `Assets/Scripts/SetNextPrisoner.cs` |

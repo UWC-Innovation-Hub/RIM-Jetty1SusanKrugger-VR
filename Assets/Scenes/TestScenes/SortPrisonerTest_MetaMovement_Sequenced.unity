@@ -45349,6 +45349,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 02affbce838d792448863c088330b636, type: 2}
   - {fileID: 2100000, guid: 29b3ab744b7170f4a81bff42cfe3a3af, type: 2}
   Grabbed: {fileID: 1520555854}
+  routeSelection: {fileID: 1520555856}
   PrisonerWalkAnimator: []
   DistanceHandGrabInteractor: {fileID: 510795793}
   reactivateAllPrisonersOnReset: 1
@@ -55091,6 +55092,7 @@ GameObject:
   - component: {fileID: 1520555853}
   - component: {fileID: 1520555854}
   - component: {fileID: 1520555855}
+  - component: {fileID: 1520555856}
   m_Layer: 0
   m_Name: Routes
   m_TagString: Untagged
@@ -55260,6 +55262,37 @@ MonoBehaviour:
   BoatGateAnimator: {fileID: 1416439106}
   identifier: cell
   AS: {fileID: 1520555853}
+  routeHoldSelector: {fileID: 1520555856}
+--- !u!114 &1520555856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1520555851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f93f7cb6503942d4a8a2b4d3572af1e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  prisonerRoute: {fileID: 1520555855}
+  prisonerSortModule: {fileID: 1283325262}
+  routeController: {fileID: 1283325264}
+  holdDuration: 3
+  autoDiscoverRoutes: 1
+  progressSprite: {fileID: 21300000, guid: 4ffe7192a29f6564e9de24693cd80155, type: 3}
+  indicatorSize: {x: 124.78, y: 54.11}
+  indicatorScale: {x: 0.0012, y: 0.0012, z: 0.0012}
+  indicatorHeightPadding: 0.2
+  backgroundColor: {r: 1, g: 0.8509, b: 0.298, a: 0.2}
+  fillColor: {r: 1, g: 0.925, b: 0.6, a: 1}
+  selectedFillColor: {r: 1, g: 0.45, b: 0.35, a: 1}
+  idleEmissionColor: {r: 1, g: 0.8509, b: 0.298, a: 1}
+  idleEmissionStrength: 0.1
+  hoverEmissionStrength: 1
+  selectedEmissionColor: {r: 1, g: 0, b: 0, a: 1}
+  selectedEmissionStrength: 1
+  routes: []
 --- !u!1 &1521578152
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,20 +15,25 @@ public class HighlightExit : MonoBehaviour
 
     public GameObject[] Selectors;
     public Material[] RouteMats;
+    private RouteHoldSelector routeHoldSelector;
 
 
     public void Start()
     {
         //HighLightMat = HM.HighLightMats[identifier];
         //Debug.Log(HighLightMat.name);
+        ResolveRouteHoldSelector();
     }
 
     public void OnHover(int identifier)
     {
+        if (ResolveRouteHoldSelector() != null)
+            return;
+
         Debug.Log($"{name} was grabbed.");
         HighLightMat = HM.HighLightMats[identifier];
         //Highlight
-        HM.HighLightMats[identifier].SetFloat("_EmissionStrength", 2f);
+        HM.HighLightMats[identifier].SetFloat("_EmissionStrength", 1f);
         //HighLightMat.SetFloat("_EmissionStrength", 2f);
         Debug.Log(HighLightMat.name);
         
@@ -36,6 +41,9 @@ public class HighlightExit : MonoBehaviour
 
     public void OnDeHover(int identifier)
     {
+        if (ResolveRouteHoldSelector() != null)
+            return;
+
         Debug.Log($"{name} was released (distance).");
         Debug.Log(HighLightMat.name);
         //Highlight
@@ -53,10 +61,13 @@ public class HighlightExit : MonoBehaviour
 
     public void OnGrabbed()
     {
+        if (ResolveRouteHoldSelector() != null)
+            return;
+
         grabbed = true;
         Debug.Log(HighLightMat.name);
         HighLightMat.SetColor("_EmissionColor", Color.red);
-        HighLightMat.SetFloat("_EmissionStrength", 2f);
+        HighLightMat.SetFloat("_EmissionStrength", 1f);
 
         foreach(GameObject go in Selectors)
         {
@@ -68,6 +79,12 @@ public class HighlightExit : MonoBehaviour
     //Where is this function called, it isn't really doing anything?
     public void ResetPaths()
     {
+        if (ResolveRouteHoldSelector() != null)
+        {
+            routeHoldSelector.ResetSelectionState();
+            return;
+        }
+
         if (!PSort.IsComplete)
         {
             DistanceHandGrabInteractor.SetActive(true);
@@ -81,14 +98,26 @@ public class HighlightExit : MonoBehaviour
         foreach (Material mat in RouteMats)
         {
             mat.SetColor("_EmissionColor", new Color(1f, 0.8509f, 0.2980f));
-            mat.SetFloat("_EmissionStrength", 0f);
+            float idleStrength = PSort != null && PSort.IsActive ? 0.1f : 0f;
+            mat.SetFloat("_EmissionStrength", idleStrength);
         }
     }
 
     private void OnApplicationQuit()
     {
-        HighLightMat.SetFloat("_EmissionStrength", 0f);
-        HighLightMat.SetColor("_EmissionColor", new Color(1f,0.8509f,0.2980f));
+        if (HighLightMat != null)
+        {
+            HighLightMat.SetFloat("_EmissionStrength", 0f);
+            HighLightMat.SetColor("_EmissionColor", new Color(1f,0.8509f,0.2980f));
+        }
         //HighLightMat.SetFloat("_ShouldHighlight", 0f);
+    }
+
+    private RouteHoldSelector ResolveRouteHoldSelector()
+    {
+        if (routeHoldSelector == null)
+            routeHoldSelector = FindFirstObjectByType<RouteHoldSelector>();
+
+        return routeHoldSelector;
     }
 }
