@@ -130,6 +130,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Registration office/
         ├── Susan Kruger/
         ├── Textures/
+            ├── Studebaker_v003_ATLAS/
         ├── Warders/
             ├── characters/
     ├── Oculus/
