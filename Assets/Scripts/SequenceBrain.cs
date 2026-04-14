@@ -118,15 +118,21 @@ public class SequenceBrain : MonoBehaviour
     private IEnumerator EnterInteractionRoutine()
     {
         _isTransitioning = true;
-        ApplyState(SequenceState.TransitionToInteraction, pauseDirector: true);
+        ApplyState(SequenceState.TransitionToInteraction, pauseDirector: false);
 
         if (activeInteraction)
         {
             // Defensive: prevent double subscribe
             activeInteraction.Completed -= OnActiveInteractionCompleted;
 
+            // Fade out FIRST while the director (and its audio) is still running,
+            // so the VO is never hard-cut while the screen is still visible.
             if (ShouldUseFade(activeInteraction))
                 yield return fadeController.FadeOutRoutine(activeInteraction.FadeOutDuration);
+
+            // Director is now hidden behind black — safe to pause here.
+            if (director && director.state == PlayState.Playing)
+                director.Pause();
 
             activeInteraction.Activate();
             activeInteraction.Completed += OnActiveInteractionCompleted;
