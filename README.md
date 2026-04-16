@@ -141,6 +141,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Characters V001/
             ├── Organization/
             ├── body track/
+        ├── Chracters V002/
         ├── Interactions/
         ├── UI/
         ├── Walking man/
