@@ -124,6 +124,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Prisoners/
             ├── Animation Controllers/
             ├── Animations/
+            ├── Models_V2/
         ├── Props_1st_Pass/
             ├── Props/
             ├── ToiletPaperWithWriting3DModel/
@@ -140,6 +141,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Characters V001/
             ├── Organization/
             ├── body track/
+        ├── Chracters V002/
         ├── Interactions/
         ├── UI/
         ├── Walking man/
