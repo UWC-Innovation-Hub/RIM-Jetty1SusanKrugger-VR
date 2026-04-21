@@ -139,7 +139,7 @@ public class SequenceBrain : MonoBehaviour
 
             ApplyState(SequenceState.InInteraction, pauseDirector: true);
 
-            if (ShouldUseFade(activeInteraction))
+            if (ShouldUseFade(activeInteraction) && !activeInteraction.SkipEnterFadeIn)
                 yield return fadeController.FadeInRoutine(activeInteraction.FadeInDuration);
         }
         else
