@@ -59,6 +59,9 @@ public abstract class InteractionModuleBase : MonoBehaviour
     [SerializeField] private bool useTransitionFade = false;
     [SerializeField] private float fadeOutDuration = 0.35f;
     [SerializeField] private float fadeInDuration = 0.35f;
+    [Tooltip("When ticked, SequenceBrain will NOT fade in after activating this interaction. " +
+             "Use this for the opening inventory interaction where the Timeline controls the fade itself.")]
+    [SerializeField] private bool skipEnterFadeIn = false;
 
     private bool _previousFogState;
     private bool _hasFogStateSnapshot;
@@ -67,6 +70,7 @@ public abstract class InteractionModuleBase : MonoBehaviour
     public bool UseTransitionFade => useTransitionFade;
     public float FadeOutDuration => fadeOutDuration;
     public float FadeInDuration => fadeInDuration;
+    public bool SkipEnterFadeIn => skipEnterFadeIn;
 
     protected virtual void Awake()
     {
