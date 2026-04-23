@@ -793,6 +793,7 @@ public class InventoryModule : InteractionModuleBase
 
     private static bool ShouldLockItem(EquippableItem item)
     {
-        return item != null && item.itemType != EquippableItem.ItemType.Baton;
+        return item != null ;
+        //&& item.itemType != EquippableItem.ItemType.Baton
     }
 }
