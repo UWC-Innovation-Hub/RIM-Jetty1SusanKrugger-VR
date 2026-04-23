@@ -4,16 +4,9 @@ using UnityEngine;
 public class FadeController : MonoBehaviour
 {
     [SerializeField] private Renderer fadeRenderer;
-    [SerializeField] private float defaultFadeDuration = 2.5f;
+    [SerializeField] private float defaultFadeDuration = 0.5f;
 
-    [Tooltip("When OFF, the quad stays black on Start and waits for an external caller " +
-             "to trigger FadeIn(). Untick on the C1 Head_Fader so the opening blackout " +
-             "is controlled by the timeline signal, not scene load.")]
-    [SerializeField] private bool autoFadeInOnStart = true;
-
-    [Tooltip("Duration used specifically by FadeInOpening() — the scene-open reveal. " +
-             "Separate from defaultFadeDuration so transitions are not affected.")]
-    [SerializeField] private float openingFadeDuration = 5f;
+    public bool ShouldFadeOnStart;
 
     private Material _mat;
     private int _fadeRequestId;
@@ -36,23 +29,15 @@ public class FadeController : MonoBehaviour
 
     private void Start()
     {
-        if (autoFadeInOnStart)
+        if(ShouldFadeOnStart)
+        {
             FadeIn();
+        }
     }
 
     public void FadeIn(float duration = -1f)   // Fade from black to clear
     {
         StartCoroutine(FadeInRoutine(duration));
-    }
-
-    /// <summary>
-    /// Call this from a Timeline Signal Receiver at the moment you want
-    /// the opening scene to reveal itself. Uses openingFadeDuration so it
-    /// never interferes with the defaultFadeDuration used by transitions.
-    /// </summary>
-    public void FadeInOpening()
-    {
-        StartCoroutine(FadeInRoutine(openingFadeDuration));
     }
 
     public void FadeOut(float duration = -1f)  // Fade to black
