@@ -198,7 +198,7 @@ public class ReactivateRoutes : MonoBehaviour
     {
         if (RouteMats == null) return;
 
-        float idleStrength = PrisonerSortModule != null && PrisonerSortModule.IsActive ? 0.1f : 0f;
+        float idleStrength = PrisonerSortModule != null && PrisonerSortModule.IsActive ? 0.0f : 0f;
 
         foreach (Material mat in RouteMats)
         {
