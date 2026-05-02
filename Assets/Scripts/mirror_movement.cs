@@ -2,23 +2,26 @@ using UnityEngine;
 
 public class mirror_movement : MonoBehaviour
 {
-
-
     public Transform playerTarget;
     public Transform mirror;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void SetPlayerTarget(Transform target)
     {
-        
+        playerTarget = target;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void LateUpdate()
     {
+        RefreshMirrorPose();
+    }
+
+    public void RefreshMirrorPose()
+    {
+        if (playerTarget == null || mirror == null)
+            return;
+
         Vector3 localPlayer = mirror.InverseTransformPoint(playerTarget.position);
         transform.position = mirror.TransformPoint(new Vector3(localPlayer.x, localPlayer.y, -localPlayer.z));
-
 
         Vector3 lookatmirror = mirror.TransformPoint(new Vector3(-localPlayer.x, localPlayer.y, localPlayer.z));
         transform.LookAt(lookatmirror);
