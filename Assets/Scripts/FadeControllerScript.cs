@@ -6,6 +6,8 @@ public class FadeController : MonoBehaviour
     [SerializeField] private Renderer fadeRenderer;
     [SerializeField] private float defaultFadeDuration = 0.5f;
 
+    public bool ShouldFadeOnStart;
+
     private Material _mat;
     private int _fadeRequestId;
 
@@ -27,7 +29,10 @@ public class FadeController : MonoBehaviour
 
     private void Start()
     {
-        FadeIn();
+        if(ShouldFadeOnStart)
+        {
+            FadeIn();
+        }
     }
 
     public void FadeIn(float duration = -1f)   // Fade from black to clear
