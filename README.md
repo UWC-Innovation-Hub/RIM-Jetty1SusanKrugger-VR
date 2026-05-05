@@ -131,6 +131,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Registration office/
         ├── Susan Kruger/
         ├── Textures/
+            ├── Chain_Textures/
             ├── Studebaker_v003_ATLAS/
         ├── Warders/
             ├── characters/
@@ -141,7 +142,6 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Characters V001/
             ├── Organization/
             ├── body track/
-        ├── Chracters V002/
         ├── Interactions/
         ├── UI/
         ├── Walking man/
@@ -154,6 +154,11 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Videos/
         ├── scripts/
     ├── Resources/
+    ├── Ropes and cables Tool/
+        ├── OptimizedRopesAndCables/
+            ├── Example/
+            ├── Material/
+            ├── Script/
     ├── Samples/
         ├── Meta XR All-in-One SDK/
         ├── Meta XR Audio SDK/
@@ -288,6 +293,12 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `ElapsedTtimer.cs` | `Assets/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
 | `SceneManager.cs` | `Assets/RIM_jetty1_assets/scripts/SceneManager.cs` |
 | `UISceneLoader.cs` | `Assets/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
+| `CameraMove.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Example/Scripts/CameraMove.cs` |
+| `PointsAssignExample.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Example/Scripts/PointsAssignExample.cs` |
+| `RopeEditor.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/Editor/RopeEditor.cs` |
+| `Rope.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/Rope.cs` |
+| `RopeMesh.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeMesh.cs` |
+| `RopeWindEffect.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeWindEffect.cs` |
 | `Background_Character_Spawning.cs` | `Assets/Scripts/Background_Character_Spawning.cs` |
 | `BarShake.cs` | `Assets/Scripts/BarShake.cs` |
 | `Billboard.cs` | `Assets/Scripts/Billboard.cs` |

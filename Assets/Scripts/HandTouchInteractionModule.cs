@@ -28,6 +28,11 @@ public class HandTouchInteractionModule : InteractionModuleBase
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private bool muteHandAudioWhileActive = true;
 
+    [Header("Recording Bypass")]
+    [SerializeField] private bool autoPlayProjectionOnActivate = false;
+    [SerializeField, Min(0)] private int autoPlayStepIndex = 0;
+    [SerializeField] private bool autoCompleteAfterAutoProjection = false;
+
     [Header("Light Restore")]
     [SerializeField] private Light sceneLightOverride;
     [SerializeField] private float restoredLightIntensity = 0.5f;
@@ -84,6 +89,13 @@ public class HandTouchInteractionModule : InteractionModuleBase
         {
             videoPlayer.loopPointReached -= OnVideoLoopPointReached;
             videoPlayer.loopPointReached += OnVideoLoopPointReached;
+        }
+
+        if (autoPlayProjectionOnActivate)
+        {
+            HideAllHands();
+            _sequenceRoutine = StartCoroutine(RunAutoProjectionBypass());
+            return;
         }
 
         ShowAvailableHands();
@@ -181,6 +193,39 @@ public class HandTouchInteractionModule : InteractionModuleBase
             }
 
             ShowAvailableHands();
+        }
+
+        _sequenceRoutine = null;
+    }
+
+    private IEnumerator RunAutoProjectionBypass()
+    {
+        int stepIndex = Mathf.Clamp(autoPlayStepIndex, 0, handSteps.Count - 1);
+        HandTouchStep step = handSteps[stepIndex];
+
+        _currentSelection = step;
+        StopStepAudio(step);
+        HideAllHands();
+
+        bool projectionStarted = StartProjectionForSelection(step);
+        yield return WaitForProjectionToFinish(projectionStarted);
+
+        if (!IsActive)
+        {
+            _sequenceRoutine = null;
+            yield break;
+        }
+
+        _currentSelection = null;
+
+        if (autoCompleteAfterAutoProjection)
+        {
+            yield return RestoreSceneLightBeforeComplete();
+
+            if (IsActive)
+            {
+                Complete();
+            }
         }
 
         _sequenceRoutine = null;

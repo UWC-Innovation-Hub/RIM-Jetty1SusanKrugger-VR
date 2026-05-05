@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -19,6 +20,11 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
     [Header("Exit Timing")]
     [SerializeField] private float lingerDuration = 2f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private bool playAudioOnGaze = true;
+    [SerializeField] private bool playOnlyOnce = true;
+
     [Header("Events")]
     public UnityEvent onGazeEnter;
     public UnityEvent onGazeExit;
@@ -29,6 +35,8 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
     private Coroutine indicatorCoroutine;
     private Vector3 indicatorOriginalScale;
     private GazeIndicator indicatorScript;
+
+    private bool playedAudio = false;
 
     private void Awake()
     {
@@ -48,6 +56,16 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
     public void OnGazeEnter()
     {
         onGazeEnter?.Invoke();
+
+        if (playAudioOnGaze && audioSource != null)
+        {
+            if (!playOnlyOnce || !playedAudio)
+            {
+                audioSource.Play();
+                playedAudio = true;
+                Debug.Log("Audio is playing");
+            }
+        }
 
         StopRoutine(ref hideCoroutine);
 

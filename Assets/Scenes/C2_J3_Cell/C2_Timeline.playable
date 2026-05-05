@@ -666,6 +666,22 @@ MonoBehaviour:
     volume: 1
     stereoPan: 0
     spatialBlend: 0
+--- !u!114 &-3867664047217387567
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15c38f6fa1940124db1ab7f6fe7268d1, type: 3}
+  m_Name: Signal Emitter
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.SignalEmitter
+  m_Time: 0
+  m_Retroactive: 0
+  m_EmitOnce: 0
+  m_Asset: {fileID: 11400000, guid: 418b09c4bb120b44c8365bf6eee53266, type: 2}
 --- !u!114 &-3119897729307584204
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1744,7 +1760,7 @@ MonoBehaviour:
   m_Version: 3
   m_AnimClip: {fileID: 0}
   m_Locked: 0
-  m_Muted: 0
+  m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
@@ -1756,6 +1772,7 @@ MonoBehaviour:
     - {fileID: -4892507757534849557}
     - {fileID: -6695915328484015211}
     - {fileID: -6911937675841363088}
+    - {fileID: -3867664047217387567}
 --- !u!74 &6772088686773393820
 AnimationClip:
   m_ObjectHideFlags: 0
