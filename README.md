@@ -100,6 +100,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Mirror effect/
     ├── Misc/
         ├── Materials/
+        ├── digital-7/
     ├── Models/
         ├── 3D_Scans/
             ├── OPTIMIZED/
@@ -180,6 +181,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── SampleScene/
         ├── TestScenes/
             ├── BlackWaitingRoomTest/
+            ├── C1_Final_Pass_TEST_Beta/
             ├── C2_J3_Cell_Rec_Assets/
             ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
@@ -303,6 +305,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `Rope.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/Rope.cs` |
 | `RopeMesh.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeMesh.cs` |
 | `RopeWindEffect.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeWindEffect.cs` |
+| `AudioSourceControl.cs` | `Assets/Scripts/AudioSourceControl.cs` |
 | `Background_Character_Spawning.cs` | `Assets/Scripts/Background_Character_Spawning.cs` |
 | `BarShake.cs` | `Assets/Scripts/BarShake.cs` |
 | `Billboard.cs` | `Assets/Scripts/Billboard.cs` |
@@ -311,6 +314,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `ButtonScale.cs` | `Assets/Scripts/ButtonScale.cs` |
 | `CanvasFade.cs` | `Assets/Scripts/CanvasFade.cs` |
 | `CargoDoorDriver.cs` | `Assets/Scripts/CargoDoorDriver.cs` |
+| `CinemachineMirrorTargetBinder.cs` | `Assets/Scripts/CinemachineMirrorTargetBinder.cs` |
 | `ClapConfirmationUI.cs` | `Assets/Scripts/ClapConfirmationUI.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/ClapDetector.cs` |
 | `ControlBoatGate.cs` | `Assets/Scripts/ControlBoatGate.cs` |
@@ -365,6 +369,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `SequenceSignalRouter.cs` | `Assets/Scripts/SequenceSignalRouter.cs` |
 | `SetNextPrisoner.cs` | `Assets/Scripts/SetNextPrisoner.cs` |
 | `TenSecTimer.cs` | `Assets/Scripts/TenSecTimer.cs` |
+| `TimedChoiceManager.cs` | `Assets/Scripts/TimedChoiceManager.cs` |
 | `TimelineBindingTransfer.cs` | `Assets/Scripts/TimelineBindingTransfer.cs` |
 | `TimelineVideoPlaybackController.cs` | `Assets/Scripts/TimelineVideoPlaybackController.cs` |
 | `TokenMove.cs` | `Assets/Scripts/TokenMove.cs` |
