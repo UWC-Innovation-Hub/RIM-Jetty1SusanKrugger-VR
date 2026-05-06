@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Video;
 
 public class GazeTarget : MonoBehaviour, IGazeTarget
 {
@@ -19,6 +21,16 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
     [Header("Exit Timing")]
     [SerializeField] private float lingerDuration = 2f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private bool playAudioOnGaze = true;
+    [SerializeField] private bool playOnlyOnce = true;
+
+    [Header("Video")]
+    [SerializeField] private VideoPlayer videoPlayer;
+    [SerializeField] private bool playVideoOnGaze = true;
+    [SerializeField] private bool playVideoOnlyOnce = true;
+
     [Header("Events")]
     public UnityEvent onGazeEnter;
     public UnityEvent onGazeExit;
@@ -29,6 +41,9 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
     private Coroutine indicatorCoroutine;
     private Vector3 indicatorOriginalScale;
     private GazeIndicator indicatorScript;
+
+    private bool playedAudio = false;
+    private bool playedVideo = false;
 
     private void Awake()
     {
@@ -48,6 +63,26 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
     public void OnGazeEnter()
     {
         onGazeEnter?.Invoke();
+
+        if (playAudioOnGaze && audioSource != null)
+        {
+            if (!playOnlyOnce || !playedAudio)
+            {
+                audioSource.Play();
+                playedAudio = true;
+                Debug.Log("Audio is playing");
+            }
+        }
+
+        if (playVideoOnGaze && videoPlayer != null)
+        {
+            if (!playVideoOnlyOnce || !playedVideo)
+            {
+                videoPlayer.Play();
+                playedVideo = true;
+                Debug.Log("Video is playing");
+            }
+        }
 
         StopRoutine(ref hideCoroutine);
 

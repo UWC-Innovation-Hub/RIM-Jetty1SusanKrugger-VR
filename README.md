@@ -303,7 +303,6 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `Rope.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/Rope.cs` |
 | `RopeMesh.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeMesh.cs` |
 | `RopeWindEffect.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeWindEffect.cs` |
-| `AudioSourceControl.cs` | `Assets/Scripts/AudioSourceControl.cs` |
 | `Background_Character_Spawning.cs` | `Assets/Scripts/Background_Character_Spawning.cs` |
 | `BarShake.cs` | `Assets/Scripts/BarShake.cs` |
 | `Billboard.cs` | `Assets/Scripts/Billboard.cs` |
