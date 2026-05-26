@@ -1,21 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Enables Meta XR HRTF spatialisation on an AudioSource so audio comes FROM
-/// this GameObject's world position. Tick Spatialize in the Inspector or let
-/// this script do it on Awake.
-///
-/// Setup (per lead guidance):
-///   1. Place this GameObject at the position you want the sound to come FROM
-///      (e.g. behind the desk where the warder starts, at floor level).
-///   2. Add an AudioSource component — assign your clip OR leave blank and let
-///      the Timeline Audio Track drive it (bind this object's AudioSource to
-///      the footstep Audio Track on Timeline_Inventory's PlayableDirector).
-///   3. To animate movement (footsteps walking toward the door):
-///      - Add an Animation Track on C1_Timeline_Inventory targeting this GameObject
-///      - Keyframe the position from start point → door position over the clip duration
-///   4. For the walkie-talkie prop: same setup, place on the desk GameObject.
-/// </summary>
 [RequireComponent(typeof(AudioSource))]
 public class FootstepAudioSource : MonoBehaviour
 {
