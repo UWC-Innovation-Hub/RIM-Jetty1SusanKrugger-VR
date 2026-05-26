@@ -228,6 +228,7 @@ public class PrisonerSortModule : InteractionModuleBase
         _currentBatchFinished.Clear();
         ApplyCurrentBatchBinding();
         routeController?.ResetForBatch();
+        prisonerRoute?.ResetForBatch();
     }
 
     private static string ResolveParticipantId(string participantId, int fallbackIndex, string prefix)

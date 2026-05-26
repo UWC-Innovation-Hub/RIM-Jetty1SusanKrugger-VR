@@ -1,13 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Makes an AudioSource sound like a walkie-talkie/intercom on a desk.
-/// Attach to Props_Intercom_System_v001 (or whichever object holds the
-/// AudioSource bound to the VO track in C1_Timeline_Inventory).
-///
-/// Adds a bandpass filter (high-pass + low-pass) to simulate radio frequency
-/// and sets the AudioSource to 3D so the VO comes FROM the desk, not the centre.
-/// </summary>
 [RequireComponent(typeof(AudioSource))]
 public class WalkieTalkieAudioSource : MonoBehaviour
 {
