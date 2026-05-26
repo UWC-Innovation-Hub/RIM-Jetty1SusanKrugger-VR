@@ -63,6 +63,7 @@ public abstract class InteractionModuleBase : MonoBehaviour
              "Use this for the opening inventory interaction where the Timeline controls the fade itself.")]
     [SerializeField] private bool skipEnterFadeIn = false;
 
+
     private bool _previousFogState;
     private bool _hasFogStateSnapshot;
     private Coroutine _interactionTimeoutRoutine;

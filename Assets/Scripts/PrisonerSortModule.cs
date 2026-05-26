@@ -18,6 +18,7 @@ public class PrisonerSortModule : InteractionModuleBase
     public int CurrentBatchIndex { get; private set; }
     public PrisonerSortSession ActiveSession { get; private set; }
     public PrisonerSortBatch CurrentBatch { get; private set; }
+
     public bool UsesSessionBatches => ActiveSession != null && ActiveSession.GetBatchCount() > 0;
 
     private readonly HashSet<string> _currentBatchArrivals = new();
