@@ -21,7 +21,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 
 <!-- AUTO-STRUCTURE-START -->
 ```
-        ├── Materials/
+    ├── Materials/
     ├── Samples/
         ├── Meta XR Interaction \342\200\213SDK/
 ├── .dotnet/
@@ -34,9 +34,6 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Animations/
         ├── C1/
         ├── J1/
-    ├── Assets/
-        ├── Fonts/
-        ├── RewardToken/
     ├── Audio/
         ├── C1/
             ├── Master/
@@ -58,10 +55,9 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── CompositionLayers/
         ├── UserSettings/
             ├── Resources/
-    ├── Custom Prefabs/
+    ├── Fonts/
+        ├── digital-7/
     ├── InteractionSDK/
-    ├── InventoryPrefabs/
-        ├── Materials/
     ├── Materials/
         ├── C1_J2_Lobby/
             ├── Materials/
@@ -91,14 +87,18 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── prisoner 5/
             ├── prisoner 6/
     ├── Media/
+        ├── RIM_jetty1_assets/
+            ├── 3dContent/
+            ├── Images/
+            ├── Material/
+            ├── Videos/
+            ├── scripts/
         ├── Video/
             ├── C1/
             ├── C2/
             ├── RIM Show and Tell/
             ├── Video Tuts/
     ├── MetaXR/
-    ├── Misc/
-        ├── Materials/
     ├── Models/
         ├── 3D_Scans/
             ├── OPTIMIZED/
@@ -131,6 +131,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Registration office/
         ├── Susan Kruger/
         ├── Textures/
+            ├── Chain_Textures/
             ├── Studebaker_v003_ATLAS/
         ├── Warders/
             ├── characters/
@@ -141,19 +142,19 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Characters V001/
             ├── Organization/
             ├── body track/
-        ├── Chracters V002/
         ├── Interactions/
+        ├── Objects/
+        ├── Rooms/
+        ├── Script Prefabs/
         ├── UI/
         ├── Walking man/
     ├── Prisoner Shaders/
-    ├── RIM_jetty1_assets/
-        ├── 3dContent/
-            ├── Old_Scans_Polycam/
-        ├── Images/
-        ├── Material/
-        ├── Videos/
-        ├── scripts/
     ├── Resources/
+    ├── Ropes and cables Tool/
+        ├── OptimizedRopesAndCables/
+            ├── Example/
+            ├── Material/
+            ├── Script/
     ├── Samples/
         ├── Meta XR All-in-One SDK/
         ├── Meta XR Audio SDK/
@@ -174,13 +175,22 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── SampleScene/
         ├── TestScenes/
             ├── BlackWaitingRoomTest/
+            ├── C1_Final_Pass_TEST_Beta/
             ├── C2_J3_Cell_Rec_Assets/
             ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
             ├── SortPrisonerTest_MetaMovement_Sequenced/
     ├── Scripts/
+        ├── Animations/
+        ├── Audio and Video/
+        ├── GazeInteraction/
+        ├── Interactions/
         ├── InventoryTest/
+        ├── Mirror/
+        ├── Prisoner/
+        ├── Timeline/
+        ├── UI/
     ├── Settings/
         ├── Build Profiles/
         ├── Project Configuration/
@@ -206,13 +216,11 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Cell/
         ├── Silhouettes/
         ├── Test Textures/
+        ├── Textures/
         ├── Warders/
             ├── Warder Cuffs/
             ├── Warder Holster/
             ├── Warder pistol/
-    ├── TokenTextures/
-        ├── Textures/
-    ├── UI Script Prefabs/
     ├── VR Body/
         ├── Animations/
         ├── Ch32_nonPBR.fbm/
@@ -241,6 +249,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Settings/
             ├── Resources/
     ├── body tracking test/
+        ├── prefabs/
 ├── LICENSE.txt/
 ├── Packages/
         ├── Unity-Movement-78.0.0/
@@ -283,79 +292,89 @@ Through VR, visitors can walk through historically significant locations on Robb
 <!-- AUTO-SCRIPTS-START -->
 | Script | Path |
 |---|---|
-| `Coin emmision test.cs` | `Assets/Assets/RewardToken/Coin emmision test.cs` |
-| `FootstepSMB.cs` | `Assets/FootstepSMB.cs` |
-| `ElapsedTtimer.cs` | `Assets/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
-| `SceneManager.cs` | `Assets/RIM_jetty1_assets/scripts/SceneManager.cs` |
-| `UISceneLoader.cs` | `Assets/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
-| `Background_Character_Spawning.cs` | `Assets/Scripts/Background_Character_Spawning.cs` |
-| `BarShake.cs` | `Assets/Scripts/BarShake.cs` |
-| `Billboard.cs` | `Assets/Scripts/Billboard.cs` |
-| `BreathingInteractionModule.cs` | `Assets/Scripts/BreathingInteractionModule.cs` |
-| `ButtonScale.cs` | `Assets/Scripts/ButtonScale.cs` |
-| `CanvasFade.cs` | `Assets/Scripts/CanvasFade.cs` |
-| `CargoDoorDriver.cs` | `Assets/Scripts/CargoDoorDriver.cs` |
-| `ClapConfirmationUI.cs` | `Assets/Scripts/ClapConfirmationUI.cs` |
-| `ClapDetector.cs` | `Assets/Scripts/ClapDetector.cs` |
-| `ControlBoatGate.cs` | `Assets/Scripts/ControlBoatGate.cs` |
-| `CountUpTimer.cs` | `Assets/Scripts/CountUpTimer.cs` |
-| `CountdownTimer.cs` | `Assets/Scripts/CountdownTimer.cs` |
-| `FadeControllerScript.cs` | `Assets/Scripts/FadeControllerScript.cs` |
-| `FingerprintLockout.cs` | `Assets/Scripts/FingerprintLockout.cs` |
-| `FingerprintProjectionInteractionModule.cs` | `Assets/Scripts/FingerprintProjectionInteractionModule.cs` |
-| `FingerprintTrigger.cs` | `Assets/Scripts/FingerprintTrigger.cs` |
-| `GazeIndicator.cs` | `Assets/Scripts/GazeIndicator.cs` |
-| `GazeRaycaster.cs` | `Assets/Scripts/GazeRaycaster.cs` |
-| `GazeTarget.cs` | `Assets/Scripts/GazeTarget.cs` |
-| `HandGestureListener.cs` | `Assets/Scripts/HandGestureListener.cs` |
-| `HandTouchInteractionModule.cs` | `Assets/Scripts/HandTouchInteractionModule.cs` |
-| `HeadLockedHud.cs` | `Assets/Scripts/HeadLockedHud.cs` |
-| `Headlock.cs` | `Assets/Scripts/Headlock.cs` |
-| `HighFiveTrigger.cs` | `Assets/Scripts/HighFiveTrigger.cs` |
-| `HighlightExit.cs` | `Assets/Scripts/HighlightExit.cs` |
-| `HighlightExitManager.cs` | `Assets/Scripts/HighlightExitManager.cs` |
-| `IGazeTarget.cs` | `Assets/Scripts/IGazeTarget.cs` |
-| `InstructionManager.cs` | `Assets/Scripts/InstructionManager.cs` |
-| `InstructionObject.cs` | `Assets/Scripts/InstructionObject.cs` |
-| `InteractionCompleteListener.cs` | `Assets/Scripts/InteractionCompleteListener.cs` |
-| `InteractionModuleBase.cs` | `Assets/Scripts/InteractionModuleBase.cs` |
-| `InventoryModule.cs` | `Assets/Scripts/InventoryModule.cs` |
+| `ElapsedTtimer.cs` | `Assets/Media/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
+| `SceneManager.cs` | `Assets/Media/RIM_jetty1_assets/scripts/SceneManager.cs` |
+| `UISceneLoader.cs` | `Assets/Media/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
+| `CameraMove.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Example/Scripts/CameraMove.cs` |
+| `PointsAssignExample.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Example/Scripts/PointsAssignExample.cs` |
+| `RopeEditor.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/Editor/RopeEditor.cs` |
+| `Rope.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/Rope.cs` |
+| `RopeMesh.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeMesh.cs` |
+| `RopeWindEffect.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeWindEffect.cs` |
+| `Boat_movement.cs` | `Assets/Scripts/Animations/Boat_movement.cs` |
+| `CargoDoorDriver.cs` | `Assets/Scripts/Animations/CargoDoorDriver.cs` |
+| `Coin emmision test.cs` | `Assets/Scripts/Animations/Coin emmision test.cs` |
+| `ControlBoatGate.cs` | `Assets/Scripts/Animations/ControlBoatGate.cs` |
+| `FadeControllerScript.cs` | `Assets/Scripts/Animations/FadeControllerScript.cs` |
+| `MaterialOpacityFader.cs` | `Assets/Scripts/Animations/MaterialOpacityFader.cs` |
+| `TokenMove.cs` | `Assets/Scripts/Animations/TokenMove.cs` |
+| `TruckManager.cs` | `Assets/Scripts/Animations/TruckManager.cs` |
+| `Wheel_rotate.cs` | `Assets/Scripts/Animations/Wheel_rotate.cs` |
+| `AudioSourceControl.cs` | `Assets/Scripts/Audio and Video/AudioSourceControl.cs` |
+| `CinemachineMirrorTargetBinder.cs` | `Assets/Scripts/Audio and Video/CinemachineMirrorTargetBinder.cs` |
+| `FootstepAudioSource.cs` | `Assets/Scripts/Audio and Video/FootstepAudioSource.cs` |
+| `FootstepSMB.cs` | `Assets/Scripts/Audio and Video/FootstepSMB.cs` |
+| `MAIO_Vid_Controller.cs` | `Assets/Scripts/Audio and Video/MAIO_Vid_Controller.cs` |
+| `ProjectionController.cs` | `Assets/Scripts/Audio and Video/ProjectionController.cs` |
+| `SimpleMovie.cs` | `Assets/Scripts/Audio and Video/SimpleMovie.cs` |
+| `TutorialVideoController.cs` | `Assets/Scripts/Audio and Video/TutorialVideoController.cs` |
+| `VideoProjectorController.cs` | `Assets/Scripts/Audio and Video/VideoProjectorController.cs` |
+| `VideoTrigger.cs` | `Assets/Scripts/Audio and Video/VideoTrigger.cs` |
+| `WalkieTalkieAudioSource.cs` | `Assets/Scripts/Audio and Video/WalkieTalkieAudioSource.cs` |
+| `GazeIndicator.cs` | `Assets/Scripts/GazeInteraction/GazeIndicator.cs` |
+| `GazeRaycaster.cs` | `Assets/Scripts/GazeInteraction/GazeRaycaster.cs` |
+| `GazeTarget.cs` | `Assets/Scripts/GazeInteraction/GazeTarget.cs` |
+| `IGazeTarget.cs` | `Assets/Scripts/GazeInteraction/IGazeTarget.cs` |
+| `Background_Character_Spawning.cs` | `Assets/Scripts/Interactions/Background_Character_Spawning.cs` |
+| `BreathingInteractionModule.cs` | `Assets/Scripts/Interactions/BreathingInteractionModule.cs` |
+| `ClapDetector.cs` | `Assets/Scripts/Interactions/ClapDetector.cs` |
+| `FingerprintLockout.cs` | `Assets/Scripts/Interactions/FingerprintLockout.cs` |
+| `FingerprintProjectionInteractionModule.cs` | `Assets/Scripts/Interactions/FingerprintProjectionInteractionModule.cs` |
+| `FingerprintTrigger.cs` | `Assets/Scripts/Interactions/FingerprintTrigger.cs` |
+| `HandTouchInteractionModule.cs` | `Assets/Scripts/Interactions/HandTouchInteractionModule.cs` |
+| `HeadLockedHud.cs` | `Assets/Scripts/Interactions/HeadLockedHud.cs` |
+| `HighFiveTrigger.cs` | `Assets/Scripts/Interactions/HighFiveTrigger.cs` |
+| `HighlightExit.cs` | `Assets/Scripts/Interactions/HighlightExit.cs` |
+| `HighlightExitManager.cs` | `Assets/Scripts/Interactions/HighlightExitManager.cs` |
+| `InstructionManager.cs` | `Assets/Scripts/Interactions/InstructionManager.cs` |
+| `InstructionObject.cs` | `Assets/Scripts/Interactions/InstructionObject.cs` |
+| `InteractionCompleteListener.cs` | `Assets/Scripts/Interactions/InteractionCompleteListener.cs` |
+| `InteractionModuleBase.cs` | `Assets/Scripts/Interactions/InteractionModuleBase.cs` |
+| `InventoryModule.cs` | `Assets/Scripts/Interactions/InventoryModule.cs` |
+| `PalmGestureDetector.cs` | `Assets/Scripts/Interactions/PalmGestureDetector.cs` |
+| `ProgressObject.cs` | `Assets/Scripts/Interactions/ProgressObject.cs` |
+| `ProgressTracker.cs` | `Assets/Scripts/Interactions/ProgressTracker.cs` |
+| `TimedChoiceManager.cs` | `Assets/Scripts/Interactions/TimedChoiceManager.cs` |
+| `TouchHandsPoseGate.cs` | `Assets/Scripts/Interactions/TouchHandsPoseGate.cs` |
 | `AvatarAttachmentPoint.cs` | `Assets/Scripts/InventoryTest/AvatarAttachmentPoint.cs` |
 | `BodyAttachmentRig.cs` | `Assets/Scripts/InventoryTest/BodyAttachmentRig.cs` |
 | `EquippableItem.cs` | `Assets/Scripts/InventoryTest/EquippableItem.cs` |
 | `InventoryManager.cs` | `Assets/Scripts/InventoryTest/InventoryManager.cs` |
 | `SimpleBodyAttachments.cs` | `Assets/Scripts/InventoryTest/SimpleBodyAttachments.cs` |
-| `LocationHighlight.cs` | `Assets/Scripts/LocationHighlight.cs` |
-| `LocationSelect.cs` | `Assets/Scripts/LocationSelect.cs` |
-| `MAIO_Vid_Controller.cs` | `Assets/Scripts/MAIO_Vid_Controller.cs` |
-| `MaterialOpacityFader.cs` | `Assets/Scripts/MaterialOpacityFader.cs` |
-| `MirrorFollow.cs` | `Assets/Scripts/MirrorFollow.cs` |
-| `Overlay.cs` | `Assets/Scripts/Overlay.cs` |
-| `PalmGestureDetector.cs` | `Assets/Scripts/PalmGestureDetector.cs` |
-| `PickUpUI.cs` | `Assets/Scripts/PickUpUI.cs` |
-| `PrisonerActorController.cs` | `Assets/Scripts/PrisonerActorController.cs` |
-| `PrisonerRoute.cs` | `Assets/Scripts/PrisonerRoute.cs` |
-| `PrisonerSortData.cs` | `Assets/Scripts/PrisonerSortData.cs` |
-| `PrisonerSortModule.cs` | `Assets/Scripts/PrisonerSortModule.cs` |
-| `ProgressBar.cs` | `Assets/Scripts/ProgressBar.cs` |
-| `ProgressObject.cs` | `Assets/Scripts/ProgressObject.cs` |
-| `ProgressTracker.cs` | `Assets/Scripts/ProgressTracker.cs` |
-| `ProjectionController.cs` | `Assets/Scripts/ProjectionController.cs` |
-| `ReactivateRoutes.cs` | `Assets/Scripts/ReactivateRoutes.cs` |
-| `RewardUI.cs` | `Assets/Scripts/RewardUI.cs` |
-| `RouteHoldSelector.cs` | `Assets/Scripts/RouteHoldSelector.cs` |
-| `SequenceBrain.cs` | `Assets/Scripts/SequenceBrain.cs` |
-| `SequenceSignalRouter.cs` | `Assets/Scripts/SequenceSignalRouter.cs` |
-| `SetNextPrisoner.cs` | `Assets/Scripts/SetNextPrisoner.cs` |
-| `TimelineBindingTransfer.cs` | `Assets/Scripts/TimelineBindingTransfer.cs` |
-| `TimelineVideoPlaybackController.cs` | `Assets/Scripts/TimelineVideoPlaybackController.cs` |
-| `TokenMove.cs` | `Assets/Scripts/TokenMove.cs` |
-| `TouchHandsPoseGate.cs` | `Assets/Scripts/TouchHandsPoseGate.cs` |
-| `TruckManager.cs` | `Assets/Scripts/TruckManager.cs` |
-| `TutorialVideoController.cs` | `Assets/Scripts/TutorialVideoController.cs` |
-| `VRTutorial.cs` | `Assets/Scripts/VRTutorial.cs` |
-| `VideoProjectorController.cs` | `Assets/Scripts/VideoProjectorController.cs` |
-| `VideoTrigger.cs` | `Assets/Scripts/VideoTrigger.cs` |
+| `Mirror movement.cs` | `Assets/Scripts/Mirror/Mirror movement.cs` |
+| `MirrorFollow.cs` | `Assets/Scripts/Mirror/MirrorFollow.cs` |
+| `mirror_movement.cs` | `Assets/Scripts/Mirror/mirror_movement.cs` |
+| `PrisonerActorController.cs` | `Assets/Scripts/Prisoner/PrisonerActorController.cs` |
+| `PrisonerRoute.cs` | `Assets/Scripts/Prisoner/PrisonerRoute.cs` |
+| `PrisonerSortData.cs` | `Assets/Scripts/Prisoner/PrisonerSortData.cs` |
+| `PrisonerSortModule.cs` | `Assets/Scripts/Prisoner/PrisonerSortModule.cs` |
+| `ReactivateRoutes.cs` | `Assets/Scripts/Prisoner/ReactivateRoutes.cs` |
+| `RouteHoldSelector.cs` | `Assets/Scripts/Prisoner/RouteHoldSelector.cs` |
+| `SetNextPrisoner.cs` | `Assets/Scripts/Prisoner/SetNextPrisoner.cs` |
+| `Walk_Cycle_modifier.cs` | `Assets/Scripts/Prisoner/Walk_Cycle_modifier.cs` |
+| `SequenceBrain.cs` | `Assets/Scripts/Timeline/SequenceBrain.cs` |
+| `SequenceSignalRouter.cs` | `Assets/Scripts/Timeline/SequenceSignalRouter.cs` |
+| `TimelineBindingTransfer.cs` | `Assets/Scripts/Timeline/TimelineBindingTransfer.cs` |
+| `TimelineVideoPlaybackController.cs` | `Assets/Scripts/Timeline/TimelineVideoPlaybackController.cs` |
+| `Billboard.cs` | `Assets/Scripts/UI/Billboard.cs` |
+| `ButtonScale.cs` | `Assets/Scripts/UI/ButtonScale.cs` |
+| `CanvasFade.cs` | `Assets/Scripts/UI/CanvasFade.cs` |
+| `ClapConfirmationUI.cs` | `Assets/Scripts/UI/ClapConfirmationUI.cs` |
+| `CountdownTimer.cs` | `Assets/Scripts/UI/CountdownTimer.cs` |
+| `Overlay.cs` | `Assets/Scripts/UI/Overlay.cs` |
+| `PickUpUI.cs` | `Assets/Scripts/UI/PickUpUI.cs` |
+| `RewardUI.cs` | `Assets/Scripts/UI/RewardUI.cs` |
+| `TenSecTimer.cs` | `Assets/Scripts/UI/TenSecTimer.cs` |
 | `AnimateOnInput.cs` | `Assets/VR Body/AnimateOnInput.cs` |
 | `IKFootSolver.cs` | `Assets/VR Body/IKFootSolver.cs` |
 | `IKTargetFollowVRRig.cs` | `Assets/VR Body/IKTargetFollowVRRig.cs` |
