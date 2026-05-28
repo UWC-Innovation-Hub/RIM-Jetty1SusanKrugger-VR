@@ -55,6 +55,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── CompositionLayers/
         ├── UserSettings/
             ├── Resources/
+    ├── Documentation/
     ├── Fonts/
         ├── digital-7/
     ├── InteractionSDK/
@@ -185,6 +186,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Animations/
         ├── Audio and Video/
         ├── GazeInteraction/
+        ├── Interaction_Sequencing Framework/
         ├── Interactions/
         ├── InventoryTest/
         ├── Mirror/
@@ -325,13 +327,23 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `GazeRaycaster.cs` | `Assets/Scripts/GazeInteraction/GazeRaycaster.cs` |
 | `GazeTarget.cs` | `Assets/Scripts/GazeInteraction/GazeTarget.cs` |
 | `IGazeTarget.cs` | `Assets/Scripts/GazeInteraction/IGazeTarget.cs` |
+| `BreathingInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/BreathingInteractionModule.cs` |
+| `FingerprintProjectionInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/FingerprintProjectionInteractionModule.cs` |
+| `HandTouchInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/HandTouchInteractionModule.cs` |
+| `InteractionModuleBase.cs` | `Assets/Scripts/Interaction_Sequencing Framework/InteractionModuleBase.cs` |
+| `InventoryModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/InventoryModule.cs` |
+| `PrisonerRoute.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PrisonerRoute.cs` |
+| `PrisonerSortData.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PrisonerSortData.cs` |
+| `PrisonerSortModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PrisonerSortModule.cs` |
+| `ReactivateRoutes.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ReactivateRoutes.cs` |
+| `RouteHoldSelector.cs` | `Assets/Scripts/Interaction_Sequencing Framework/RouteHoldSelector.cs` |
+| `SequenceBrain.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SequenceBrain.cs` |
+| `SequenceSignalRouter.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SequenceSignalRouter.cs` |
+| `SetNextPrisoner.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SetNextPrisoner.cs` |
 | `Background_Character_Spawning.cs` | `Assets/Scripts/Interactions/Background_Character_Spawning.cs` |
-| `BreathingInteractionModule.cs` | `Assets/Scripts/Interactions/BreathingInteractionModule.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/Interactions/ClapDetector.cs` |
 | `FingerprintLockout.cs` | `Assets/Scripts/Interactions/FingerprintLockout.cs` |
-| `FingerprintProjectionInteractionModule.cs` | `Assets/Scripts/Interactions/FingerprintProjectionInteractionModule.cs` |
 | `FingerprintTrigger.cs` | `Assets/Scripts/Interactions/FingerprintTrigger.cs` |
-| `HandTouchInteractionModule.cs` | `Assets/Scripts/Interactions/HandTouchInteractionModule.cs` |
 | `HeadLockedHud.cs` | `Assets/Scripts/Interactions/HeadLockedHud.cs` |
 | `HighFiveTrigger.cs` | `Assets/Scripts/Interactions/HighFiveTrigger.cs` |
 | `HighlightExit.cs` | `Assets/Scripts/Interactions/HighlightExit.cs` |
@@ -339,8 +351,6 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `InstructionManager.cs` | `Assets/Scripts/Interactions/InstructionManager.cs` |
 | `InstructionObject.cs` | `Assets/Scripts/Interactions/InstructionObject.cs` |
 | `InteractionCompleteListener.cs` | `Assets/Scripts/Interactions/InteractionCompleteListener.cs` |
-| `InteractionModuleBase.cs` | `Assets/Scripts/Interactions/InteractionModuleBase.cs` |
-| `InventoryModule.cs` | `Assets/Scripts/Interactions/InventoryModule.cs` |
 | `PalmGestureDetector.cs` | `Assets/Scripts/Interactions/PalmGestureDetector.cs` |
 | `ProgressObject.cs` | `Assets/Scripts/Interactions/ProgressObject.cs` |
 | `ProgressTracker.cs` | `Assets/Scripts/Interactions/ProgressTracker.cs` |
@@ -355,15 +365,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `MirrorFollow.cs` | `Assets/Scripts/Mirror/MirrorFollow.cs` |
 | `mirror_movement.cs` | `Assets/Scripts/Mirror/mirror_movement.cs` |
 | `PrisonerActorController.cs` | `Assets/Scripts/Prisoner/PrisonerActorController.cs` |
-| `PrisonerRoute.cs` | `Assets/Scripts/Prisoner/PrisonerRoute.cs` |
-| `PrisonerSortData.cs` | `Assets/Scripts/Prisoner/PrisonerSortData.cs` |
-| `PrisonerSortModule.cs` | `Assets/Scripts/Prisoner/PrisonerSortModule.cs` |
-| `ReactivateRoutes.cs` | `Assets/Scripts/Prisoner/ReactivateRoutes.cs` |
-| `RouteHoldSelector.cs` | `Assets/Scripts/Prisoner/RouteHoldSelector.cs` |
-| `SetNextPrisoner.cs` | `Assets/Scripts/Prisoner/SetNextPrisoner.cs` |
 | `Walk_Cycle_modifier.cs` | `Assets/Scripts/Prisoner/Walk_Cycle_modifier.cs` |
-| `SequenceBrain.cs` | `Assets/Scripts/Timeline/SequenceBrain.cs` |
-| `SequenceSignalRouter.cs` | `Assets/Scripts/Timeline/SequenceSignalRouter.cs` |
 | `TimelineBindingTransfer.cs` | `Assets/Scripts/Timeline/TimelineBindingTransfer.cs` |
 | `TimelineVideoPlaybackController.cs` | `Assets/Scripts/Timeline/TimelineVideoPlaybackController.cs` |
 | `Billboard.cs` | `Assets/Scripts/UI/Billboard.cs` |
