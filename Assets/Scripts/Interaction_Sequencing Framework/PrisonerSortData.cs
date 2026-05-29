@@ -26,6 +26,7 @@ public class PrisonerSortBatch
 {
     public string batchId;
     public PrisonerSortParticipant[] participants;
+    public GameObject[] linkedObjects;
     [Min(0)] public int requiredArrivals;
 
     public int GetRequiredArrivals()
