@@ -329,6 +329,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `IGazeTarget.cs` | `Assets/Scripts/GazeInteraction/IGazeTarget.cs` |
 | `BreathingInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/BreathingInteractionModule.cs` |
 | `FingerprintProjectionInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/FingerprintProjectionInteractionModule.cs` |
+| `GazeInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/GazeInteractionModule.cs` |
 | `HandTouchInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/HandTouchInteractionModule.cs` |
 | `InteractionModuleBase.cs` | `Assets/Scripts/Interaction_Sequencing Framework/InteractionModuleBase.cs` |
 | `InventoryModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/InventoryModule.cs` |
