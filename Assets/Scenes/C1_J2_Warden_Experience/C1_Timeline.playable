@@ -6981,7 +6981,7 @@ AnimationClip:
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
-        time: 145.56667
+        time: 146.26666
         value: {x: 0, y: 0, z: 0}
         inSlope: {x: 0, y: 0, z: -0.012705137}
         outSlope: {x: 0, y: 0, z: -0.012705137}
@@ -6992,8 +6992,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 147.63333
         value: {x: 0.218, y: 0, z: -1.1593584}
-        inSlope: {x: 0.1721053, y: 0, z: 0}
-        outSlope: {x: 0.1721053, y: 0, z: 0}
+        inSlope: {x: 0.19969456, y: 0, z: 0}
+        outSlope: {x: 0.19969456, y: 0, z: 0}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -7379,7 +7379,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 145.56667
+        time: 146.26666
         value: 0
         inSlope: 0
         outSlope: 0
@@ -7390,8 +7390,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 147.63333
         value: 0.218
-        inSlope: 0.1721053
-        outSlope: 0.1721053
+        inSlope: 0.19969456
+        outSlope: 0.19969456
         tangentMode: 136
         weightedMode: 0
         inWeight: 0.33333334
@@ -7643,7 +7643,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 145.56667
+        time: 146.26666
         value: 0
         inSlope: 0
         outSlope: 0
@@ -7898,7 +7898,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 145.56667
+        time: 146.26666
         value: 0
         inSlope: -0.012705137
         outSlope: -0.012705137
@@ -9010,7 +9010,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 88.433334
+  - time: 89.38333
     functionName: Walk
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -9031,7 +9031,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 147.03334
+  - time: 148.35
     functionName: Walk
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -9052,6 +9052,18 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
+--- !u!114 &-6331995275964751981
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fde0d25a170598d46a0b9dc16b4527a5, type: 3}
+  m_Name: ActivationPlayableAsset(Clone)
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.ActivationPlayableAsset
 --- !u!114 &-6227986758858297443
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9512,8 +9524,8 @@ MonoBehaviour:
   - m_Version: 1
     m_Start: 111.31666666666666
     m_ClipIn: 0
-    m_Asset: {fileID: 1679048561980786451}
-    m_Duration: 0.21666666666666856
+    m_Asset: {fileID: -6331995275964751981}
+    m_Duration: 0.93333333333333
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5623731990205951766}
     m_EaseInDuration: 0
@@ -9579,10 +9591,10 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: Active
   - m_Version: 1
-    m_Start: 169.53333333333333
+    m_Start: 169.55
     m_ClipIn: 0
-    m_Asset: {fileID: 8027865363685210047}
-    m_Duration: 0.19999999999998863
+    m_Asset: {fileID: 3994799928582762366}
+    m_Duration: 0.9999999999999929
     m_TimeScale: 1
     m_ParentTrack: {fileID: -5623731990205951766}
     m_EaseInDuration: 0
@@ -24643,18 +24655,6 @@ MonoBehaviour:
   m_bufferingTime: 0.1
   m_ClipProperties:
     volume: 1
---- !u!114 &1679048561980786451
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fde0d25a170598d46a0b9dc16b4527a5, type: 3}
-  m_Name: ActivationPlayableAsset(Clone)
-  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.ActivationPlayableAsset
 --- !u!74 &2045414039891245933
 AnimationClip:
   m_ObjectHideFlags: 0
@@ -29664,6 +29664,18 @@ MonoBehaviour:
   m_Name: ActivationPlayableAsset(Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.ActivationPlayableAsset
 --- !u!114 &3985071075165057066
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fde0d25a170598d46a0b9dc16b4527a5, type: 3}
+  m_Name: ActivationPlayableAsset(Clone)(Clone)
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.ActivationPlayableAsset
+--- !u!114 &3994799928582762366
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -34894,18 +34906,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fde0d25a170598d46a0b9dc16b4527a5, type: 3}
   m_Name: ActivationPlayableAsset(Clone)(Clone)(Clone)(Clone)
-  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.ActivationPlayableAsset
---- !u!114 &8027865363685210047
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fde0d25a170598d46a0b9dc16b4527a5, type: 3}
-  m_Name: ActivationPlayableAsset(Clone)(Clone)
   m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.ActivationPlayableAsset
 --- !u!114 &8104024384556410414
 MonoBehaviour:
