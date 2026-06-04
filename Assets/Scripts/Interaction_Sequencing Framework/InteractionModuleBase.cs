@@ -63,6 +63,10 @@ public abstract class InteractionModuleBase : MonoBehaviour
              "Use this for the opening inventory interaction where the Timeline controls the fade itself.")]
     [SerializeField] private bool skipEnterFadeIn = false;
 
+    [Header("Optional Ambient Audio")]
+    [Tooltip("Audio state to activate when this interaction starts. Set to None to leave audio unchanged.")]
+    [SerializeField] private AmbientAudioManager.AudioState audioStateOnActivate = AmbientAudioManager.AudioState.None;
+
     private bool _previousFogState;
     private bool _hasFogStateSnapshot;
     private Coroutine _interactionTimeoutRoutine;
@@ -106,6 +110,9 @@ public abstract class InteractionModuleBase : MonoBehaviour
         {
             PlayInteractionTimeline();
         }
+
+        if (audioStateOnActivate != AmbientAudioManager.AudioState.None)
+            AmbientAudioManager.Instance?.SetState(audioStateOnActivate);
     }
 
     public virtual void Deactivate()
