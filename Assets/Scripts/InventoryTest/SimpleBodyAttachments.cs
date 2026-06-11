@@ -5,11 +5,11 @@ public class SimpleBodyAttachments : MonoBehaviour
     [Header("Auto-Setup")]
     public bool autoSetup = true;
 
-    [Header("Spawn Point References")]
-    public Transform hipSpawnPoint;
-    public Transform beltLeftSpawnPoint;
-    public Transform beltRightSpawnPoint;
-    public Transform chestSpawnPoint;
+    [Header("Reference Points")]
+    [SerializeField] private Transform hipReference;
+    [SerializeField] private Transform beltLeftReference;
+    [SerializeField] private Transform beltRightReference;
+    [SerializeField] private Transform chestReference;
 
     [Header("Attachment Points (Auto-Created)")]
     public GameObject hipSlot;
@@ -24,7 +24,9 @@ public class SimpleBodyAttachments : MonoBehaviour
     [SerializeField] private Material beltRightHighlightMaterial;
     [SerializeField] private Material chestHighlightMaterial;
 
-    void Start()
+    private Transform trackingSpace;
+
+    private void Start()
     {
         if (autoSetup)
         {
@@ -32,56 +34,87 @@ public class SimpleBodyAttachments : MonoBehaviour
         }
     }
 
-    void AutoSetup()
+    private void AutoSetup()
     {
-        if (hipSpawnPoint == null || beltLeftSpawnPoint == null ||
-            beltRightSpawnPoint == null || chestSpawnPoint == null)
+        // Find camera rig
+        OVRCameraRig rig = FindObjectOfType<OVRCameraRig>();
+
+        if (rig == null)
         {
-            Debug.LogError("One or more spawn points are not assigned!");
+            Debug.LogError("OVRCameraRig not found!");
             return;
         }
 
-        if (InventoryManager.Instance == null)
-        {
-            Debug.LogError("InventoryManager instance not found! Make sure it exists in the scene.");
-            return;
-        }
+        trackingSpace = rig.trackingSpace;
 
-        CreateSlot(ref hipSlot, "HipSlot", hipSpawnPoint, AvatarAttachmentPoint.AttachmentType.Hip);
-        CreateSlot(ref beltLeftSlot, "BeltLeftSlot", beltLeftSpawnPoint, AvatarAttachmentPoint.AttachmentType.BeltLeft);
-        CreateSlot(ref beltRightSlot, "BeltRightSlot", beltRightSpawnPoint, AvatarAttachmentPoint.AttachmentType.BeltRight);
-        CreateSlot(ref chestSlot, "ChestSlot", chestSpawnPoint, AvatarAttachmentPoint.AttachmentType.ChestLeft);
+        // Create attachment slots
+        CreateSlot(ref hipSlot, "HipSlot", AvatarAttachmentPoint.AttachmentType.Hip);
+        CreateSlot(ref beltLeftSlot, "BeltLeftSlot", AvatarAttachmentPoint.AttachmentType.BeltLeft);
+        CreateSlot(ref beltRightSlot, "BeltRightSlot", AvatarAttachmentPoint.AttachmentType.BeltRight);
+        CreateSlot(ref chestSlot, "ChestSlot", AvatarAttachmentPoint.AttachmentType.ChestLeft);
 
         Debug.Log("Body attachment system initialized successfully!");
     }
 
-    void CreateSlot(ref GameObject slot, string name, Transform spawnPoint, AvatarAttachmentPoint.AttachmentType type)
+    private void CreateSlot(ref GameObject slot, string name, AvatarAttachmentPoint.AttachmentType type)
     {
         slot = new GameObject(name);
-        slot.transform.SetParent(spawnPoint);
+
+        if (trackingSpace != null)
+        {
+            slot.transform.SetParent(trackingSpace);
+        }
+
         slot.transform.localPosition = Vector3.zero;
         slot.transform.localRotation = Quaternion.identity;
 
         AvatarAttachmentPoint attachPoint = slot.AddComponent<AvatarAttachmentPoint>();
+
         attachPoint.attachmentType = type;
         attachPoint.snapRadius = 0.15f;
-        attachPoint.ConfigureHighlightMaterial(GetHighlightMaterialForType(type), instantiateHighlightMaterials);
+        attachPoint.ConfigureHighlightMaterial(
+            GetHighlightMaterialForType(type),
+            instantiateHighlightMaterials);
 
-        // Register with InventoryManager
-        InventoryManager.Instance.attachmentPoints.Add(attachPoint);
-
-        Debug.Log($"Created {name} as child of {spawnPoint.name} and registered with InventoryManager");
+        Debug.Log($"Created {name}");
     }
 
     private Material GetHighlightMaterialForType(AvatarAttachmentPoint.AttachmentType type)
     {
         switch (type)
         {
-            case AvatarAttachmentPoint.AttachmentType.Hip: return hipHighlightMaterial;
-            case AvatarAttachmentPoint.AttachmentType.BeltLeft: return beltLeftHighlightMaterial;
-            case AvatarAttachmentPoint.AttachmentType.BeltRight: return beltRightHighlightMaterial;
-            case AvatarAttachmentPoint.AttachmentType.ChestLeft: return chestHighlightMaterial;
-            default: return null;
+            case AvatarAttachmentPoint.AttachmentType.Hip:
+                return hipHighlightMaterial;
+
+            case AvatarAttachmentPoint.AttachmentType.BeltLeft:
+                return beltLeftHighlightMaterial;
+
+            case AvatarAttachmentPoint.AttachmentType.BeltRight:
+                return beltRightHighlightMaterial;
+
+            case AvatarAttachmentPoint.AttachmentType.ChestLeft:
+                return chestHighlightMaterial;
+
+            default:
+                return null;
         }
+    }
+
+    private void Update()
+    {
+        UpdateSlot(hipSlot, hipReference);
+        UpdateSlot(beltLeftSlot, beltLeftReference);
+        UpdateSlot(beltRightSlot, beltRightReference);
+        UpdateSlot(chestSlot, chestReference);
+    }
+
+    private void UpdateSlot(GameObject slot, Transform reference)
+    {
+        if (slot == null || reference == null)
+            return;
+
+        // Match world position and rotation exactly
+        slot.transform.position = reference.position;
+        slot.transform.rotation = reference.rotation;
     }
 }
