@@ -34,6 +34,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Animations/
         ├── C1/
         ├── J1/
+        ├── Mixamo_tests/
     ├── Audio/
         ├── C1/
             ├── Master/
@@ -59,6 +60,16 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Fonts/
         ├── digital-7/
     ├── InteractionSDK/
+    ├── MagicaCloth2/
+        ├── Example (Can be deleted)/
+            ├── Common/
+            ├── DemoScenes/
+        ├── Res/
+            ├── Icon/
+            ├── Preset/
+        ├── Scripts/
+            ├── Core/
+            ├── Editor/
     ├── Materials/
         ├── C1_J2_Lobby/
             ├── Materials/
@@ -104,6 +115,11 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── 3D_Scans/
             ├── OPTIMIZED/
             ├── RAW/
+        ├── Black_Visitors/
+            ├── 1/
+            ├── 2/
+            ├── 3/
+            ├── 4/
         ├── C1_J2_Lobby/
             ├── Characters/
             ├── Environment/
@@ -142,6 +158,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Prefabs/
         ├── Characters V001/
             ├── Organization/
+            ├── Waiting Room/
             ├── body track/
         ├── Interactions/
         ├── Objects/
@@ -189,6 +206,8 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Interaction_Sequencing Framework/
         ├── Interactions/
         ├── InventoryTest/
+        ├── Manacles/
+            ├── Editor/
         ├── Mirror/
         ├── Prisoner/
         ├── Timeline/
@@ -223,6 +242,11 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Warder Cuffs/
             ├── Warder Holster/
             ├── Warder pistol/
+    ├── Toolkits/
+        ├── Rope/
+            ├── Core/
+            ├── Examples/
+            ├── Helpers/
     ├── VR Body/
         ├── Animations/
         ├── Ch32_nonPBR.fbm/
@@ -294,6 +318,182 @@ Through VR, visitors can walk through historically significant locations on Robb
 <!-- AUTO-SCRIPTS-START -->
 | Script | Path |
 |---|---|
+| `AutoRotate.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/AutoRotate.cs` |
+| `CameraOrbit.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/CameraOrbit.cs` |
+| `CreateSingleton.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/CreateSingleton.cs` |
+| `UnityPackageImporter.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/Editor/ShaderGraph/UnityPackageImporter.cs` |
+| `GameObjectContainer.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/GameObjectContainer.cs` |
+| `ModelController.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/ModelController.cs` |
+| `RuntimeBuildDemo.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/RuntimeBuildDemo.cs` |
+| `RuntimeDressUpDemo.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/RuntimeDressUpDemo.cs` |
+| `SimpleInput.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/SimpleInput.cs` |
+| `SimpleInputManager.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/SimpleInputManager.cs` |
+| `SliderText.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/SliderText.cs` |
+| `TargetFPS.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/TargetFPS.cs` |
+| `WindDemo.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/WindDemo.cs` |
+| `CheckSliderSerializeData.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/CheckSliderSerializeData.cs` |
+| `ClothBehaviour.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothBehaviour.cs` |
+| `ClothDisableMode.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothDisableMode.cs` |
+| `ClothForceMode.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothForceMode.cs` |
+| `ClothInitSerializeData.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothInitSerializeData.cs` |
+| `ClothMeshWriteMode.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothMeshWriteMode.cs` |
+| `ClothNormalAxis.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothNormalAxis.cs` |
+| `ClothParameters.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothParameters.cs` |
+| `ClothProcess.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothProcess.cs` |
+| `ClothProcessData.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothProcessData.cs` |
+| `ClothProcessGeneration.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothProcessGeneration.cs` |
+| `ClothSerializeData.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothSerializeData.cs` |
+| `ClothSerializeData2.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothSerializeData2.cs` |
+| `ClothSerializeDataFunction.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothSerializeDataFunction.cs` |
+| `ClothUpdateMode.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/ClothUpdateMode.cs` |
+| `ColliderComponent.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Collider/ColliderComponent.cs` |
+| `ColliderSymmetryMode.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Collider/ColliderSymmetryMode.cs` |
+| `MagicaCapsuleCollider.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Collider/MagicaCapsuleCollider.cs` |
+| `MagicaPlaneCollider.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Collider/MagicaPlaneCollider.cs` |
+| `MagicaSphereCollider.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Collider/MagicaSphereCollider.cs` |
+| `AngleConstraint.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Constraints/AngleConstraint.cs` |
+| `ColliderCollisionConstraint.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Constraints/ColliderCollisionConstraint.cs` |
+| `DistanceConstraint.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Constraints/DistanceConstraint.cs` |
+| `InertiaConstraint.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Constraints/InertiaConstraint.cs` |
+| `MotionConstraint.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Constraints/MotionConstraint.cs` |
+| `SelfCollisionConstraint.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Constraints/SelfCollisionConstraint.cs` |
+| `SpringConstraint.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Constraints/SpringConstraint.cs` |
+| `TetherConstraint.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Constraints/TetherConstraint.cs` |
+| `TriangleBendingConstraint.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Constraints/TriangleBendingConstraint.cs` |
+| `CullingSettings.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/CullingSettings.cs` |
+| `CurveSerializeData.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/CurveSerializeData.cs` |
+| `CustomSkinningSettings.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/CustomSkinningSettings.cs` |
+| `GizmoSerializeData.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/GizmoSerializeData.cs` |
+| `MagicaCloth.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/MagicaCloth.cs` |
+| `MagicaClothAPI.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/MagicaClothAPI.cs` |
+| `MagicaClothAnimationProperty.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/MagicaClothAnimationProperty.cs` |
+| `NormalAlignmentSettings.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/NormalAlignmentSettings.cs` |
+| `SelectionData.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/SelectionData.cs` |
+| `MagicaWindZone.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Wind/MagicaWindZone.cs` |
+| `WindParams.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Wind/WindParams.cs` |
+| `WindSettings.cs` | `Assets/MagicaCloth2/Scripts/Core/Cloth/Wind/WindSettings.cs` |
+| `ResultDefine.cs` | `Assets/MagicaCloth2/Scripts/Core/Define/ResultDefine.cs` |
+| `SystemDefine.cs` | `Assets/MagicaCloth2/Scripts/Core/Define/SystemDefine.cs` |
+| `ICount.cs` | `Assets/MagicaCloth2/Scripts/Core/Interface/ICount.cs` |
+| `IDataValidate.cs` | `Assets/MagicaCloth2/Scripts/Core/Interface/IDataValidate.cs` |
+| `ITransform.cs` | `Assets/MagicaCloth2/Scripts/Core/Interface/ITransform.cs` |
+| `IValid.cs` | `Assets/MagicaCloth2/Scripts/Core/Interface/IValid.cs` |
+| `ClothManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Cloth/ClothManager.cs` |
+| `PreBuildManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Cloth/PreBuildManager.cs` |
+| `IManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/IManager.cs` |
+| `MagicaManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/MagicaManager.cs` |
+| `MagicaManagerAPI.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/MagicaManagerAPI.cs` |
+| `MagicaSettings.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/MagicaSettings.cs` |
+| `RenderData.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Render/RenderData.cs` |
+| `RenderManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Render/RenderManager.cs` |
+| `RenderSetupData.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Render/RenderSetupData.cs` |
+| `RenderSetupDataSerialization.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Render/RenderSetupDataSerialization.cs` |
+| `RenderSetupSerializeData.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Render/RenderSetupSerializeData.cs` |
+| `ColliderManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Simulation/ColliderManager.cs` |
+| `SimulationManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Simulation/SimulationManager.cs` |
+| `SimulationManagerNormal.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Simulation/SimulationManagerNormal.cs` |
+| `SimulationManagerSplit.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Simulation/SimulationManagerSplit.cs` |
+| `TimeManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Simulation/TimeManager.cs` |
+| `WindManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Simulation/WindManager.cs` |
+| `TeamManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Team/TeamManager.cs` |
+| `TeamWindData.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/Team/TeamWindData.cs` |
+| `TransformData.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/TransformManager/TransformData.cs` |
+| `TransformDataSerialization.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/TransformManager/TransformDataSerialization.cs` |
+| `TransformManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/TransformManager/TransformManager.cs` |
+| `TransformRecord.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/TransformManager/TransformRecord.cs` |
+| `TransformRecordSerializeData.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/TransformManager/TransformRecordSerializeData.cs` |
+| `VirtualMeshManager.cs` | `Assets/MagicaCloth2/Scripts/Core/Manager/VirtualMesh/VirtualMeshManager.cs` |
+| `PreBuildScriptableObject.cs` | `Assets/MagicaCloth2/Scripts/Core/PreBuild/PreBuildScriptableObject.cs` |
+| `PreBuildSerializeData.cs` | `Assets/MagicaCloth2/Scripts/Core/PreBuild/PreBuildSerializeData.cs` |
+| `SharePreBuildData.cs` | `Assets/MagicaCloth2/Scripts/Core/PreBuild/SharePreBuildData.cs` |
+| `UniquePreBuildData.cs` | `Assets/MagicaCloth2/Scripts/Core/PreBuild/UniquePreBuildData.cs` |
+| `ReductionSettings.cs` | `Assets/MagicaCloth2/Scripts/Core/Reduction/ReductionSettings.cs` |
+| `ReductionWorkData.cs` | `Assets/MagicaCloth2/Scripts/Core/Reduction/ReductionWorkData.cs` |
+| `SameDistanceReduction.cs` | `Assets/MagicaCloth2/Scripts/Core/Reduction/SameDistanceReduction.cs` |
+| `ShapeDistanceReduction.cs` | `Assets/MagicaCloth2/Scripts/Core/Reduction/ShapeDistanceReduction.cs` |
+| `SimpleDistanceReduction.cs` | `Assets/MagicaCloth2/Scripts/Core/Reduction/SimpleDistanceReduction.cs` |
+| `StepReductionBase.cs` | `Assets/MagicaCloth2/Scripts/Core/Reduction/StepReductionBase.cs` |
+| `ClothDebugSettings.cs` | `Assets/MagicaCloth2/Scripts/Core/Settings/ClothDebugSettings.cs` |
+| `VirtualMeshDebugSettings.cs` | `Assets/MagicaCloth2/Scripts/Core/Settings/VirtualMeshDebugSettings.cs` |
+| `DataUtility.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Data/DataUtility.cs` |
+| `MagicaObjectId.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Data/MagicaObjectId.cs` |
+| `MultiDataBuilder.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Data/MultiDataBuilder.cs` |
+| `GridMap.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Grid/GridMap.cs` |
+| `InterlockUtility.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Jobs/InterlockUtility.cs` |
+| `JobUtility.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Jobs/JobUtility.cs` |
+| `AABB.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Math/AABB.cs` |
+| `IntAABB.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Math/IntAABB.cs` |
+| `MathExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Math/MathExtensions.cs` |
+| `MathUtility.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Math/MathUtility.cs` |
+| `MinimumData.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Math/MinimumData.cs` |
+| `MeshUtility.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Mesh/MeshUtility.cs` |
+| `Develop.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Misc/Develop.cs` |
+| `StaticStringBuilder.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Misc/StaticStringBuilder.cs` |
+| `DataChunk.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/DataChunk.cs` |
+| `ExBitFlag16.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/ExBitFlag16.cs` |
+| `ExBitFlag8.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/ExBitFlag8.cs` |
+| `ExCostSortedList1.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/ExCostSortedList1.cs` |
+| `ExCostSortedList4.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/ExCostSortedList4.cs` |
+| `ExNativeArray.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/ExNativeArray.cs` |
+| `ExProcessingList.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/ExProcessingList.cs` |
+| `ExSimpleNativeArray.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/ExSimpleNativeArray.cs` |
+| `ExTransformAccessArray.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/ExTransformAccessArray.cs` |
+| `FixedList128BytesExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/FixedList128BytesExtensions.cs` |
+| `FixedList32BytesExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/FixedList32BytesExtensions.cs` |
+| `FixedList4096BytesExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/FixedList4096BytesExtensions.cs` |
+| `FixedList512BytesExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/FixedList512BytesExtensions.cs` |
+| `FixedList64BytesExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/FixedList64BytesExtensions.cs` |
+| `NativeArrayExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/NativeArrayExtensions.cs` |
+| `NativeMultiHashMapExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/NativeMultiHashMapExtensions.cs` |
+| `NativeParallelHashMapExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/NativeParallelHashMapExtensions.cs` |
+| `NativeReferenceExtensions.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/NativeCollection/NativeReferenceExtensions.cs` |
+| `Exception.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/ResultCode/Exception.cs` |
+| `ResultCode.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/ResultCode/ResultCode.cs` |
+| `TimeSpan.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Time/TimeSpan.cs` |
+| `UnityTimeSpan.cs` | `Assets/MagicaCloth2/Scripts/Core/Utility/Time/UnityTimeSpan.cs` |
+| `VirtualMeshInputOutput.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/Function/VirtualMeshInputOutput.cs` |
+| `VirtualMeshMapping.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/Function/VirtualMeshMapping.cs` |
+| `VirtualMeshOptimization.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/Function/VirtualMeshOptimization.cs` |
+| `VirtualMeshProxy.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/Function/VirtualMeshProxy.cs` |
+| `VirtualMeshReduction.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/Function/VirtualMeshReduction.cs` |
+| `VirtualMeshSerialization.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/Function/VirtualMeshSerialization.cs` |
+| `VirtualMeshWork.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/Function/VirtualMeshWork.cs` |
+| `VertexAttribute.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/VertexAttribute.cs` |
+| `VirtualMesh.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/VirtualMesh.cs` |
+| `VirtualMeshBoneWeight.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/VirtualMeshBoneWeight.cs` |
+| `VirtualMeshContainer.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/VirtualMeshContainer.cs` |
+| `VirtualMeshPrimitive.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/VirtualMeshPrimitive.cs` |
+| `VirtualMeshRaycastHit.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/VirtualMeshRaycastHit.cs` |
+| `VirtualMeshTransform.cs` | `Assets/MagicaCloth2/Scripts/Core/VirtualMesh/VirtualMeshTransform.cs` |
+| `ClothAssetPostprocessor.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/ClothAssetPostprocessor.cs` |
+| `ClothEditorManager.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/ClothEditorManager.cs` |
+| `ClothEditorUtility.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/ClothEditorUtility.cs` |
+| `ClothInspectorUtility.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/ClothInspectorUtility.cs` |
+| `ClothPainter.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/ClothPainter.cs` |
+| `ClothPresetUtility.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/ClothPresetUtility.cs` |
+| `MagicaCapsuleColliderEditor.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/MagicaCapsuleColliderEditor.cs` |
+| `MagicaClothEditor.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/MagicaClothEditor.cs` |
+| `MagicaEditorBase.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/MagicaEditorBase.cs` |
+| `MagicaPlaneColliderEditor.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/MagicaPlaneColliderEditor.cs` |
+| `MagicaSettingsEditor.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/MagicaSettingsEditor.cs` |
+| `MagicaSphereColliderEditor.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/MagicaSphereColliderEditor.cs` |
+| `MagicaWindZoneEditor.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/MagicaWindZoneEditor.cs` |
+| `VirtualMeshEditorUtility.cs` | `Assets/MagicaCloth2/Scripts/Editor/Cloth/VirtualMeshEditorUtility.cs` |
+| `AboutMenu.cs` | `Assets/MagicaCloth2/Scripts/Editor/EditorExtension/AboutMenu.cs` |
+| `CheckSliderSerializeDataDrawer.cs` | `Assets/MagicaCloth2/Scripts/Editor/EditorExtension/CheckSliderSerializeDataDrawer.cs` |
+| `CurveSerializeDataDrawer.cs` | `Assets/MagicaCloth2/Scripts/Editor/EditorExtension/CurveSerializeDataDrawer.cs` |
+| `DrawIconInHierarchy.cs` | `Assets/MagicaCloth2/Scripts/Editor/EditorExtension/DrawIconInHierarchy.cs` |
+| `MenuItemScript.cs` | `Assets/MagicaCloth2/Scripts/Editor/EditorExtension/MenuItemScript.cs` |
+| `SharePreBuildDataDrawer.cs` | `Assets/MagicaCloth2/Scripts/Editor/EditorExtension/SharePreBuildDataDrawer.cs` |
+| `GizmoUtility.cs` | `Assets/MagicaCloth2/Scripts/Editor/Gizmos/GizmoUtility.cs` |
+| `MagicaCapsuleColliderGizmoDrawer.cs` | `Assets/MagicaCloth2/Scripts/Editor/Gizmos/MagicaCapsuleColliderGizmoDrawer.cs` |
+| `MagicaClothGizmoDrawer.cs` | `Assets/MagicaCloth2/Scripts/Editor/Gizmos/MagicaClothGizmoDrawer.cs` |
+| `MagicaPlaneColliderGizmoDrawer.cs` | `Assets/MagicaCloth2/Scripts/Editor/Gizmos/MagicaPlaneColliderGizmoDrawer.cs` |
+| `MagicaSphereColliderGizmoDrawer.cs` | `Assets/MagicaCloth2/Scripts/Editor/Gizmos/MagicaSphereColliderGizmoDrawer.cs` |
+| `MagicaWindZoneGizmoDrawer.cs` | `Assets/MagicaCloth2/Scripts/Editor/Gizmos/MagicaWindZoneGizmoDrawer.cs` |
+| `PreBuildDataCreation.cs` | `Assets/MagicaCloth2/Scripts/Editor/PreBuild/PreBuildDataCreation.cs` |
+| `UnityPackageImporter.cs` | `Assets/MagicaCloth2/Scripts/Editor/UnityPackageImporter/Burst/UnityPackageImporter.cs` |
+| `UnityPackageImporter.cs` | `Assets/MagicaCloth2/Scripts/Editor/UnityPackageImporter/Collections/UnityPackageImporter.cs` |
 | `ElapsedTtimer.cs` | `Assets/Media/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
 | `SceneManager.cs` | `Assets/Media/RIM_jetty1_assets/scripts/SceneManager.cs` |
 | `UISceneLoader.cs` | `Assets/Media/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
@@ -305,6 +505,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `RopeWindEffect.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeWindEffect.cs` |
 | `Boat_movement.cs` | `Assets/Scripts/Animations/Boat_movement.cs` |
 | `CargoDoorDriver.cs` | `Assets/Scripts/Animations/CargoDoorDriver.cs` |
+| `ClockAnim.cs` | `Assets/Scripts/Animations/ClockAnim.cs` |
 | `Coin emmision test.cs` | `Assets/Scripts/Animations/Coin emmision test.cs` |
 | `ControlBoatGate.cs` | `Assets/Scripts/Animations/ControlBoatGate.cs` |
 | `FadeControllerScript.cs` | `Assets/Scripts/Animations/FadeControllerScript.cs` |
@@ -333,6 +534,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `HandTouchInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/HandTouchInteractionModule.cs` |
 | `InteractionModuleBase.cs` | `Assets/Scripts/Interaction_Sequencing Framework/InteractionModuleBase.cs` |
 | `InventoryModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/InventoryModule.cs` |
+| `PlayerRelocate.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PlayerRelocate.cs` |
 | `PrisonerRoute.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PrisonerRoute.cs` |
 | `PrisonerSortData.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PrisonerSortData.cs` |
 | `PrisonerSortModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PrisonerSortModule.cs` |
@@ -362,6 +564,10 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `EquippableItem.cs` | `Assets/Scripts/InventoryTest/EquippableItem.cs` |
 | `InventoryManager.cs` | `Assets/Scripts/InventoryTest/InventoryManager.cs` |
 | `SimpleBodyAttachments.cs` | `Assets/Scripts/InventoryTest/SimpleBodyAttachments.cs` |
+| `AnkleManacleRope.cs` | `Assets/Scripts/Manacles/AnkleManacleRope.cs` |
+| `AnkleRopeTestSceneSetup.cs` | `Assets/Scripts/Manacles/Editor/AnkleRopeTestSceneSetup.cs` |
+| `C1ManacleSceneSetup.cs` | `Assets/Scripts/Manacles/Editor/C1ManacleSceneSetup.cs` |
+| `LookatFollow.cs` | `Assets/Scripts/Mirror/LookatFollow.cs` |
 | `Mirror movement.cs` | `Assets/Scripts/Mirror/Mirror movement.cs` |
 | `MirrorFollow.cs` | `Assets/Scripts/Mirror/MirrorFollow.cs` |
 | `mirror_movement.cs` | `Assets/Scripts/Mirror/mirror_movement.cs` |
@@ -378,6 +584,21 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `PickUpUI.cs` | `Assets/Scripts/UI/PickUpUI.cs` |
 | `RewardUI.cs` | `Assets/Scripts/UI/RewardUI.cs` |
 | `TenSecTimer.cs` | `Assets/Scripts/UI/TenSecTimer.cs` |
+| `DisableInPlayModeAttribute.cs` | `Assets/Toolkits/Rope/Core/DisableInPlayModeAttribute.cs` |
+| `DisableInPlayModePropertyDrawer.cs` | `Assets/Toolkits/Rope/Core/Editor/DisableInPlayModePropertyDrawer.cs` |
+| `RopeEditor.cs` | `Assets/Toolkits/Rope/Core/Editor/RopeEditor.cs` |
+| `PointsExtensions.cs` | `Assets/Toolkits/Rope/Core/PointsExtensions.cs` |
+| `RigidbodyExtensions.cs` | `Assets/Toolkits/Rope/Core/RigidbodyExtensions.cs` |
+| `ApplyTorqueOnKey.cs` | `Assets/Toolkits/Rope/Examples/00_Main/ApplyTorqueOnKey.cs` |
+| `RopeBridgePlank.cs` | `Assets/Toolkits/Rope/Examples/00_Main/RopeBridgePlank.cs` |
+| `BackAndForthMovement.cs` | `Assets/Toolkits/Rope/Examples/01_DynamicAttach/BackAndForthMovement.cs` |
+| `DynamicAttach.cs` | `Assets/Toolkits/Rope/Examples/01_DynamicAttach/DynamicAttach.cs` |
+| `Spawner.cs` | `Assets/Toolkits/Rope/Examples/02_BoxingRing/Spawner.cs` |
+| `SimpleRopeInteractionEditor.cs` | `Assets/Toolkits/Rope/Helpers/Editor/SimpleRopeInteractionEditor.cs` |
+| `SimpleRopeInteraction.cs` | `Assets/Toolkits/Rope/Helpers/SimpleRopeInteraction.cs` |
+| `SimpleRopeInteractionGUI.cs` | `Assets/Toolkits/Rope/Helpers/SimpleRopeInteractionGUI.cs` |
+| `Rope.cs` | `Assets/Toolkits/Rope/Rope.cs` |
+| `RopeConnection.cs` | `Assets/Toolkits/Rope/RopeConnection.cs` |
 | `AnimateOnInput.cs` | `Assets/VR Body/AnimateOnInput.cs` |
 | `IKFootSolver.cs` | `Assets/VR Body/IKFootSolver.cs` |
 | `IKTargetFollowVRRig.cs` | `Assets/VR Body/IKTargetFollowVRRig.cs` |
