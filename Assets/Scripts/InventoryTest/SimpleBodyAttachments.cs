@@ -5,14 +5,11 @@ public class SimpleBodyAttachments : MonoBehaviour
     [Header("Auto-Setup")]
     public bool autoSetup = true;
 
-    [Header("Position Configuration")]
-    [SerializeField] float hipHeight = -0.4f;      // moved up ~15cm
-    [SerializeField] float hipForward = 0.05f;      // pushed forward so visible when looking down
-    [SerializeField] float hipSideOffset = -0.12f;  // left side for baton
-    [SerializeField] float chestHeight = -0.2f;     // Moved up ~10cm
-    [SerializeField] float chestForward = 0.07f;     // pushed forward
-    [SerializeField] float chestSideOffset = -0.08f; // left side of chest
-    [SerializeField] float beltSideOffset = 0.16f;  // slightly tighter
+    [Header("Reference Points")]
+    [SerializeField] private Transform hipReference;
+    [SerializeField] private Transform beltLeftReference;
+    [SerializeField] private Transform beltRightReference;
+    [SerializeField] private Transform chestReference;
 
     [Header("Attachment Points (Auto-Created)")]
     public GameObject hipSlot;
@@ -27,10 +24,9 @@ public class SimpleBodyAttachments : MonoBehaviour
     [SerializeField] private Material beltRightHighlightMaterial;
     [SerializeField] private Material chestHighlightMaterial;
 
-    private Transform trackingSpace; 
-    private Transform centerEye;
+    private Transform trackingSpace;
 
-    void Start()
+    private void Start()
     {
         if (autoSetup)
         {
@@ -38,10 +34,11 @@ public class SimpleBodyAttachments : MonoBehaviour
         }
     }
 
-    void AutoSetup()
+    private void AutoSetup()
     {
         // Find camera rig
         OVRCameraRig rig = FindObjectOfType<OVRCameraRig>();
+
         if (rig == null)
         {
             Debug.LogError("OVRCameraRig not found!");
@@ -49,15 +46,8 @@ public class SimpleBodyAttachments : MonoBehaviour
         }
 
         trackingSpace = rig.trackingSpace;
-        centerEye = rig.centerEyeAnchor;
 
-        if (centerEye == null)
-        {
-            Debug.LogError("CenterEyeAnchor not found!");
-            return;
-        }
-
-        // Attachment slots that  will follow the head
+        // Create attachment slots
         CreateSlot(ref hipSlot, "HipSlot", AvatarAttachmentPoint.AttachmentType.Hip);
         CreateSlot(ref beltLeftSlot, "BeltLeftSlot", AvatarAttachmentPoint.AttachmentType.BeltLeft);
         CreateSlot(ref beltRightSlot, "BeltRightSlot", AvatarAttachmentPoint.AttachmentType.BeltRight);
@@ -65,21 +55,26 @@ public class SimpleBodyAttachments : MonoBehaviour
 
         Debug.Log("Body attachment system initialized successfully!");
     }
-    // Create slots 
-    void CreateSlot(ref GameObject slot, string name, AvatarAttachmentPoint.AttachmentType type)
+
+    private void CreateSlot(ref GameObject slot, string name, AvatarAttachmentPoint.AttachmentType type)
     {
         slot = new GameObject(name);
-        slot.transform.SetParent(trackingSpace);
 
-        // Start at tracking space origin, will be positioned in Update
+        if (trackingSpace != null)
+        {
+            slot.transform.SetParent(trackingSpace);
+        }
+
         slot.transform.localPosition = Vector3.zero;
         slot.transform.localRotation = Quaternion.identity;
 
-        // Add attachment point component
         AvatarAttachmentPoint attachPoint = slot.AddComponent<AvatarAttachmentPoint>();
+
         attachPoint.attachmentType = type;
         attachPoint.snapRadius = 0.15f;
-        attachPoint.ConfigureHighlightMaterial(GetHighlightMaterialForType(type), instantiateHighlightMaterials);
+        attachPoint.ConfigureHighlightMaterial(
+            GetHighlightMaterialForType(type),
+            instantiateHighlightMaterials);
 
         Debug.Log($"Created {name}");
     }
@@ -90,75 +85,36 @@ public class SimpleBodyAttachments : MonoBehaviour
         {
             case AvatarAttachmentPoint.AttachmentType.Hip:
                 return hipHighlightMaterial;
+
             case AvatarAttachmentPoint.AttachmentType.BeltLeft:
                 return beltLeftHighlightMaterial;
+
             case AvatarAttachmentPoint.AttachmentType.BeltRight:
                 return beltRightHighlightMaterial;
+
             case AvatarAttachmentPoint.AttachmentType.ChestLeft:
                 return chestHighlightMaterial;
+
             default:
                 return null;
         }
     }
 
-    void Update()
+    private void Update()
     {
-        if (centerEye == null) return;
+        UpdateSlot(hipSlot, hipReference);
+        UpdateSlot(beltLeftSlot, beltLeftReference);
+        UpdateSlot(beltRightSlot, beltRightReference);
+        UpdateSlot(chestSlot, chestReference);
+    }
 
-        // Get head position and direction
-        Vector3 headPos = centerEye.position;
-        Vector3 headForward = Vector3.ProjectOnPlane(centerEye.forward, Vector3.up);
-
-        // Guard before normalizing — fallback if head is looking straight up/down
-        if (headForward.sqrMagnitude < 0.0001f)
-            headForward = Vector3.ProjectOnPlane(centerEye.right, Vector3.up);
-
-        if (headForward.sqrMagnitude < 0.0001f)
+    private void UpdateSlot(GameObject slot, Transform reference)
+    {
+        if (slot == null || reference == null)
             return;
 
-        headForward.Normalize();
-        Vector3 headRight = Vector3.Cross(Vector3.up, headForward).normalized;
-
-        Quaternion bodyRotation = Quaternion.LookRotation(headForward);
-
-        // Update HipSlot position
-        if (hipSlot != null)
-        {
-            hipSlot.transform.position = headPos +
-                Vector3.up * hipHeight +
-                headForward * hipForward +
-                headRight * hipSideOffset;
-            hipSlot.transform.rotation = bodyRotation;
-        }
-
-        // Update ChestSlot position
-        if (chestSlot != null)
-        {
-            chestSlot.transform.position = headPos +
-                Vector3.up * chestHeight +
-                headForward * chestForward +
-                headRight * chestSideOffset;
-            chestSlot.transform.rotation = bodyRotation;
-        }
-
-        // Update BeltLeftSlot position
-        if (beltLeftSlot != null)
-        {
-            beltLeftSlot.transform.position = headPos +
-                Vector3.up * hipHeight +
-                headForward * hipForward +
-                headRight * -beltSideOffset; // Left side (negative right)
-            beltLeftSlot.transform.rotation = bodyRotation;
-        }
-
-        // Update BeltRightSlot position
-        if (beltRightSlot != null)
-        {
-            beltRightSlot.transform.position = headPos +
-                Vector3.up * hipHeight +
-                headForward * hipForward +
-                headRight * beltSideOffset; // Right side (positive right)
-            beltRightSlot.transform.rotation = bodyRotation;
-        }
+        // Match world position and rotation exactly
+        slot.transform.position = reference.position;
+        slot.transform.rotation = reference.rotation;
     }
 }

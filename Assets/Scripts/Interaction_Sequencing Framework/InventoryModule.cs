@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using Oculus.Interaction.HandGrab;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryModule : InteractionModuleBase
@@ -49,6 +50,10 @@ public class InventoryModule : InteractionModuleBase
     [SerializeField] private float highlightLerpDuration = 0.35f;
     [SerializeField] private bool lerpHighlightOut = true;
     [SerializeField] private float highlightOutLerpDuration = 0.25f;
+
+    [Header("Relocate Settings")]
+    public float relocateDelay = 1f;
+    public PlayerRelocate playerRelocate;
 
     [Header("Attachment Point Guidance")]
     [SerializeField] private bool highlightExpectedAttachmentPoints = true;
@@ -310,7 +315,16 @@ public class InventoryModule : InteractionModuleBase
         if (CorrectPlacedCount >= GetTargetCount())
         {
             Complete();
+
+            StartCoroutine(RelocateAfterDelay());
         }
+    }
+
+    private IEnumerator RelocateAfterDelay()
+    {
+        yield return new WaitForSeconds(relocateDelay);
+
+        playerRelocate.Relocate();
     }
 
     private void UpdateHighlight()
