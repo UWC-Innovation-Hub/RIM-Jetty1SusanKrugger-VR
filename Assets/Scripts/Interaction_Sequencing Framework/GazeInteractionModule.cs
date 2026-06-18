@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -23,9 +22,8 @@ public class GazeInteractionModule : InteractionModuleBase
     [SerializeField] private int requiredGazedCount = -1;
 
     [Header("Dwell Time")]
-    [Tooltip("Wheather the student must hold their gaze for a set duration to register a look")]
+    [Tooltip("When enabled, gaze completion is accepted from GazeTarget.OnGazeDwell. When disabled, gaze enter completes immediately.")]
     [SerializeField] private bool useDwellTime = true;
-    [SerializeField] private float dwellDuration = 1.5f;
 
     [Header("Highlight")]
     [Tooltip("Highlight un-gazed objects so the student knows what to look at")]
@@ -43,9 +41,8 @@ public class GazeInteractionModule : InteractionModuleBase
     //PRIVATE STATE
 
     private readonly HashSet<GazeTarget> _gazedTargets = new HashSet<GazeTarget>();
-    private readonly Dictionary<GazeTarget, Coroutine> _dwellCoroutines = new Dictionary<GazeTarget, Coroutine>();
     private readonly Dictionary<GazeTarget, UnityAction> _enterActions = new Dictionary<GazeTarget, UnityAction>();
-    private readonly Dictionary<GazeTarget, UnityAction> _exitActions = new Dictionary<GazeTarget, UnityAction>();
+    private readonly Dictionary<GazeTarget, UnityAction> _dwellActions = new Dictionary<GazeTarget, UnityAction>();
     private bool _subscribed;
 
     //INTERACTIONMODULEBASE OVERRIDES
@@ -55,7 +52,6 @@ public class GazeInteractionModule : InteractionModuleBase
         base.Activate();
 
         _gazedTargets.Clear();
-        StopAllDwellCoroutines();
 
         SubscribeGazeEvents();
         SetAllHighlights(idleEmmissionStrength);
@@ -68,7 +64,6 @@ public class GazeInteractionModule : InteractionModuleBase
         base.Deactivate();
 
         UnsubscribeGazeEvents();
-        StopAllDwellCoroutines();
         SetAllHighlights(idleEmmissionStrength);
     }
 
@@ -91,13 +86,19 @@ public class GazeInteractionModule : InteractionModuleBase
             GazeTarget captured = binding.target;
 
             UnityAction enterAction = () => OnGazeEnter(captured);
-            UnityAction exitAction = () => OnGazeExit(captured);
+            UnityAction dwellAction = () => OnGazeDwell(captured);
 
             _enterActions[captured] = enterAction;
-            _exitActions[captured] = exitAction;
+            _dwellActions[captured] = dwellAction;
 
-            binding.target.onGazeEnter.AddListener(enterAction);
-            binding.target.onGazeExit.AddListener(exitAction);
+            if (useDwellTime)
+            {
+                binding.target.onGazeDwell.AddListener(dwellAction);
+            }
+            else
+            {
+                binding.target.onGazeEnter.AddListener(enterAction);
+            }
         }
 
         _subscribed = true;
@@ -122,12 +123,14 @@ public class GazeInteractionModule : InteractionModuleBase
                 binding.target.onGazeEnter.RemoveListener(enterAction);
             }
 
-            if (_exitActions.TryGetValue(binding.target, out UnityAction exitAction))
+            if (_dwellActions.TryGetValue(binding.target, out UnityAction dwellAction))
             {
-                binding.target.onGazeExit.RemoveListener(exitAction);
+                binding.target.onGazeDwell.RemoveListener(dwellAction);
             }
         }
 
+        _enterActions.Clear();
+        _dwellActions.Clear();
         _subscribed = false;
     }
 
@@ -145,42 +148,21 @@ public class GazeInteractionModule : InteractionModuleBase
             return;
         }
 
-        if (useDwellTime)
-        {
-            if (!_dwellCoroutines.ContainsKey(target))
-            {
-                _dwellCoroutines[target] = StartCoroutine(DwellRoutine(target));
-            }
-        }
-        else
-        {
-            AcceptGaze(target);
-        }
+        AcceptGaze(target);
     }
 
-    private void OnGazeExit(GazeTarget target)
+    private void OnGazeDwell(GazeTarget target)
     {
         if (!IsActive || IsComplete || target == null)
         {
             return;
         }
 
-        if (_dwellCoroutines.TryGetValue(target, out Coroutine routine))
+        if (_gazedTargets.Contains(target))
         {
-            if (routine != null)
-            {
-                StopCoroutine(routine);
-                _dwellCoroutines.Remove(target);
-            }
+            return;
         }
-    }
 
-    //DWELL TIMER
-
-    private IEnumerator DwellRoutine(GazeTarget target)
-    {
-        yield return new WaitForSeconds(dwellDuration);
-        _dwellCoroutines.Remove(target);
         AcceptGaze(target);
     }
 
@@ -257,17 +239,4 @@ public class GazeInteractionModule : InteractionModuleBase
         }
     }
 
-    //HELPERS
-
-    private void StopAllDwellCoroutines()
-    {
-        foreach (Coroutine routine in _dwellCoroutines.Values)
-        {
-            if (routine != null)
-            {
-                StopCoroutine(routine);
-            }
-        }
-        _dwellCoroutines.Clear();
-    }
 }
