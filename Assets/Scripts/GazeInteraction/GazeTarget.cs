@@ -32,6 +32,8 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
     [SerializeField] private bool playVideoOnGaze = true;
     [SerializeField] private bool playVideoOnlyOnce = true;
 
+    [SerializeField] private Material HighlightMaterial;
+
     [Header("Events")]
     public UnityEvent onGazeEnter;
     public UnityEvent onGazeExit;
@@ -59,6 +61,16 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
             indicatorOriginalScale = indicator.transform.localScale;
             indicatorScript = indicator.GetComponent<GazeIndicator>();
         }
+    }
+
+    public void SetEmissionMatUp()
+    {
+        HighlightMaterial.SetFloat("_EmissionStrength", 2.0f);
+    }
+
+    public void SetEmissionMatDown()
+    {
+        HighlightMaterial.SetFloat("_EmissionStrength", 0.0f);
     }
 
     public void OnGazeEnter()
