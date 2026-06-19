@@ -431,7 +431,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
         return currentEquippedItem != null;
     }
 
-    private static bool IsCompatible(AttachmentType itemType, AttachmentType slotType)
+    public static bool IsCompatible(AttachmentType itemType, AttachmentType slotType)
     {
         if (itemType == slotType)
         {
