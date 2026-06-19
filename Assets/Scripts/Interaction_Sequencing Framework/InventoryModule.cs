@@ -52,7 +52,7 @@ public class InventoryModule : InteractionModuleBase
     [Header("Order Enforcement")]
     [SerializeField] private AudioSource InventoryAudio;
     [SerializeField] private bool enforceOrder = true;
-    [Tooltip("Ordered list of scene items. For your flow: Keys, WalkieTalkie, Baton, Badge.")]
+    [Tooltip("Ordered list of scene items. For your flow: Baton, Pistol.")]
     [SerializeField] private List<EquippableItem> orderedItems = new List<EquippableItem>();
     [SerializeField] private OrderedMatchMode orderedMatchMode = OrderedMatchMode.ItemType;
     [SerializeField] private bool rejectOutOfOrderEquips = true;
