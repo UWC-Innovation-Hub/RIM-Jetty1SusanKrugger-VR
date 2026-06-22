@@ -1,6 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// A module that manages a batch of prisoner sort participants and their interactions with a cell hold selector.
+/// Author: Kyle
+/// </summary>
 public class PrisonerSortModule : InteractionModuleBase
 {
     [Header("Cell-Only Batch")]
