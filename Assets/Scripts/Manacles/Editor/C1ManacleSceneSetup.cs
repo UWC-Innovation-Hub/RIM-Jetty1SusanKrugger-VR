@@ -68,7 +68,7 @@ public static class C1ManacleSceneSetup
             new PairSpec("Batch_C_P1_P2_Chain", 0, 1),
         }, material, mesh);
 
-        WirePrisonerSortLinkedObjects(scene, batchAChains, batchBChains, batchCChains);
+        WirePrisonerSortLinkedObjects(scene, batchBChains);
 
         batchAChains.SetActive(false);
         batchBChains.SetActive(false);
@@ -152,7 +152,7 @@ public static class C1ManacleSceneSetup
         serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 
-    private static void WirePrisonerSortLinkedObjects(UnityScene scene, GameObject batchAChains, GameObject batchBChains, GameObject batchCChains)
+    private static void WirePrisonerSortLinkedObjects(UnityScene scene, GameObject retainedBatchChains)
     {
         var interactionRoot = RequireGameObject(scene, "Interaction_PrisonerSort");
         var module = interactionRoot.GetComponent<PrisonerSortModule>();
@@ -161,31 +161,16 @@ public static class C1ManacleSceneSetup
             throw new InvalidOperationException("Interaction_PrisonerSort is missing PrisonerSortModule.");
 
         var serialized = new SerializedObject(module);
-        var sessions = serialized.FindProperty("sessions");
+        var linkedObjects = serialized.FindProperty("linkedObjects");
 
-        AssignBatchLinkedObject(sessions, 0, 0, batchAChains);
-        AssignBatchLinkedObject(sessions, 1, 0, batchBChains);
-        AssignBatchLinkedObject(sessions, 2, 0, batchCChains);
+        if (linkedObjects == null || !linkedObjects.isArray)
+            throw new InvalidOperationException("PrisonerSortModule is missing linkedObjects.");
+
+        linkedObjects.arraySize = 1;
+        linkedObjects.GetArrayElementAtIndex(0).objectReferenceValue = retainedBatchChains;
 
         serialized.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(module);
-    }
-
-    private static void AssignBatchLinkedObject(SerializedProperty sessions, int sessionIndex, int batchIndex, GameObject linkedObject)
-    {
-        if (sessions == null || !sessions.isArray || sessions.arraySize <= sessionIndex)
-            throw new InvalidOperationException($"Missing PrisonerSort session at index {sessionIndex}.");
-
-        var session = sessions.GetArrayElementAtIndex(sessionIndex);
-        var batches = session.FindPropertyRelative("batches");
-
-        if (batches == null || !batches.isArray || batches.arraySize <= batchIndex)
-            throw new InvalidOperationException($"Missing PrisonerSort batch {batchIndex} in session {sessionIndex}.");
-
-        var batch = batches.GetArrayElementAtIndex(batchIndex);
-        var linkedObjects = batch.FindPropertyRelative("linkedObjects");
-        linkedObjects.arraySize = 1;
-        linkedObjects.GetArrayElementAtIndex(0).objectReferenceValue = linkedObject;
     }
 
     private static Mesh LoadChainMesh()

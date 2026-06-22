@@ -3,26 +3,19 @@ using UnityEngine;
 
 public class PrisonerSortModule : InteractionModuleBase
 {
-    [Header("Completion Rule")]
-    [SerializeField] private int requiredSorted = 5;
+    [Header("Cell-Only Batch")]
+    [SerializeField] private PrisonerSortParticipant[] participants;
+    [SerializeField] private GameObject[] linkedObjects;
+    [SerializeField] private CellHoldSelector cellInteractable;
+    [SerializeField] private AudioSource selectionAudio;
+    [Min(1)]
+    [SerializeField] private int requiredFinishedCount = 4;
 
-    [Header("Session Authoring")]
-    [SerializeField] private PrisonerSortSession[] sessions;
-    [SerializeField] private int activeSessionIndex = -1;
+    public int FinishedCount => _finishedParticipants.Count;
+    public bool HasSentBatchToCell { get; private set; }
+    public bool UsesSessionBatches => false;
 
-    [Header("Batch Reset Wiring")]
-    [SerializeField] private ReactivateRoutes routeController;
-    [SerializeField] private PrisonerRoute prisonerRoute;
-
-    public int SortedCount { get; private set; }
-    public int CurrentBatchIndex { get; private set; }
-    public PrisonerSortSession ActiveSession { get; private set; }
-    public PrisonerSortBatch CurrentBatch { get; private set; }
-
-    public bool UsesSessionBatches => ActiveSession != null && ActiveSession.GetBatchCount() > 0;
-
-    private readonly HashSet<string> _currentBatchArrivals = new();
-    private readonly HashSet<string> _currentBatchFinished = new();
+    private readonly HashSet<string> _finishedParticipants = new();
 
     private void Reset()
     {
@@ -32,224 +25,163 @@ public class PrisonerSortModule : InteractionModuleBase
     public override void Activate()
     {
         base.Activate();
-        SortedCount = 0;
-        CurrentBatchIndex = 0;
-        _currentBatchArrivals.Clear();
-        _currentBatchFinished.Clear();
+
+        HasSentBatchToCell = false;
+        _finishedParticipants.Clear();
         ResolveDependencies();
-        ResolveActiveSession();
-        SyncSessionVisibility();
+        BindParticipantNotifiers();
+        ResetParticipants();
+        SetBatchActive(true);
 
-        if (routeController != null)
-            routeController.BindSession(ActiveSession);
-
-        if (prisonerRoute != null)
-            prisonerRoute.BindSession(ActiveSession);
-
-        ApplyCurrentBatchBinding();
-
-        if (routeController != null)
-            routeController.ResetForBatch();
-
-        if (prisonerRoute != null)
-            prisonerRoute.ResetForBatch();
+        if (cellInteractable != null)
+        {
+            cellInteractable.Bind(this);
+            cellInteractable.ResetSelectionState();
+            cellInteractable.SetInteractionEnabled(true);
+        }
     }
 
     public override void Deactivate()
     {
+        if (cellInteractable != null)
+            cellInteractable.SetInteractionEnabled(false);
+
+        SetBatchActive(false);
+        _finishedParticipants.Clear();
+        HasSentBatchToCell = false;
+
         base.Deactivate();
-        ResolveDependencies();
-
-        if (routeController != null)
-            routeController.EndPrisonerSortInteraction();
-
-        CurrentBatch = null;
-        CurrentBatchIndex = 0;
-        _currentBatchArrivals.Clear();
-        _currentBatchFinished.Clear();
-
-        if (routeController != null)
-            routeController.SetActiveBatch(null);
-
-        if (prisonerRoute != null)
-            prisonerRoute.SetActiveBatch(null);
     }
 
-    /// Legacy entry point. In session mode this should be routed through RegisterParticipantArrived.
+    public void SendBatchToCell()
+    {
+        if (!IsActive || IsComplete || HasSentBatchToCell)
+            return;
+
+        HasSentBatchToCell = true;
+
+        if (cellInteractable != null)
+            cellInteractable.SetInteractionEnabled(false);
+
+        if (participants != null)
+        {
+            for (int i = 0; i < participants.Length; i++)
+            {
+                PrisonerSortParticipant participant = participants[i];
+                if (participant == null)
+                    continue;
+
+                participant.SendToCell();
+            }
+        }
+
+        if (selectionAudio != null)
+            selectionAudio.Play();
+    }
+
+    public void RegisterParticipantArrived(string participantId)
+    {
+        if (!IsActive || IsComplete)
+            return;
+
+        Debug.Log($"[PrisonerSortModule] Participant arrived: {ResolveParticipantId(participantId)}");
+    }
+
     public void RegisterPrisonerArrived()
     {
         RegisterParticipantArrived(string.Empty);
     }
 
-    public void RegisterParticipantArrived(string participantId)
-    {
-        if (!IsActive || IsComplete) return;
-
-        if (!UsesSessionBatches)
-        {
-            RegisterLegacyArrival();
-            return;
-        }
-
-        if (CurrentBatch == null)
-        {
-            Debug.LogWarning($"{name}: Received arrival for session mode, but no current batch is bound.");
-            return;
-        }
-
-        string resolvedId = ResolveParticipantId(participantId, _currentBatchArrivals.Count, "arrival");
-        _currentBatchArrivals.Add(resolvedId);
-
-        int requiredArrivalsForBatch = CurrentBatch.GetRequiredArrivals();
-        Debug.Log($"[PrisonerSortModule] Batch {CurrentBatchIndex + 1} arrivals: {_currentBatchArrivals.Count}/{requiredArrivalsForBatch}");
-    }
-
     public void RegisterParticipantFinished(string participantId)
     {
-        if (!IsActive || IsComplete || !UsesSessionBatches) return;
-
-        if (CurrentBatch == null)
-        {
-            Debug.LogWarning($"{name}: Received finish for session mode, but no current batch is bound.");
+        if (!IsActive || IsComplete)
             return;
-        }
 
-        string resolvedId = ResolveParticipantId(participantId, _currentBatchFinished.Count, "finish");
-        _currentBatchFinished.Add(resolvedId);
+        string resolvedId = ResolveParticipantId(participantId);
+        if (!_finishedParticipants.Add(resolvedId))
+            return;
 
-        int requiredFinishesForBatch = CurrentBatch.GetRequiredArrivals();
-        Debug.Log($"[PrisonerSortModule] Batch {CurrentBatchIndex + 1} finished: {_currentBatchFinished.Count}/{requiredFinishesForBatch}");
+        int required = ResolveRequiredFinishedCount();
+        Debug.Log($"[PrisonerSortModule] Cell arrivals finished: {_finishedParticipants.Count}/{required}");
 
-        if (_currentBatchFinished.Count >= requiredFinishesForBatch)
-            CompleteCurrentBatch();
+        if (_finishedParticipants.Count >= required)
+            CompleteCellOnlyBatch();
     }
 
-    public void DisableInteractables()
+    private void CompleteCellOnlyBatch()
     {
+        if (!IsActive || IsComplete)
+            return;
 
-    }
+        SetBatchActive(false);
 
-    public void SetActiveSession(int sessionIndex)
-    {
-        activeSessionIndex = sessionIndex;
-        ResolveActiveSession();
-        SyncSessionVisibility();
+        if (cellInteractable != null)
+            cellInteractable.SetInteractionEnabled(false);
+
+        Complete();
     }
 
     private void ResolveDependencies()
     {
-        if (!routeController) routeController = GetComponent<ReactivateRoutes>();
-        if (!prisonerRoute) prisonerRoute = FindFirstObjectByType<PrisonerRoute>();
+        if (cellInteractable == null)
+            cellInteractable = GetComponentInChildren<CellHoldSelector>(true);
+
+        if (cellInteractable == null)
+            cellInteractable = FindFirstObjectByType<CellHoldSelector>();
+
+        if (selectionAudio == null)
+            selectionAudio = GetComponentInChildren<AudioSource>(true);
     }
 
-    private void ResolveActiveSession()
+    private void BindParticipantNotifiers()
     {
-        if (sessions == null || sessions.Length == 0)
-        {
-            ActiveSession = null;
+        if (participants == null)
             return;
-        }
 
-        if (activeSessionIndex < 0)
-            activeSessionIndex = 0;
-        else if (activeSessionIndex >= sessions.Length)
-            activeSessionIndex = sessions.Length - 1;
-
-        ActiveSession = sessions[activeSessionIndex];
+        for (int i = 0; i < participants.Length; i++)
+            participants[i]?.arrivalNotifier?.Bind(this);
     }
 
-    private void ApplyCurrentBatchBinding()
+    private void ResetParticipants()
     {
-        CurrentBatch = UsesSessionBatches ? ActiveSession.GetBatch(CurrentBatchIndex) : null;
-
-        if (routeController != null)
-            routeController.SetActiveBatch(CurrentBatch);
-
-        if (prisonerRoute != null)
-            prisonerRoute.SetActiveBatch(CurrentBatch);
-    }
-
-    private void SyncSessionVisibility()
-    {
-        if (sessions == null) return;
-
-        for (int sessionIndex = 0; sessionIndex < sessions.Length; sessionIndex++)
-        {
-            PrisonerSortSession session = sessions[sessionIndex];
-            bool active = session == ActiveSession;
-            if (session?.batches == null) continue;
-
-            for (int batchIndex = 0; batchIndex < session.batches.Length; batchIndex++)
-            {
-                PrisonerSortBatch batch = session.batches[batchIndex];
-                if (batch?.participants == null) continue;
-
-                for (int participantIndex = 0; participantIndex < batch.participants.Length; participantIndex++)
-                {
-                    GameObject root = batch.participants[participantIndex]?.root;
-                    if (root != null)
-                        root.SetActive(active);
-                }
-
-                SetLinkedObjectsActive(batch, active);
-            }
-        }
-    }
-
-    private void RegisterLegacyArrival()
-    {
-        SortedCount++;
-
-        Debug.Log($"[PrisonerSortModule] Arrived: {SortedCount}/{requiredSorted}");
-
-        if (SortedCount >= requiredSorted)
-            Complete();
-    }
-
-    private void CompleteCurrentBatch()
-    {
-        if (!UsesSessionBatches || CurrentBatch == null) return;
-
-        routeController?.CompleteCurrentBatch();
-
-        SortedCount++;
-        Debug.Log($"[PrisonerSortModule] Batch complete: {SortedCount}/{ActiveSession.GetBatchCount()}");
-
-        CurrentBatchIndex++;
-
-        if (CurrentBatchIndex >= ActiveSession.GetBatchCount())
-        {
-            if (activeSessionIndex + 1 < sessions.Length)
-                activeSessionIndex++;
-
-            routeController?.EndPrisonerSortInteraction();
-            Complete();
+        if (participants == null)
             return;
-        }
 
-        _currentBatchArrivals.Clear();
-        _currentBatchFinished.Clear();
-        ApplyCurrentBatchBinding();
-        routeController?.ResetForBatch();
+        for (int i = 0; i < participants.Length; i++)
+            participants[i]?.ResetAnimators();
     }
 
-    private static string ResolveParticipantId(string participantId, int fallbackIndex, string prefix)
+    private void SetBatchActive(bool active)
+    {
+        if (participants != null)
+        {
+            for (int i = 0; i < participants.Length; i++)
+                participants[i]?.SetActive(active);
+        }
+
+        if (linkedObjects == null)
+            return;
+
+        for (int i = 0; i < linkedObjects.Length; i++)
+        {
+            if (linkedObjects[i] != null)
+                linkedObjects[i].SetActive(active);
+        }
+    }
+
+    private int ResolveRequiredFinishedCount()
+    {
+        if (requiredFinishedCount > 0)
+            return requiredFinishedCount;
+
+        return participants != null ? participants.Length : 0;
+    }
+
+    private string ResolveParticipantId(string participantId)
     {
         if (!string.IsNullOrWhiteSpace(participantId))
             return participantId;
 
-        return $"{prefix}_{fallbackIndex}";
-    }
-
-    private static void SetLinkedObjectsActive(PrisonerSortBatch batch, bool active)
-    {
-        if (batch?.linkedObjects == null) return;
-
-        for (int i = 0; i < batch.linkedObjects.Length; i++)
-        {
-            GameObject linkedObject = batch.linkedObjects[i];
-            if (linkedObject != null)
-                linkedObject.SetActive(active);
-        }
+        return $"participant_{_finishedParticipants.Count}";
     }
 }
