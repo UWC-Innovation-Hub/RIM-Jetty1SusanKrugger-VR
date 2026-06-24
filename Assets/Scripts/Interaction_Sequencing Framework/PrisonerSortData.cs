@@ -19,13 +19,45 @@ public class PrisonerSortParticipant
 
         return string.Empty;
     }
+
+    public void SetActive(bool active)
+    {
+        if (root != null)
+            root.SetActive(active);
+    }
+
+    public void ResetAnimators()
+    {
+        ResetAnimator(choiceAnimator);
+        ResetAnimator(walkAnimator);
+    }
+
+    public void SendToCell()
+    {
+        if (choiceAnimator != null)
+            choiceAnimator.SetTrigger("GoToCell");
+
+        if (walkAnimator != null)
+            walkAnimator.SetTrigger("ShouldWalk");
+    }
+
+    private static void ResetAnimator(Animator animator)
+    {
+        if (animator == null)
+            return;
+
+        animator.Rebind();
+        animator.Update(0f);
+    }
 }
 
 [System.Serializable]
+// Retained only so older scenes/scripts compile while C1 uses the single-batch module.
 public class PrisonerSortBatch
 {
     public string batchId;
     public PrisonerSortParticipant[] participants;
+    public GameObject[] linkedObjects;
     [Min(0)] public int requiredArrivals;
 
     public int GetRequiredArrivals()
@@ -38,6 +70,7 @@ public class PrisonerSortBatch
 }
 
 [System.Serializable]
+// Retained only so older scenes/scripts compile while C1 uses the single-batch module.
 public class PrisonerSortSession
 {
     public string sessionId;

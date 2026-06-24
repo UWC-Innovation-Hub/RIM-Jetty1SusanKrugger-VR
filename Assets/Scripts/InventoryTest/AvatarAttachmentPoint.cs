@@ -16,6 +16,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
     [Header("Visual Feedback")]
     public Color normalColor = new Color(1f, 1f, 0f, 0.08f); // Sphere Color yellow before insertion
     public Color hoverColor = new Color(0f, 1f, 0f, 0.15f);  // Color green indicates correct attachment point
+    [SerializeField] private MeshRenderer visualizer;
     [SerializeField] private Material highlightMaterial;
     [SerializeField] private bool instantiateHighlightMaterial = true;
     [SerializeField] private string emissionStrengthProperty = "_EmissionStrength";
@@ -44,7 +45,6 @@ public class AvatarAttachmentPoint : MonoBehaviour
     private EquippableItem currentEquippedItem;
     private EquippableItem nearbyItem;
     private SphereCollider snapZone;
-    private MeshRenderer visualizer;
     private bool ownsVisualizerMaterial;
     private bool _isGuidanceLerping;
     private float _guidanceLerpStart;
@@ -124,38 +124,60 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
     void SetupSnapZone()
     {
-        // Create or get sphere collider
         snapZone = GetComponent<SphereCollider>();
         if (snapZone == null)
         {
-            snapZone = gameObject.AddComponent<SphereCollider>();
+            Debug.LogWarning($"{name}: Missing SphereCollider for {attachmentType} snap zone.", this);
         }
-        snapZone.radius = snapRadius;
-        snapZone.isTrigger = true;
+        else
+        {
+            snapZone.radius = snapRadius;
+            snapZone.isTrigger = true;
+        }
 
-        // Create visual indicator
-        CreateVisualIndicator();
+        ResolveVisualizer();
+        if (visualizer != null)
+        {
+            ApplyVisualizerMaterial();
+            ConfigureVisualizerRenderer();
+            SetGuidanceHighlighted(false);
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: Missing editor-authored visualizer for {attachmentType} snap zone.", this);
+        }
 
         Debug.Log($"Setup {attachmentType} snap zone at {transform.position}");
     }
 
-    void CreateVisualIndicator()
+    private void ResolveVisualizer()
     {
-        // Create a sphere to show the snap zone
-        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        sphere.name = "SnapZoneVisualizer";
-        sphere.transform.SetParent(transform);
-        sphere.transform.localPosition = Vector3.zero;
-        sphere.transform.localScale = Vector3.one * snapRadius * 0.4f;
+        if (visualizer != null)
+        {
+            return;
+        }
 
-        // Remove the collider (we only want visual)
-        Destroy(sphere.GetComponent<Collider>());
+        Transform child = transform.Find("SnapZoneVisualizer");
+        if (child != null)
+        {
+            visualizer = child.GetComponent<MeshRenderer>();
+        }
 
-        visualizer = sphere.GetComponent<MeshRenderer>();
-        ApplyVisualizerMaterial();
+        if (visualizer == null)
+        {
+            visualizer = GetComponentInChildren<MeshRenderer>(true);
+        }
+    }
+
+    private void ConfigureVisualizerRenderer()
+    {
+        if (visualizer == null)
+        {
+            return;
+        }
+
         visualizer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         visualizer.receiveShadows = false;
-        SetGuidanceHighlighted(false);
     }
 
     private void ApplyVisualizerMaterial()
@@ -167,7 +189,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
         if (ownsVisualizerMaterial && visualizer.material != null)
         {
-            Destroy(visualizer.material);
+            DestroyOwnedMaterial(visualizer.material);
         }
 
         Material mat;
@@ -222,6 +244,23 @@ public class AvatarAttachmentPoint : MonoBehaviour
         }
 
         return ownsVisualizerMaterial ? visualizer.material : visualizer.sharedMaterial;
+    }
+
+    private static void DestroyOwnedMaterial(Material material)
+    {
+        if (material == null)
+        {
+            return;
+        }
+
+        if (Application.isPlaying)
+        {
+            Destroy(material);
+        }
+        else
+        {
+            DestroyImmediate(material);
+        }
     }
 
     private void TickGuidanceLerp()
@@ -342,11 +381,8 @@ public class AvatarAttachmentPoint : MonoBehaviour
 
         currentEquippedItem = item;
 
-        // Parent to this attachment point
-        item.transform.SetParent(transform);
-
-        // Apply positioning
-        item.transform.localPosition = localPositionOffset;
+        item.transform.SetParent(transform, false);
+        item.transform.localPosition = localPositionOffset + item.GetEquippedPositionOffset();
         item.transform.localRotation = Quaternion.Euler(localRotationOffset) * item.GetEquippedRotationOffset();
 
         // Notify the item it's been equipped
@@ -395,7 +431,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
         return currentEquippedItem != null;
     }
 
-    private static bool IsCompatible(AttachmentType itemType, AttachmentType slotType)
+    public static bool IsCompatible(AttachmentType itemType, AttachmentType slotType)
     {
         if (itemType == slotType)
         {
@@ -435,7 +471,7 @@ public class AvatarAttachmentPoint : MonoBehaviour
     {
         if (ownsVisualizerMaterial && visualizer != null && visualizer.material != null)
         {
-            Destroy(visualizer.material);
+            DestroyOwnedMaterial(visualizer.material);
         }
     }
 
@@ -445,4 +481,5 @@ public class AvatarAttachmentPoint : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, snapRadius);
     }
+
 }

@@ -23,6 +23,7 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
+    [Tooltip("Play the assigned AudioSource when gaze dwell completes.")]
     [SerializeField] private bool playAudioOnGaze = true;
     [SerializeField] private bool playOnlyOnce = true;
 
@@ -30,6 +31,8 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private bool playVideoOnGaze = true;
     [SerializeField] private bool playVideoOnlyOnce = true;
+
+    [SerializeField] private Material HighlightMaterial;
 
     [Header("Events")]
     public UnityEvent onGazeEnter;
@@ -60,19 +63,19 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
         }
     }
 
+    public void SetEmissionMatUp()
+    {
+        HighlightMaterial.SetFloat("_EmissionStrength", 2.0f);
+    }
+
+    public void SetEmissionMatDown()
+    {
+        HighlightMaterial.SetFloat("_EmissionStrength", 0.0f);
+    }
+
     public void OnGazeEnter()
     {
         onGazeEnter?.Invoke();
-
-        if (playAudioOnGaze && audioSource != null)
-        {
-            if (!playOnlyOnce || !playedAudio)
-            {
-                audioSource.Play();
-                playedAudio = true;
-                Debug.Log("Audio is playing");
-            }
-        }
 
         if (playVideoOnGaze && videoPlayer != null)
         {
@@ -121,6 +124,16 @@ public class GazeTarget : MonoBehaviour, IGazeTarget
     public void OnGazeDwell()
     {
         onGazeDwell?.Invoke();
+
+        if (playAudioOnGaze && audioSource != null)
+        {
+            if (!playOnlyOnce || !playedAudio)
+            {
+                audioSource.Play();
+                playedAudio = true;
+                Debug.Log("Audio is playing");
+            }
+        }
     }
 
     private IEnumerator HideAfterDelay()

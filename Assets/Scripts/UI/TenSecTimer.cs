@@ -25,6 +25,19 @@ public class TenSecTimer : MonoBehaviour
     private int lastDisplayedSecond = -1;
     void OnEnable()
     {
+        StartTimer();
+    }
+
+    void OnDisable()
+    {
+        StopCoroutine("Pulse");
+        timerText.transform.localScale = new Vector3(normalScale, normalScale, 1f);
+        timerText.color = normalColor;
+    }
+
+    public void StartTimer()
+    {
+        StopCoroutine("PulseEffect");
         currentTime = startTime;
         isRunning = true;
         lastDisplayedSecond = -1;

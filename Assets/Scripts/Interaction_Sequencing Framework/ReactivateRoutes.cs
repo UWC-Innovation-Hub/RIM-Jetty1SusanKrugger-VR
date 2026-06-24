@@ -56,6 +56,7 @@ public class ReactivateRoutes : MonoBehaviour
         if (activeBatch != null)
         {
             SetBatchParticipantsActive(activeBatch, true);
+            SetBatchLinkedObjectsActive(activeBatch, true);
             return;
         }
 
@@ -164,6 +165,7 @@ public class ReactivateRoutes : MonoBehaviour
         if (activeBatch == null) return;
 
         SetBatchParticipantsActive(activeBatch, false);
+        SetBatchLinkedObjectsActive(activeBatch, false);
         ResolveRouteSelection();
         routeSelection?.ResetSelectionState();
         ResetMats();
@@ -282,6 +284,18 @@ public class ReactivateRoutes : MonoBehaviour
             PrisonerSortParticipant participant = batch.participants[i];
             if (participant?.root == null) continue;
             participant.root.SetActive(active);
+        }
+    }
+
+    private static void SetBatchLinkedObjectsActive(PrisonerSortBatch batch, bool active)
+    {
+        if (batch?.linkedObjects == null) return;
+
+        for (int i = 0; i < batch.linkedObjects.Length; i++)
+        {
+            GameObject linkedObject = batch.linkedObjects[i];
+            if (linkedObject != null)
+                linkedObject.SetActive(active);
         }
     }
 

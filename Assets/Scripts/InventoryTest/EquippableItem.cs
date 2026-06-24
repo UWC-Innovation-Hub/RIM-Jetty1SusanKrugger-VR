@@ -28,7 +28,8 @@ public class EquippableItem : MonoBehaviour
         Baton,
         Badge,
         WalkieTalkie,
-        Generic
+        Generic,
+        Pistol
     }
 
     private bool isEquipped = false;
