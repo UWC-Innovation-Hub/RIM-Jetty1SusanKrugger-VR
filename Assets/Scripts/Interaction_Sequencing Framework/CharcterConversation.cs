@@ -15,7 +15,7 @@ public class CharacterConversation : InteractionModuleBase
     [Header("Spotlight")]
     [SerializeField] private CharacterSpotlight spotlight;
 
-    [Header("Highlight")]
+    [Header("Spotlight")]
     [SerializeField] private CharacterHighlight highlight;
 
     [Header("Conversation Complete Event")]

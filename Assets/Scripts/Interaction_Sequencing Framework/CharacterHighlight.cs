@@ -1,98 +1,90 @@
 using System.Collections;
 using UnityEngine;
 
-[DisallowMultipleComponent]
+
 public class CharacterHighlight : MonoBehaviour
 {
-    [Header("Highlight Visual")]
-    [SerializeField] private Renderer[] renderers;
+    [Header("Wiring")]
+    [SerializeField] private Material glowMat;
 
-    [SerializeField] private string shaderProperty = "_OutlineAlpha";
+    [SerializeField] private Collider triggerCollider;
 
-    [Header("Fade Settings")]
-    [SerializeField] private float fadeInDuration = 0.3f;
-    [SerializeField] private float fadeOutDuration = 0.5f;
-    [SerializeField] private float maxIntensity = 1f;
-    [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [Header("Shader Property")]
+    [SerializeField] private string emissionStrengthProperty = "_EmissionStrength";
+    [SerializeField] private float highlightedEmissionStrength = 2f;
+    [SerializeField] private float idleEmissionStrength = 0f;
 
-    private MaterialPropertyBlock _propBlock;
-    private Coroutine _fadeRoutine;
-    private float _currentIntensity;
+    [Header("Fade Timing")]
+    [SerializeField] private float fadeInDuration = 0.35f;
+    [SerializeField] private float fadeOutDuration = 0.25f;
+
+    private float _lerpStart;
+    private float _lerpTarget;
+    private float _lerpDuration;
+    private float _lerpElapsed;
+    private bool _isLerping;
 
     private void Awake()
     {
-        if (renderers == null || renderers.Length == 0)
+        if (glowMat != null && glowMat.HasProperty(emissionStrengthProperty))
         {
-            renderers = GetComponentsInChildren<Renderer>();
+           glowMat.SetFloat(emissionStrengthProperty, idleEmissionStrength);
         }
 
-        _propBlock = new MaterialPropertyBlock();
-        SetIntensity(0f);
-    }
-
-    public void FadeIn()
-    {
-        StartFade(maxIntensity, fadeInDuration);
-    }
-
-    public void FadeOut()
-    {
-        StartFade(0f, fadeOutDuration);
-    }
-
-    public void SetImmediate(bool on)
-    {
-        if (_fadeRoutine != null)
+        if (triggerCollider != null)
         {
-            StopCoroutine(_fadeRoutine);
-            SetIntensity(on ? maxIntensity : 0f);
+            triggerCollider.enabled = false;
         }
     }
 
-    private void StartFade(float target, float duration)
+    private void Update()
     {
-        if (_fadeRoutine != null)
+        if (!_isLerping || glowMat == null)
         {
-            StopCoroutine(_fadeRoutine);
-            _fadeRoutine = StartCoroutine(FadeRoutine(target, duration));
+            return;
+        }
+        _lerpElapsed += Time.deltaTime;
+        float t = Mathf.Clamp01(_lerpElapsed / Mathf.Max(0.0001f, _lerpDuration));
+        float value = Mathf.Lerp(_lerpStart, _lerpTarget, t);
+
+        glowMat.SetFloat(emissionStrengthProperty, value);
+
+        if (t >= 1f)
+        {
+            _isLerping = false;
         }
     }
 
-    private IEnumerator FadeRoutine(float target, float duration)
+    public void Show()
     {
-        float start = _currentIntensity;
-        float t = 0f;
-
-        if (duration <= 0f)
+        if (triggerCollider != null)
         {
-            SetIntensity(target);
-            yield break;
+            triggerCollider.enabled = true;
         }
-
-        while (t < duration)
-        {
-            t += Time.deltaTime;
-            float normalized = fadeCurve.Evaluate(Mathf.Clamp01(t / duration));
-            SetIntensity(Mathf.Lerp(start, target, normalized));
-            yield return null;
-        }
-
-        SetIntensity(target);
-        _fadeRoutine = null;
+        StartLerp(highlightedEmissionStrength, fadeInDuration);
     }
 
-    private void SetIntensity(float value)
+    public void Hide()
     {
-        _currentIntensity = value;
-        foreach (var rend in renderers)
+        if (triggerCollider != null)
         {
-            if (rend == null)
-            {
-                continue;
-            }
-            rend.GetPropertyBlock(_propBlock);
-            _propBlock.SetFloat(shaderProperty, value);
-            rend.SetPropertyBlock(_propBlock);
+            triggerCollider.enabled = false;
         }
+
+        StartLerp(idleEmissionStrength, fadeInDuration);
+    }
+
+    private void StartLerp(float target, float duration)
+    {
+        if (glowMat == null || !glowMat.HasProperty(emissionStrengthProperty))
+        {
+            return;
+        }
+
+        _lerpStart = glowMat.GetFloat(emissionStrengthProperty);
+        _lerpTarget = target;
+        _lerpDuration = duration;
+        _lerpDuration = 0f;
+        _isLerping = true;
     }
 }

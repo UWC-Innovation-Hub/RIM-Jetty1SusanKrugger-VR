@@ -59,6 +59,7 @@ public class CharacterInteractionModule : InteractionModuleBase
             }
         }
 
+
         base.Deactivate();
     }
 
@@ -114,6 +115,7 @@ public class CharacterInteractionModule : InteractionModuleBase
         {
             finished.Completed -= OnCharacterCompleted;
             finished.Deactivate();
+            finished.HideHighlight();
             _completedCharacters.Add(finished);
             CompletedCount = _completedCharacters.Count;
         }
