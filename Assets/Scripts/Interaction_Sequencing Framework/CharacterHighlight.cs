@@ -30,6 +30,14 @@ public class CharacterHighlight : MonoBehaviour
         {
            glowMat.SetFloat(emissionStrengthProperty, idleEmissionStrength);
         }
+        else if (glowMat == null)
+        {
+            Debug.LogWarning($"[CharacterHighlight] '{name}': glowMat is not assigned.");
+        }
+        else
+        {
+            Debug.LogWarning($"[CharacterHighlight] '{name}': glowMat has no property '{emissionStrengthProperty}'.");
+        }
 
         if (triggerCollider != null)
         {
@@ -57,6 +65,8 @@ public class CharacterHighlight : MonoBehaviour
 
     public void Show()
     {
+        Debug.Log($"[CharacterHighlight] Show() called on '{name}'.");
+
         if (triggerCollider != null)
         {
             triggerCollider.enabled = true;
@@ -71,7 +81,7 @@ public class CharacterHighlight : MonoBehaviour
             triggerCollider.enabled = false;
         }
 
-        StartLerp(idleEmissionStrength, fadeInDuration);
+        StartLerp(idleEmissionStrength, fadeOutDuration);
     }
 
     private void StartLerp(float target, float duration)
@@ -84,7 +94,7 @@ public class CharacterHighlight : MonoBehaviour
         _lerpStart = glowMat.GetFloat(emissionStrengthProperty);
         _lerpTarget = target;
         _lerpDuration = duration;
-        _lerpDuration = 0f;
+        _lerpElapsed = 0f;
         _isLerping = true;
     }
 }
