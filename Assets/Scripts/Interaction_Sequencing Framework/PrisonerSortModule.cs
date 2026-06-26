@@ -190,6 +190,8 @@ public class PrisonerSortModule : InteractionModuleBase
                     if (root != null)
                         root.SetActive(active);
                 }
+
+                SetLinkedObjectsActive(batch, active);
             }
         }
     }
@@ -237,5 +239,17 @@ public class PrisonerSortModule : InteractionModuleBase
             return participantId;
 
         return $"{prefix}_{fallbackIndex}";
+    }
+
+    private static void SetLinkedObjectsActive(PrisonerSortBatch batch, bool active)
+    {
+        if (batch?.linkedObjects == null) return;
+
+        for (int i = 0; i < batch.linkedObjects.Length; i++)
+        {
+            GameObject linkedObject = batch.linkedObjects[i];
+            if (linkedObject != null)
+                linkedObject.SetActive(active);
+        }
     }
 }
