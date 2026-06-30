@@ -43,7 +43,7 @@ public class CharacterConversation : InteractionModuleBase
 
         if (highlight != null)
         {
-            highlight.Hide();
+          //  highlight.Hide();
         }
 
         if (_dialogueRoutine != null)
@@ -98,7 +98,7 @@ public class CharacterConversation : InteractionModuleBase
     {
         if (highlight != null)
         {
-            highlight.Show();
+          //  highlight.Show();
         }
     }
 
@@ -106,7 +106,7 @@ public class CharacterConversation : InteractionModuleBase
     {
         if (highlight != null)
         {
-            highlight.Hide();
+          //  highlight.Hide();
         }
     }
 
