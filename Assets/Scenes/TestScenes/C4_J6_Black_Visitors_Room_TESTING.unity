@@ -15036,7 +15036,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSpotlight
   spotlight: {fileID: 630503202}
   directionalLight: {fileID: 203844588}
-  spotTargetIntensity: 3
+  spotTargetIntensity: 5
   fadeDuration: 0.5
 --- !u!114 &759829008
 MonoBehaviour:
@@ -15045,18 +15045,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 759829002}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 24f0d79c92b91be4ca2922fcbb8782f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterHighlight
   glowMat: {fileID: 2100000, guid: 6da0042f70b01824f84ba3fff5ca52da, type: 2}
-  triggerCollider: {fileID: 0}
+  triggerCollider: {fileID: 867714353}
   emissionStrengthProperty: _EmissionStrength
   highlightedEmissionStrength: 2
   idleEmissionStrength: 0
-  fadeInDuration: 0.35
-  fadeOutDuration: 0.25
+  fadeInDuration: 0.5
+  fadeOutDuration: 0.5
 --- !u!95 &759829009
 Animator:
   serializedVersion: 7
@@ -23495,8 +23495,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 076e519e3c17dca438369f3e6f479b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueUI
-  buttonContainer: {fileID: 1196722976}
-  buttonPrefab: {fileID: 161999859}
+  buttonYes: {fileID: 0}
+  buttonNo: {fileID: 0}
 --- !u!1 &1199931593
 GameObject:
   m_ObjectHideFlags: 0
@@ -28565,8 +28565,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 076e519e3c17dca438369f3e6f479b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueUI
-  buttonContainer: {fileID: 1446792949}
-  buttonPrefab: {fileID: 1131187975}
+  buttonYes: {fileID: 1131187975}
+  buttonNo: {fileID: 1000618662}
 --- !u!114 &1446792952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30283,8 +30283,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 076e519e3c17dca438369f3e6f479b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueUI
-  buttonContainer: {fileID: 1552688422}
-  buttonPrefab: {fileID: 1689367856}
+  buttonYes: {fileID: 0}
+  buttonNo: {fileID: 0}
 --- !u!114 &1552688425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32817,8 +32817,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 076e519e3c17dca438369f3e6f479b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueUI
-  buttonContainer: {fileID: 1667114924}
-  buttonPrefab: {fileID: 1493006115}
+  buttonYes: {fileID: 0}
+  buttonNo: {fileID: 0}
 --- !u!114 &1667114927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39812,8 +39812,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 076e519e3c17dca438369f3e6f479b63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueUI
-  buttonContainer: {fileID: 2145896212}
-  buttonPrefab: {fileID: 28558474}
+  buttonYes: {fileID: 0}
+  buttonNo: {fileID: 0}
 --- !u!114 &2145896215
 MonoBehaviour:
   m_ObjectHideFlags: 0
