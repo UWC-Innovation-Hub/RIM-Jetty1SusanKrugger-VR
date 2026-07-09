@@ -6,33 +6,34 @@ using UnityEngine.UI;
 public class DialogueUI : MonoBehaviour
 {
     [Header("Wiring")]
-    [SerializeField] private RectTransform buttonContainer;
-
-    [SerializeField] private Button buttonPrefab;
+    [SerializeField] private Button buttonYes;
+    [SerializeField] private Button buttonNo;
 
     public event Action<int> OnChoiceSelected;
 
-    private readonly List<Button> _spawnedButtons = new List<Button>();
-
     private void Awake()
     {
+        buttonYes.onClick.AddListener(() => OnChoiceSelected?.Invoke(0));
+        buttonNo.onClick.AddListener(() => OnChoiceSelected?.Invoke(1));
+
         Hide();
     }
 
     public void Show(DialogueChoice[] choices)
     {
-        ClearButtons();
-
-        for (int i = 0; i < choices.Length; i++)
+       if (choices == null || choices.Length < 2)
         {
-            Button button = Instantiate(buttonPrefab, buttonContainer);
+            Debug.LogWarning("[DialogueUI] Show() called with fewer than 2 choices.");
+        }
 
-            SetButtonLabel(button, choices[i].responseText);
+       if (choices != null && choices.Length > 0)
+        {
+            SetButtonLabel(buttonYes, choices[0].responseText);
+        }
 
-            int index = i;
-            button.onClick.AddListener(() => OnChoiceSelected?.Invoke(index));
-
-            _spawnedButtons.Add(button);
+       if (choices != null && choices.Length > 1)
+        {
+            SetButtonLabel(buttonNo, choices[1].responseText);
         }
 
         gameObject.SetActive(true);
@@ -40,21 +41,7 @@ public class DialogueUI : MonoBehaviour
 
     public void Hide()
     {
-        ClearButtons();
         gameObject.SetActive(false);
-    }
-
-    private void ClearButtons()
-    {
-        for (int i = 0; i < _spawnedButtons.Count; i++)
-        {
-            if (_spawnedButtons[i] != null)
-            {
-                Destroy(_spawnedButtons[i].gameObject);
-            }
-        }
-
-        _spawnedButtons.Clear();
     }
 
     private void SetButtonLabel(Button button, string label)

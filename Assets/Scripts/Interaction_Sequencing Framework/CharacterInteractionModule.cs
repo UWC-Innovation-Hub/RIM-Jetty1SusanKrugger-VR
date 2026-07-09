@@ -33,17 +33,20 @@ public class CharacterInteractionModule : InteractionModuleBase
         ActiveCharacter = null;
         _completedCharacters.Clear();
 
-        //for (int i = 0; i < characters.Length; i++)
-        //{
-        //    if (characters[i] != null)
-        //    {
-        //        characters[i].Deactivate();
-        //    }
-        //}
+        for (int i = 0; i < characters.Length; i++)
+        {
+            if (characters[i] != null)
+            {
+                characters[i].Deactivate();
+                characters[i].ShowHighlight();
+            }
+        }
     }
 
     public override void Deactivate()
     {
+        Debug.Log($"[CharacterInteractionModule] Deactivate() called. Stack trace:\n{System.Environment.StackTrace}");
+
         if (ActiveCharacter != null)
         {
             ActiveCharacter.Completed -= OnCharacterCompleted;
@@ -59,11 +62,12 @@ public class CharacterInteractionModule : InteractionModuleBase
             }
         }
 
+
         base.Deactivate();
     }
 
     //PUBLIC API
-    
+
     public void StartConversation(CharacterConversation character)
     {
         if (!IsActive || IsComplete)
@@ -114,6 +118,7 @@ public class CharacterInteractionModule : InteractionModuleBase
         {
             finished.Completed -= OnCharacterCompleted;
             finished.Deactivate();
+            finished.HideHighlight();
             _completedCharacters.Add(finished);
             CompletedCount = _completedCharacters.Count;
         }
@@ -130,7 +135,7 @@ public class CharacterInteractionModule : InteractionModuleBase
         }
     }
 
-    private bool IsRegisteredCharacter (CharacterConversation character)
+    private bool IsRegisteredCharacter(CharacterConversation character)
     {
         for (int i = 0; i < characters.Length; i++)
         {
