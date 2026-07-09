@@ -33,6 +33,9 @@ Through VR, visitors can walk through historically significant locations on Robb
 ├── Assets/
     ├── Animations/
         ├── C1/
+        ├── C4/
+            ├── Controllers/
+            ├── Sitting Animations/
         ├── J1/
         ├── Mixamo_tests/
     ├── Audio/
@@ -50,9 +53,14 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C3/
         ├── C4/
             ├── Master/
+            ├── testing/
         ├── C5/
         ├── C6/
             ├── Master/
+    ├── Black_Visitors/
+        ├── Checkpoint_4_PREFABS/
+            ├── Textures/
+        ├── PREFABS/
     ├── CompositionLayers/
         ├── UserSettings/
             ├── Resources/
