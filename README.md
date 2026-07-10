@@ -142,6 +142,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── folded-wrinkled-paper/
         ├── C6_SK1_The_Hold/
             ├── GrayBox/
+            ├── Rough/
         ├── Cargo Space/
         ├── Cargo Space exterior/
             ├── Animations/
@@ -177,6 +178,10 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── UI/
         ├── Walking man/
     ├── Prisoner Shaders/
+    ├── Prisoners/
+        ├── Prisoner_Prefabs/
+        ├── Prisoner_Rigs/
+            ├── Textures/
     ├── Resources/
     ├── Ropes and cables Tool/
         ├── OptimizedRopesAndCables/
@@ -205,6 +210,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── BlackWaitingRoomTest/
             ├── C1_Final_Pass_TEST_Beta/
             ├── C2_J3_Cell_Rec_Assets/
+            ├── C6_SK1_The_Hold/
             ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
