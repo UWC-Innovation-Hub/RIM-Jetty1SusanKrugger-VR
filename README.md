@@ -33,6 +33,9 @@ Through VR, visitors can walk through historically significant locations on Robb
 ├── Assets/
     ├── Animations/
         ├── C1/
+        ├── C4/
+            ├── Controllers/
+            ├── Sitting Animations/
         ├── J1/
         ├── Mixamo_tests/
     ├── Audio/
@@ -50,9 +53,14 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C3/
         ├── C4/
             ├── Master/
+            ├── testing/
         ├── C5/
         ├── C6/
             ├── Master/
+    ├── Black_Visitors/
+        ├── Checkpoint_4_PREFABS/
+            ├── Textures/
+        ├── PREFABS/
     ├── CompositionLayers/
         ├── UserSettings/
             ├── Resources/
@@ -202,6 +210,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Scripts/
         ├── Animations/
         ├── Audio and Video/
+        ├── DialogueData/
         ├── GazeInteraction/
         ├── Interaction_Sequencing Framework/
         ├── Interactions/
@@ -524,11 +533,18 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `VideoProjectorController.cs` | `Assets/Scripts/Audio and Video/VideoProjectorController.cs` |
 | `VideoTrigger.cs` | `Assets/Scripts/Audio and Video/VideoTrigger.cs` |
 | `WalkieTalkieAudioSource.cs` | `Assets/Scripts/Audio and Video/WalkieTalkieAudioSource.cs` |
+| `DialogueData.cs` | `Assets/Scripts/DialogueData/DialogueData.cs` |
+| `DialogueUI.cs` | `Assets/Scripts/DialogueData/DialogueUI.cs` |
 | `GazeIndicator.cs` | `Assets/Scripts/GazeInteraction/GazeIndicator.cs` |
 | `GazeRaycaster.cs` | `Assets/Scripts/GazeInteraction/GazeRaycaster.cs` |
 | `GazeTarget.cs` | `Assets/Scripts/GazeInteraction/GazeTarget.cs` |
 | `IGazeTarget.cs` | `Assets/Scripts/GazeInteraction/IGazeTarget.cs` |
 | `BreathingInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/BreathingInteractionModule.cs` |
+| `CharacterHighlight.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterHighlight.cs` |
+| `CharacterInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterInteractionModule.cs` |
+| `CharacterSpotlight.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterSpotlight.cs` |
+| `CharcterConversation.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharcterConversation.cs` |
+| `ConversationTrigger.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ConversationTrigger.cs` |
 | `FingerprintProjectionInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/FingerprintProjectionInteractionModule.cs` |
 | `GazeInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/GazeInteractionModule.cs` |
 | `HandTouchInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/HandTouchInteractionModule.cs` |
