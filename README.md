@@ -107,6 +107,8 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── prisoner 5/
             ├── prisoner 6/
     ├── Media/
+        ├── Photos/
+            ├── Prison Heads/
         ├── RIM_jetty1_assets/
             ├── 3dContent/
             ├── Images/
@@ -519,6 +521,8 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `ControlBoatGate.cs` | `Assets/Scripts/Animations/ControlBoatGate.cs` |
 | `FadeControllerScript.cs` | `Assets/Scripts/Animations/FadeControllerScript.cs` |
 | `MaterialOpacityFader.cs` | `Assets/Scripts/Animations/MaterialOpacityFader.cs` |
+| `ParentVelocityToWalkAnimator.cs` | `Assets/Scripts/Animations/ParentVelocityToWalkAnimator.cs` |
+| `SK_controller.cs` | `Assets/Scripts/Animations/SK_controller.cs` |
 | `TokenMove.cs` | `Assets/Scripts/Animations/TokenMove.cs` |
 | `TruckManager.cs` | `Assets/Scripts/Animations/TruckManager.cs` |
 | `Wheel_rotate.cs` | `Assets/Scripts/Animations/Wheel_rotate.cs` |
@@ -535,11 +539,13 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `WalkieTalkieAudioSource.cs` | `Assets/Scripts/Audio and Video/WalkieTalkieAudioSource.cs` |
 | `DialogueData.cs` | `Assets/Scripts/DialogueData/DialogueData.cs` |
 | `DialogueUI.cs` | `Assets/Scripts/DialogueData/DialogueUI.cs` |
+| `GazeHighlightFeedback.cs` | `Assets/Scripts/GazeInteraction/GazeHighlightFeedback.cs` |
 | `GazeIndicator.cs` | `Assets/Scripts/GazeInteraction/GazeIndicator.cs` |
 | `GazeRaycaster.cs` | `Assets/Scripts/GazeInteraction/GazeRaycaster.cs` |
 | `GazeTarget.cs` | `Assets/Scripts/GazeInteraction/GazeTarget.cs` |
 | `IGazeTarget.cs` | `Assets/Scripts/GazeInteraction/IGazeTarget.cs` |
 | `BreathingInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/BreathingInteractionModule.cs` |
+| `CellHoldSelector.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CellHoldSelector.cs` |
 | `CharacterHighlight.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterHighlight.cs` |
 | `CharacterInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterInteractionModule.cs` |
 | `CharacterSpotlight.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterSpotlight.cs` |
