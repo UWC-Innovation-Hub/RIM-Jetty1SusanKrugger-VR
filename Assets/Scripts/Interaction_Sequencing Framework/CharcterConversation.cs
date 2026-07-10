@@ -50,7 +50,7 @@ public class CharacterConversation : InteractionModuleBase
         }
         else
         {
-            Debug.LogWarning($"[CharacterConversation] '{characterName}' has no highlight assigned — cannot fade it out.");
+            Debug.LogWarning($"[CharacterConversation] '{characterName}' has no highlight assigned ï¿½ cannot fade it out.");
         }
 
         if (_dialogueRoutine != null)
@@ -103,7 +103,7 @@ public class CharacterConversation : InteractionModuleBase
     {
         if (highlight != null)
         {
-            highlight.Show();
+          //  highlight.Show();
         }
     }
 
@@ -111,7 +111,7 @@ public class CharacterConversation : InteractionModuleBase
     {
         if (highlight != null)
         {
-            highlight.Hide();
+          //  highlight.Hide();
         }
     }
 
