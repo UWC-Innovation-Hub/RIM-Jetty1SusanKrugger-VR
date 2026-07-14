@@ -10,6 +10,7 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     [SerializeField] private string walkPlaybackParameterName = "WalkPlayback";
     [SerializeField] private string turnLeftTriggerName = "TurnLeft";
     [SerializeField] private string turnRightTriggerName = "TurnRight";
+    [SerializeField] private string isTurningParameterName = "IsTurning";
 
     [Header("Speed Tuning")]
     [Tooltip("The real-world movement speed that visually matches the walk clip at 1x playback.")]
@@ -46,6 +47,7 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     private int walkPlaybackParameter;
     private int turnLeftTrigger;
     private int turnRightTrigger;
+    private int isTurningParameter;
 
     private void Awake()
     {
@@ -53,6 +55,7 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
         walkPlaybackParameter = Animator.StringToHash(walkPlaybackParameterName);
         turnLeftTrigger = Animator.StringToHash(turnLeftTriggerName);
         turnRightTrigger = Animator.StringToHash(turnRightTriggerName);
+        isTurningParameter = Animator.StringToHash(isTurningParameterName);
     }
 
     private void OnEnable()
@@ -60,6 +63,19 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
         previousPosition = transform.position;
         previousYaw = transform.eulerAngles.y;
         turnDetectionArmed = true;
+
+        if (prisonerAnimator != null)
+            prisonerAnimator.SetBool(isTurningParameter, false);
+    }
+
+    private void OnDisable()
+    {
+        if (prisonerAnimator == null)
+            return;
+
+        prisonerAnimator.SetBool(isTurningParameter, false);
+        prisonerAnimator.ResetTrigger(turnLeftTrigger);
+        prisonerAnimator.ResetTrigger(turnRightTrigger);
     }
 
     private void LateUpdate()
@@ -104,7 +120,10 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
         if (!turnDetectionArmed)
         {
             if (absoluteYawSpeed <= turnExitYawSpeed)
+            {
                 turnDetectionArmed = true;
+                prisonerAnimator.SetBool(isTurningParameter, false);
+            }
 
             return;
         }
@@ -114,6 +133,8 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
         {
             return;
         }
+
+        prisonerAnimator.SetBool(isTurningParameter, true);
 
         if (yawSpeed > 0f)
         {
