@@ -14,6 +14,8 @@ public class ConversationTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log($"[CharacterTrigger] OnTriggerEnter fired on '{name}' by '{other.name}' (tag: {other.tag}. Collider enabled: {GetComponent<Collider>().enabled}");
+
         if (!other.CompareTag(playerTag))
         {
             return;

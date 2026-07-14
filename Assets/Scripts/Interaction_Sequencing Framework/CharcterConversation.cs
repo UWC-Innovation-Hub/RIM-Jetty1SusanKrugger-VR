@@ -34,6 +34,8 @@ public class CharacterConversation : InteractionModuleBase
 
     public override void Activate()
     {
+        Debug.Log($"[CharacterConversation] Activate() called on '{characterName}'. highlight assigned: {highlight != null}");
+
         base.Activate();
 
         if (spotlight != null)
@@ -43,7 +45,12 @@ public class CharacterConversation : InteractionModuleBase
 
         if (highlight != null)
         {
-          //  highlight.Hide();
+            Debug.Log($"[CharacterConversation] Calling highlight.Hide() on '{characterName}'.");
+            highlight.Hide();
+        }
+        else
+        {
+            Debug.LogWarning($"[CharacterConversation] '{characterName}' has no highlight assigned � cannot fade it out.");
         }
 
         if (_dialogueRoutine != null)
@@ -76,8 +83,6 @@ public class CharacterConversation : InteractionModuleBase
         {
             audioSource.Stop();
         }
-
-        //SetIdle();
 
         base.Deactivate();
     }
@@ -125,8 +130,6 @@ public class CharacterConversation : InteractionModuleBase
         if (animator != null)
         {
             animator.SetTrigger(idleTrigger);
-
-             Debug.Log("STOP TALKING TRIGGERED");
         }
     }
 
@@ -134,22 +137,20 @@ public class CharacterConversation : InteractionModuleBase
 
     private IEnumerator PlayClipAndWait(AudioClip clip)
     {
-        Debug.Log($"[CharacterConversation] '{characterName}' starting clip '{clip.name}' (length: {clip.length:0.00}s).");
-
         if (audioSource == null || clip == null)
         {
             yield break;
         }
 
+        Debug.Log($"[CharacterConversation] '{characterName}' starting clip '{clip.name}' (length: {clip.length:0.00}s).");
+
         SetTalking();
 
         audioSource.clip = clip;
         audioSource.Play();
-        Debug.Log("Audio is playing");
 
         yield return new WaitForSeconds(clip.length);
 
-        Debug.Log("STOP TALKING REACHED");
         SetIdle();
     }
 
@@ -164,7 +165,6 @@ public class CharacterConversation : InteractionModuleBase
         if (dialogueData.openingClip != null && audioSource != null)
         {
             yield return PlayClipAndWait(dialogueData.openingClip);
-            Debug.Log($"[CharacterConversation] '{characterName}' opening clip done. Showing choices.");
         }
         else
         {
@@ -172,13 +172,11 @@ public class CharacterConversation : InteractionModuleBase
             {
                 Debug.LogWarning($"[CharacterConversation] '{characterName}' has no opening clip assigned.");
             }
-                
 
             if (audioSource == null)
             {
                 Debug.LogWarning($"[CharacterConversation] '{characterName}' has no AudioSource assigned.");
             }
-                
         }
 
         if (dialogueData.choices == null || dialogueData.choices.Length == 0)

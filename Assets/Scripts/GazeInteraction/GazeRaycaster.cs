@@ -47,10 +47,10 @@ public class GazeRaycaster : MonoBehaviour
 
     private void Update()
     {
-        PeformRaycast();
+        PerformRaycast();
     }
 
-    private void PeformRaycast()
+    private void PerformRaycast()
     {
         if (gazeCamera == null) return;
 
@@ -58,7 +58,7 @@ public class GazeRaycaster : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, interactableLayers))
         {
-            IGazeTarget target = hit.collider.GetComponent<IGazeTarget>();
+            IGazeTarget target = hit.collider.GetComponentInParent<IGazeTarget>();
 
             if (target != null && !IsTargetBlocked(target))
             {
