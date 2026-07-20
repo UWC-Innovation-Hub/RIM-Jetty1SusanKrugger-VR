@@ -103,7 +103,7 @@ public class CharacterConversation : InteractionModuleBase
     {
         if (highlight != null)
         {
-          //  highlight.Show();
+            highlight.Show();
         }
     }
 
@@ -111,7 +111,7 @@ public class CharacterConversation : InteractionModuleBase
     {
         if (highlight != null)
         {
-          //  highlight.Hide();
+            highlight.Hide();
         }
     }
 
