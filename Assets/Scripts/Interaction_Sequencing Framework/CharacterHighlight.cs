@@ -44,26 +44,29 @@ public class CharacterHighlight : MonoBehaviour
 
         _instanceMaterial = new Material(glowMat);
 
-        Material[] mats = glowRenderer.materials;
-
-        if (materialIndex >= 0 && materialIndex < mats.Length)
+        if (glowRenderer != null)
         {
-            mats[materialIndex] = _instanceMaterial;
-            glowRenderer.materials = mats;
+            Material[] mats = glowRenderer.materials;
+            Debug.Log($"[CharacterHighlight] '{name}': renderer has {mats.Length} material slot(s). Using index {materialIndex}.");
+            for (int i = 0; i < mats.Length; i++)
+            {
+                Debug.Log($"[CharacterHighlight] '{name}': slot {i} = {mats[i]?.name}");
+            }
+
+            if (materialIndex >= 0 && materialIndex < mats.Length)
+            {
+                mats[materialIndex] = _instanceMaterial;
+                glowRenderer.materials = mats;
+                Debug.Log($"[CharacterHighlight] '{name}': instanced material applied to slot {materialIndex}.");
+            }
+            else
+            {
+                Debug.LogWarning($"[CharacterHighlight] '{name}': materialIndex {materialIndex} out of range.");
+            }
         }
         else
         {
-            Debug.LogWarning($"[CharacterHighlight] '{name}': materialIndex {materialIndex} out of range.");
-            return;
-        }
-
-        if (_instanceMaterial.HasProperty(emissionStrengthProperty))
-        {
-            _instanceMaterial.SetFloat(emissionStrengthProperty, idleEmissionStrength);
-        }
-        else
-        {
-            Debug.LogWarning($"[CharacterHighlight] '{name}': material has no property '{emissionStrengthProperty}'.");
+            Debug.LogWarning($"[CharacterHighlight] '{name}': glowRenderer is not assigned.");
         }
 
         if (triggerCollider != null)
@@ -74,15 +77,13 @@ public class CharacterHighlight : MonoBehaviour
 
     private void Update()
     {
-        if (!_isLerping || glowMat == null)
+        if (!_isLerping || _instanceMaterial == null)
         {
             return;
         }
         _lerpElapsed += Time.deltaTime;
         float t = Mathf.Clamp01(_lerpElapsed / Mathf.Max(0.0001f, _lerpDuration));
-        float value = Mathf.Lerp(_lerpStart, _lerpTarget, t);
-
-        _instanceMaterial.SetFloat(emissionStrengthProperty, value);
+        _instanceMaterial.SetFloat(emissionStrengthProperty, Mathf.Lerp(_lerpStart, _lerpTarget, t));
 
         if (t >= 1f)
         {
@@ -113,7 +114,7 @@ public class CharacterHighlight : MonoBehaviour
 
     private void StartLerp(float target, float duration)
     {
-        if (glowMat == null || !glowMat.HasProperty(emissionStrengthProperty))
+        if (_instanceMaterial == null || !_instanceMaterial.HasProperty(emissionStrengthProperty))
         {
             return;
         }
