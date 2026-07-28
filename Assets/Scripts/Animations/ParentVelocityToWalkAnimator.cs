@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ParentVelocityToWalkAnimator : MonoBehaviour
 {
@@ -19,12 +20,27 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     [Tooltip("Below this speed, the character is considered idle.")]
     [SerializeField] private float idleThreshold = 0.08f;
 
-    [Tooltip("Smooths the Animator speed parameter to avoid flickering between idle and walk.")]
-    [SerializeField] private float speedDampTime = 0.12f;
+    [Tooltip("Smooths the Speed parameter used by the Idle/Walk state transitions.")]
+    [Min(0f)]
+    [SerializeField] private float speedDampTime = 0.06f;
+
+    [Tooltip("Keeps the Walk state eligible briefly after movement stops so an immediately following turn can take priority. Walk playback still follows real movement speed during this window.")]
+    [Min(0f)]
+    [FormerlySerializedAs("idleDecisionDelay")]
+    [SerializeField] private float turnDecisionWindow = 0.3f;
 
     [Header("Playback Clamp")]
+    [Tooltip("Minimum Walk clip playback multiplier. This prevents unnaturally slow walk cycles at low movement speeds.")]
+    [Min(0f)]
     [SerializeField] private float minWalkPlayback = 0.65f;
+
+    [Tooltip("Maximum Walk clip playback multiplier.")]
+    [Min(0f)]
     [SerializeField] private float maxWalkPlayback = 1.35f;
+
+    [Tooltip("Smooths WalkPlayback independently from the state-transition Speed parameter.")]
+    [Min(0f)]
+    [SerializeField] private float walkPlaybackDampTime = 0.03f;
 
     [Header("Turn Detection")]
     [Tooltip("The character must be at or below this ground speed before an in-place turn can trigger.")]
@@ -42,6 +58,8 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     private Vector3 previousPosition;
     private float previousYaw;
     private bool turnDetectionArmed;
+    private bool wasMoving;
+    private float turnDecisionElapsed;
 
     private int speedParameter;
     private int walkPlaybackParameter;
@@ -63,6 +81,8 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
         previousPosition = transform.position;
         previousYaw = transform.eulerAngles.y;
         turnDetectionArmed = true;
+        wasMoving = false;
+        turnDecisionElapsed = 0f;
 
         if (prisonerAnimator != null)
             prisonerAnimator.SetBool(isTurningParameter, false);
@@ -99,7 +119,9 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
 
         float horizontalSpeed = delta.magnitude / deltaTime;
 
-        float animatorSpeed = horizontalSpeed < idleThreshold ? 0f : horizontalSpeed;
+        UpdateTurn(horizontalSpeed, yawSpeed);
+
+        float animatorSpeed = GetAnimatorSpeed(horizontalSpeed, deltaTime);
 
         float playback = authoredWalkSpeed > 0f
             ? horizontalSpeed / authoredWalkSpeed
@@ -107,10 +129,37 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
 
         playback = Mathf.Clamp(playback, minWalkPlayback, maxWalkPlayback);
 
-        prisonerAnimator.SetFloat(speedParameter, animatorSpeed, speedDampTime, Time.deltaTime);
-        prisonerAnimator.SetFloat(walkPlaybackParameter, playback, speedDampTime, Time.deltaTime);
+        prisonerAnimator.SetFloat(speedParameter, animatorSpeed, speedDampTime, deltaTime);
+        prisonerAnimator.SetFloat(walkPlaybackParameter, playback, walkPlaybackDampTime, deltaTime);
+    }
 
-        UpdateTurn(horizontalSpeed, yawSpeed);
+    private float GetAnimatorSpeed(float horizontalSpeed, float deltaTime)
+    {
+        if (horizontalSpeed >= idleThreshold)
+        {
+            wasMoving = true;
+            turnDecisionElapsed = 0f;
+            return horizontalSpeed;
+        }
+
+        if (!turnDetectionArmed)
+        {
+            wasMoving = false;
+            turnDecisionElapsed = 0f;
+            return 0f;
+        }
+
+        if (!wasMoving)
+            return 0f;
+
+        turnDecisionElapsed += deltaTime;
+
+        if (turnDecisionElapsed < turnDecisionWindow)
+            return idleThreshold + 0.001f;
+
+        wasMoving = false;
+        turnDecisionElapsed = 0f;
+        return 0f;
     }
 
     private void UpdateTurn(float horizontalSpeed, float yawSpeed)

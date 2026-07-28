@@ -418,9 +418,11 @@ MonoBehaviour:
   walkPlaybackParameterName: WalkPlayback
   turnLeftTriggerName: TurnLeft
   turnRightTriggerName: TurnRight
+  isTurningParameterName: IsTurning
   authoredWalkSpeed: 0.5
   idleThreshold: 0.15
   speedDampTime: 0.12
+  turnDecisionWindow: 0.3
   minWalkPlayback: 0.8
   maxWalkPlayback: 1.8
   maximumMovementSpeedDuringTurn: 0.1
@@ -863,7 +865,7 @@ PrefabInstance:
     - target: {fileID: 1459554997816393607, guid: 33b845e2b7c975543ac4edf4243c4e54, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 2008255280}
+      objectReference: {fileID: 1938217421}
     - target: {fileID: 1474461384091714032, guid: 33b845e2b7c975543ac4edf4243c4e54, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.0003178564
@@ -3448,13 +3450,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961739749}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -5.966, y: 1, z: 4.92}
+  m_LocalRotation: {x: -0, y: 0.9040288, z: -0, w: 0.42747164}
+  m_LocalPosition: {x: -1.52, y: 1.06, z: 1.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_Father: {fileID: 2096768706}
+  m_LocalEulerAnglesHint: {x: 0, y: 129.386, z: 0}
 --- !u!1001 &963572487
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3816,7 +3818,7 @@ Transform:
   - {fileID: 1343007762}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!43 &2008255280
+--- !u!43 &1938217421
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4028,6 +4030,7 @@ Transform:
   m_Children:
   - {fileID: 543450652761086345}
   - {fileID: 543450652709505935}
+  - {fileID: 961739753}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!111 &2096768707
@@ -4086,13 +4089,16 @@ MonoBehaviour:
   walkPlaybackParameterName: WalkPlayback
   turnLeftTriggerName: TurnLeft
   turnRightTriggerName: TurnRight
+  isTurningParameterName: IsTurning
   authoredWalkSpeed: 1.2
   idleThreshold: 0.08
-  speedDampTime: 0.12
+  speedDampTime: 0.06
+  turnDecisionWindow: 0.3
   minWalkPlayback: 0.65
   maxWalkPlayback: 1.35
+  walkPlaybackDampTime: 0.03
   maximumMovementSpeedDuringTurn: 0.1
-  turnEnterYawSpeed: 20
+  turnEnterYawSpeed: 10
   turnExitYawSpeed: 5
 --- !u!1001 &2142928659
 PrefabInstance:
@@ -10529,7 +10535,6 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 961739753}
   - {fileID: 203844589}
   - {fileID: 686520010}
   - {fileID: 1635466253}
