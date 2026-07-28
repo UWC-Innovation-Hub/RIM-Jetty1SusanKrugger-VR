@@ -33,7 +33,7 @@ public class ArtifactHighlightTrigger : MonoBehaviour
     public bool IsArmed => _armed;
     public bool isComplete => _isComplete;
     public AudioSource ResponseAudio => responseAudio;
-    public VideoPlayer ResonseVideo => responseVideo;
+    public VideoPlayer ResponseVideo => responseVideo;
 
 
     private void Awake()
@@ -136,10 +136,20 @@ public class ArtifactHighlightTrigger : MonoBehaviour
         }
     }
 
+    public void HideResponseVideo()
+    {
+        if (responseVideo != null)
+        {
+            responseVideo.Stop();
+            responseVideo.gameObject.SetActive(false);
+        }
+    }
+
     private void PlayResponse()
     {
         if (responseVideo != null)
         {
+            responseVideo.gameObject.SetActive(true);
             responseVideo.Play();
         }
 
@@ -166,13 +176,13 @@ public class ArtifactHighlightTrigger : MonoBehaviour
 
     private IEnumerator FadeRoutine(float target)
     {
-        targetRenderer.GetPropertyBlock(_mpb);
+        targetRenderer.GetPropertyBlock(_mpb, materialIndex);
         float start = _mpb.GetFloat(emissionProperty);
 
         if (fadeDuration <= 0f)
         {
             _mpb.SetFloat(emissionProperty, target);
-            targetRenderer.SetPropertyBlock(_mpb);
+            targetRenderer.SetPropertyBlock(_mpb, materialIndex);
             _fadeRoutine = null;
             yield break;
         }

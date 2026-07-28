@@ -67,12 +67,21 @@ public class ArtifactInteractionModule : InteractionModuleBase
     {
         target.SetArmed(false);
 
-        float waitTime = 0f;
+        float audioTime = 0f;
 
         if (target.ResponseAudio != null && target.ResponseAudio.clip != null)
         {
-            waitTime = target.ResponseAudio.clip.length;
+            audioTime = target.ResponseAudio.clip.length;
         }
+
+        float videoTime = 0f;
+
+        if (target.ResponseVideo != null && target.ResponseVideo.clip != null)
+        {
+            videoTime = (float)target.ResponseVideo.clip.length;
+        }
+
+        float waitTime = Mathf.Max(audioTime, videoTime);
 
         if (waitTime > 0f)
         {
@@ -84,6 +93,7 @@ public class ArtifactInteractionModule : InteractionModuleBase
             yield break;
         }
 
+        target.HideResponseVideo();
         target.MarkComplete();
         _completed.Add(target);
 
