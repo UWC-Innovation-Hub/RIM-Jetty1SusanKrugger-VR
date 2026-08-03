@@ -22,9 +22,13 @@ public class CharacterConversation : InteractionModuleBase
     [SerializeField] private UnityEvent onConversationEnded;
 
     [Header("Animation")]
-    [SerializeField] private Animator animator;
+    [SerializeField] private Animator bodyAnimator;
     [SerializeField] private string talkingTrigger = "StartTalking";
     [SerializeField] private string idleTrigger = "StopTalking";
+
+    [Header("Facial Animation")]
+    [SerializeField] private Animator facialAnimator;
+    [SerializeField] private string faceTalkingTrigger = "StartTalking";
 
     public string CharacterName => characterName;
 
@@ -84,6 +88,8 @@ public class CharacterConversation : InteractionModuleBase
             audioSource.Stop();
         }
 
+        SetIdle();
+
         base.Deactivate();
     }
 
@@ -119,17 +125,22 @@ public class CharacterConversation : InteractionModuleBase
 
     private void SetTalking()
     {
-        if (animator != null)
+        if (bodyAnimator != null)
         {
-            animator.SetTrigger(talkingTrigger);
+            bodyAnimator.SetTrigger(talkingTrigger);
+        }
+
+        if (facialAnimator != null)
+        {
+            facialAnimator.SetTrigger(faceTalkingTrigger);
         }
     }
 
     private void SetIdle()
     {
-        if (animator != null)
+        if (bodyAnimator != null)
         {
-            animator.SetTrigger(idleTrigger);
+            bodyAnimator.SetTrigger(idleTrigger);
         }
     }
 
