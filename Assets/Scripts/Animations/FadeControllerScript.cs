@@ -84,8 +84,10 @@ public class FadeController : MonoBehaviour
         float start = _mat.color.a;
         float time = 0f;
 
+
         while (time < duration)
         {
+
             if (requestId != _fadeRequestId)
                 yield break;
 

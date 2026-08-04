@@ -8,6 +8,9 @@ public class CharacterInteractionModule : InteractionModuleBase
     [Header("Characters (assign all four)")]
     [SerializeField] private CharacterConversation[] characters = new CharacterConversation[4];
 
+    [Header("Tutorial")]
+    [SerializeField] private TutorialPopup tutorialPopup;
+
     [Header("Events")]
     [Tooltip("Fired each time a conversation is complete")]
     [SerializeField] private UnityEvent<int> onCharacterCompleted;
@@ -38,14 +41,28 @@ public class CharacterInteractionModule : InteractionModuleBase
             if (characters[i] != null)
             {
                 characters[i].Deactivate();
-                characters[i].ShowHighlight();
             }
+        }
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Closed += OnTutorialClosed;
+            tutorialPopup.Show();
+        }
+        else
+        {
+            ShowAllHighlights();
         }
     }
 
     public override void Deactivate()
     {
         Debug.Log($"[CharacterInteractionModule] Deactivate() called. Stack trace:\n{System.Environment.StackTrace}");
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Closed -= OnTutorialClosed;
+        }
 
         if (ActiveCharacter != null)
         {
@@ -99,6 +116,23 @@ public class CharacterInteractionModule : InteractionModuleBase
     }
 
     //INTERNAL HELPERS
+
+    private void OnTutorialClosed()
+    {
+        tutorialPopup.Closed -= OnTutorialClosed;
+        ShowAllHighlights();
+    }
+
+    private void ShowAllHighlights()
+    {
+        for (int i = 0; i < characters.Length; i++)
+        {
+            if (characters[i] != null)
+            {
+                characters[i].ShowHighlight();
+            }
+        }
+    }
 
     private void BeginConversation(CharacterConversation character)
     {

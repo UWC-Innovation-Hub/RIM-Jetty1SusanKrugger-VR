@@ -8,6 +8,9 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     [Header("Animator Parameters")]
     [SerializeField] private string speedParameterName = "Speed";
     [SerializeField] private string walkPlaybackParameterName = "WalkPlayback";
+    [SerializeField] private string turnLeftTriggerName = "TurnLeft";
+    [SerializeField] private string turnRightTriggerName = "TurnRight";
+    [SerializeField] private string isTurningParameterName = "IsTurning";
 
     [Header("Speed Tuning")]
     [Tooltip("The real-world movement speed that visually matches the walk clip at 1x playback.")]
@@ -23,19 +26,56 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     [SerializeField] private float minWalkPlayback = 0.65f;
     [SerializeField] private float maxWalkPlayback = 1.35f;
 
+    [Header("Turn Detection")]
+    [Tooltip("The character must be at or below this ground speed before an in-place turn can trigger.")]
+    [Min(0f)]
+    [SerializeField] private float maximumMovementSpeedDuringTurn = 0.1f;
+
+    [Tooltip("The minimum absolute parent yaw speed required to trigger a turn animation.")]
+    [Min(0f)]
+    [SerializeField] private float turnEnterYawSpeed = 20f;
+
+    [Tooltip("The parent yaw speed must fall to or below this value before another turn can trigger.")]
+    [Min(0f)]
+    [SerializeField] private float turnExitYawSpeed = 5f;
+
     private Vector3 previousPosition;
+    private float previousYaw;
+    private bool turnDetectionArmed;
+
     private int speedParameter;
     private int walkPlaybackParameter;
+    private int turnLeftTrigger;
+    private int turnRightTrigger;
+    private int isTurningParameter;
 
     private void Awake()
     {
         speedParameter = Animator.StringToHash(speedParameterName);
         walkPlaybackParameter = Animator.StringToHash(walkPlaybackParameterName);
+        turnLeftTrigger = Animator.StringToHash(turnLeftTriggerName);
+        turnRightTrigger = Animator.StringToHash(turnRightTriggerName);
+        isTurningParameter = Animator.StringToHash(isTurningParameterName);
     }
 
     private void OnEnable()
     {
         previousPosition = transform.position;
+        previousYaw = transform.eulerAngles.y;
+        turnDetectionArmed = true;
+
+        if (prisonerAnimator != null)
+            prisonerAnimator.SetBool(isTurningParameter, false);
+    }
+
+    private void OnDisable()
+    {
+        if (prisonerAnimator == null)
+            return;
+
+        prisonerAnimator.SetBool(isTurningParameter, false);
+        prisonerAnimator.ResetTrigger(turnLeftTrigger);
+        prisonerAnimator.ResetTrigger(turnRightTrigger);
     }
 
     private void LateUpdate()
@@ -43,14 +83,21 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
         if (prisonerAnimator == null)
             return;
 
+        float deltaTime = Mathf.Max(Time.deltaTime, 0.0001f);
+
         Vector3 currentPosition = transform.position;
         Vector3 delta = currentPosition - previousPosition;
         previousPosition = currentPosition;
 
+        float currentYaw = transform.eulerAngles.y;
+        float yawDelta = Mathf.DeltaAngle(previousYaw, currentYaw);
+        float yawSpeed = yawDelta / deltaTime;
+        previousYaw = currentYaw;
+
         // Ignore vertical motion. We only care about ground-plane travel speed.
         delta.y = 0f;
 
-        float horizontalSpeed = delta.magnitude / Mathf.Max(Time.deltaTime, 0.0001f);
+        float horizontalSpeed = delta.magnitude / deltaTime;
 
         float animatorSpeed = horizontalSpeed < idleThreshold ? 0f : horizontalSpeed;
 
@@ -62,5 +109,44 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
 
         prisonerAnimator.SetFloat(speedParameter, animatorSpeed, speedDampTime, Time.deltaTime);
         prisonerAnimator.SetFloat(walkPlaybackParameter, playback, speedDampTime, Time.deltaTime);
+
+        UpdateTurn(horizontalSpeed, yawSpeed);
+    }
+
+    private void UpdateTurn(float horizontalSpeed, float yawSpeed)
+    {
+        float absoluteYawSpeed = Mathf.Abs(yawSpeed);
+
+        if (!turnDetectionArmed)
+        {
+            if (absoluteYawSpeed <= turnExitYawSpeed)
+            {
+                turnDetectionArmed = true;
+                prisonerAnimator.SetBool(isTurningParameter, false);
+            }
+
+            return;
+        }
+
+        if (horizontalSpeed > maximumMovementSpeedDuringTurn ||
+            absoluteYawSpeed < turnEnterYawSpeed)
+        {
+            return;
+        }
+
+        prisonerAnimator.SetBool(isTurningParameter, true);
+
+        if (yawSpeed > 0f)
+        {
+            prisonerAnimator.ResetTrigger(turnLeftTrigger);
+            prisonerAnimator.SetTrigger(turnRightTrigger);
+        }
+        else
+        {
+            prisonerAnimator.ResetTrigger(turnRightTrigger);
+            prisonerAnimator.SetTrigger(turnLeftTrigger);
+        }
+
+        turnDetectionArmed = false;
     }
 }
