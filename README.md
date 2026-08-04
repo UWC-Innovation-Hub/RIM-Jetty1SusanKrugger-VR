@@ -109,6 +109,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Media/
         ├── Photos/
             ├── Prison Heads/
+            ├── TutorialPhotos/
         ├── RIM_jetty1_assets/
             ├── 3dContent/
             ├── Images/
@@ -139,6 +140,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Lamp_iwanPlays/
             ├── prison-bed/
         ├── C4_J6_Black_Visitors_Room/
+            ├── Black_Visitors_Room_Textures/
             ├── folded-wrinkled-paper/
         ├── C6_SK1_The_Hold/
             ├── GrayBox/
@@ -210,6 +212,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── BlackWaitingRoomTest/
             ├── C1_Final_Pass_TEST_Beta/
             ├── C2_J3_Cell_Rec_Assets/
+            ├── C4_J6_Black_Visitors_Room_TESTING/
             ├── C6_SK1_The_Hold/
             ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
@@ -550,6 +553,8 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `GazeRaycaster.cs` | `Assets/Scripts/GazeInteraction/GazeRaycaster.cs` |
 | `GazeTarget.cs` | `Assets/Scripts/GazeInteraction/GazeTarget.cs` |
 | `IGazeTarget.cs` | `Assets/Scripts/GazeInteraction/IGazeTarget.cs` |
+| `ArtifactHighlightTrigger.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ArtifactHighlightTrigger.cs` |
+| `ArtifactInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ArtifactInteractionModule.cs` |
 | `BreathingInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/BreathingInteractionModule.cs` |
 | `CellHoldSelector.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CellHoldSelector.cs` |
 | `CharacterHighlight.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterHighlight.cs` |
@@ -571,6 +576,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `SequenceBrain.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SequenceBrain.cs` |
 | `SequenceSignalRouter.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SequenceSignalRouter.cs` |
 | `SetNextPrisoner.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SetNextPrisoner.cs` |
+| `TutorialPopup.cs` | `Assets/Scripts/Interaction_Sequencing Framework/TutorialPopup.cs` |
 | `Background_Character_Spawning.cs` | `Assets/Scripts/Interactions/Background_Character_Spawning.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/Interactions/ClapDetector.cs` |
 | `FingerprintLockout.cs` | `Assets/Scripts/Interactions/FingerprintLockout.cs` |
