@@ -11,6 +11,7 @@ public class CharacterConversation : InteractionModuleBase
     [SerializeField] private DialogueData dialogueData;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private DialogueUI dialogueUI;
+    [SerializeField] private float startDelay = 0.5f;
 
     [Header("Spotlight")]
     [SerializeField] private CharacterSpotlight spotlight;
@@ -171,6 +172,11 @@ public class CharacterConversation : InteractionModuleBase
         {
             FinishConversation();
             yield break;
+        }
+
+        if (startDelay > 0)
+        {
+            yield return new WaitForSeconds(startDelay);
         }
 
         if (dialogueData.openingClip != null && audioSource != null)

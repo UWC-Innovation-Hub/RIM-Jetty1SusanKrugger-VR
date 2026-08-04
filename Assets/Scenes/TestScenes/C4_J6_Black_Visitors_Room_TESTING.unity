@@ -244,7 +244,7 @@ MonoBehaviour:
   - {fileID: 657164261}
   - {fileID: 827071455}
   spotTargetIntensity: 1
-  fadeDuration: 0.5
+  fadeDuration: 1.5
 --- !u!114 &2657628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,16 +304,22 @@ MonoBehaviour:
   dialogueData: {fileID: 11400000, guid: 7ca80a0d5c111cc4a8f375bdb4baf374, type: 2}
   audioSource: {fileID: 2657626}
   dialogueUI: {fileID: 571525585}
+  startDelay: 0.5
   spotlight: {fileID: 2657627}
   highlight: {fileID: 2657628}
   onConversationEnded:
     m_PersistentCalls:
       m_Calls: []
-  bodyAnimator: {fileID: 0}
+  bodyAnimator: {fileID: 2657630}
   talkingTrigger: StartTalking
   idleTrigger: StopTalking
   facialAnimator: {fileID: 0}
   faceTalkingTrigger: StartTalking
+--- !u!95 &2657630 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5247283307085127741, guid: aacd482270b0a7c46b3814b2a04c90e4, type: 3}
+  m_PrefabInstance: {fileID: 1319554708}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3390063
 GameObject:
   m_ObjectHideFlags: 0
@@ -1094,7 +1100,7 @@ Transform:
   m_GameObject: {fileID: 73777457}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.306, y: 0.851, z: 1.977}
+  m_LocalPosition: {x: 0.71, y: 0.851, z: 2.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4333,7 +4339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8604,7 +8610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11151,8 +11157,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.3440392, y: 1.2602276, z: 1.2514207}
-  m_Center: {x: -0.057422485, y: -0.1301117, z: 0.1257064}
+  m_Size: {x: 2.3440392, y: 1.2602276, z: 1.1175387}
+  m_Center: {x: -0.057422467, y: -0.13011171, z: 0.058765415}
 --- !u!1 &664612614
 GameObject:
   m_ObjectHideFlags: 0
@@ -12992,6 +12998,7 @@ MonoBehaviour:
   dialogueData: {fileID: 11400000, guid: 35c7d5fc1067dd545a443e99f7fea6cc, type: 2}
   audioSource: {fileID: 759829006}
   dialogueUI: {fileID: 1446792951}
+  startDelay: 0.5
   spotlight: {fileID: 759829007}
   highlight: {fileID: 759829008}
   onConversationEnded:
@@ -13117,7 +13124,7 @@ MonoBehaviour:
   - {fileID: 657164261}
   - {fileID: 827071455}
   spotTargetIntensity: 5
-  fadeDuration: 0.5
+  fadeDuration: 1.5
 --- !u!114 &759829008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13343,7 +13350,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 768529289}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 3.136}
+  m_LocalPosition: {x: 0, y: 0, z: 3.178}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -13353,7 +13360,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -2.297, y: 0.502}
+  m_AnchoredPosition: {x: 0.8, y: 0.502}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &768529294
@@ -13547,8 +13554,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.3440392, y: 1.2602276, z: 1.2514207}
-  m_Center: {x: -0.057422485, y: -0.1301117, z: 0.1257064}
+  m_Size: {x: 2.3440392, y: 1.2602276, z: 1.0305443}
+  m_Center: {x: -0.057422467, y: -0.13011171, z: 0.015268557}
 --- !u!1 &785677329
 GameObject:
   m_ObjectHideFlags: 0
@@ -15477,8 +15484,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.3440392, y: 1.2602276, z: 1.2514207}
-  m_Center: {x: -0.057422485, y: -0.1301117, z: 0.1257064}
+  m_Size: {x: 2.3440392, y: 1.2602276, z: 0.9128655}
+  m_Center: {x: -0.057422463, y: -0.13011171, z: -0.043570746}
 --- !u!1 &868849284
 GameObject:
   m_ObjectHideFlags: 0
@@ -15754,6 +15761,11 @@ Transform:
   - {fileID: 676331079}
   m_Father: {fileID: 1563780866}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &885192405 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2728902386492038407, guid: f7283e3f7615bdb4a926711fe5edd90a, type: 3}
+  m_PrefabInstance: {fileID: 1829231404}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &885765878
 GameObject:
   m_ObjectHideFlags: 0
@@ -18420,7 +18432,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -19762,7 +19774,7 @@ MonoBehaviour:
   - {fileID: 657164261}
   - {fileID: 827071455}
   spotTargetIntensity: 1
-  fadeDuration: 0.5
+  fadeDuration: 1.5
 --- !u!114 &1116973608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19822,16 +19834,22 @@ MonoBehaviour:
   dialogueData: {fileID: 11400000, guid: a77f76d8889e0a4409af8d889a0146cd, type: 2}
   audioSource: {fileID: 1116973606}
   dialogueUI: {fileID: 681458559}
+  startDelay: 0.5
   spotlight: {fileID: 1116973607}
   highlight: {fileID: 1116973608}
   onConversationEnded:
     m_PersistentCalls:
       m_Calls: []
-  bodyAnimator: {fileID: 0}
+  bodyAnimator: {fileID: 1116973610}
   talkingTrigger: StartTalking
   idleTrigger: StopTalking
   facialAnimator: {fileID: 0}
   faceTalkingTrigger: StartTalking
+--- !u!95 &1116973610 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3747128095386117112, guid: 568bbd1728dea8547b200d1110a033dc, type: 3}
+  m_PrefabInstance: {fileID: 128594652}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1120229295
 GameObject:
   m_ObjectHideFlags: 0
@@ -20504,7 +20522,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -30898,8 +30916,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.3440392, y: 1.2602276, z: 1.2514207}
-  m_Center: {x: -0.057422485, y: -0.1301117, z: 0.1257064}
+  m_Size: {x: 2.3440392, y: 1.2602276, z: 1.044257}
+  m_Center: {x: -0.057422467, y: -0.13011171, z: 0.22928746}
 --- !u!1 &1816438432
 GameObject:
   m_ObjectHideFlags: 0
@@ -31029,6 +31047,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2728902386492038407, guid: f7283e3f7615bdb4a926711fe5edd90a, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3872872258204616684, guid: f7283e3f7615bdb4a926711fe5edd90a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.118
@@ -31211,7 +31233,7 @@ MonoBehaviour:
   - {fileID: 657164261}
   - {fileID: 827071455}
   spotTargetIntensity: 1
-  fadeDuration: 0.5
+  fadeDuration: 1.5
 --- !u!114 &1830212331
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31271,16 +31293,22 @@ MonoBehaviour:
   dialogueData: {fileID: 11400000, guid: 95c84dfaf17cbd1409cb9c57869611c8, type: 2}
   audioSource: {fileID: 1830212329}
   dialogueUI: {fileID: 509738151}
+  startDelay: 0.5
   spotlight: {fileID: 1830212330}
   highlight: {fileID: 1830212331}
   onConversationEnded:
     m_PersistentCalls:
       m_Calls: []
-  bodyAnimator: {fileID: 0}
+  bodyAnimator: {fileID: 1830212333}
   talkingTrigger: StartTalking
   idleTrigger: StopTalking
   facialAnimator: {fileID: 0}
   faceTalkingTrigger: StartTalking
+--- !u!95 &1830212333 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8272125459685690932, guid: 857ab99e7f1c9884c8ce0a34734bb6d2, type: 3}
+  m_PrefabInstance: {fileID: 1509074712}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1831774601
 GameObject:
   m_ObjectHideFlags: 0
@@ -31335,7 +31363,7 @@ PlayableDirector:
   - key: {fileID: -4994580223940952592, guid: eb73f24f70e871c4db4f0eaef22cdcc1, type: 2}
     value: {fileID: 657628687}
   - key: {fileID: 3608841911149873895, guid: eb73f24f70e871c4db4f0eaef22cdcc1, type: 2}
-    value: {fileID: 743822086}
+    value: {fileID: 885192405}
   - key: {fileID: -5269279690968412854, guid: eb73f24f70e871c4db4f0eaef22cdcc1, type: 2}
     value: {fileID: 743822085}
   m_ExposedReferences:
