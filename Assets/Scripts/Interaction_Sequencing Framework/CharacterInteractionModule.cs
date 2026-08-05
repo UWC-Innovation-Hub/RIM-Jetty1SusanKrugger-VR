@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class CharacterInteractionModule : InteractionModuleBase
 {
     [Header("Characters (assign all four)")]
-    [SerializeField] private CharacterConversation[] characters = new CharacterConversation[4];
+    [SerializeField] private CharacterConversation[] characters = new CharacterConversation[0];
 
     [Header("Tutorial")]
     [SerializeField] private TutorialPopup tutorialPopup;
@@ -21,6 +21,7 @@ public class CharacterInteractionModule : InteractionModuleBase
     //RUNTIME STATE
 
     public int CompletedCount { get; private set; }
+    public int TotalCount => characters.Length;
 
     public CharacterConversation ActiveCharacter { get; private set; }
 
@@ -180,16 +181,4 @@ public class CharacterInteractionModule : InteractionModuleBase
         }
         return false;
     }
-
-    //EDITORS HELPERS
-
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        if (characters != null && characters.Length != 4)
-        {
-            System.Array.Resize(ref characters, 4);
-        }
-    }
-#endif
 }
