@@ -6,6 +6,13 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     [Header("References")]
     [SerializeField] private Animator prisonerAnimator;
 
+    [Header("Turn Rotation Source")]
+    [Tooltip("When enabled, turn detection reads local yaw from Turn Rotation Source while movement speed continues to use this GameObject's world position.")]
+    [SerializeField] private bool useSeparateTurnRotationSource = false;
+
+    [Tooltip("The child transform whose local yaw drives turn detection when Use Separate Turn Rotation Source is enabled.")]
+    [SerializeField] private Transform turnRotationSource;
+
     [Header("Animator Parameters")]
     [SerializeField] private string speedParameterName = "Speed";
     [SerializeField] private string walkPlaybackParameterName = "WalkPlayback";
@@ -47,11 +54,11 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     [Min(0f)]
     [SerializeField] private float maximumMovementSpeedDuringTurn = 0.1f;
 
-    [Tooltip("The minimum absolute parent yaw speed required to trigger a turn animation.")]
+    [Tooltip("The minimum absolute yaw speed required to trigger a turn animation.")]
     [Min(0f)]
     [SerializeField] private float turnEnterYawSpeed = 20f;
 
-    [Tooltip("The parent yaw speed must fall to or below this value before another turn can trigger.")]
+    [Tooltip("The yaw speed must fall to or below this value before another turn can trigger.")]
     [Min(0f)]
     [SerializeField] private float turnExitYawSpeed = 5f;
 
@@ -60,6 +67,9 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     private bool turnDetectionArmed;
     private bool wasMoving;
     private float turnDecisionElapsed;
+    private Transform activeTurnRotationSource;
+    private bool activeTurnRotationUsesLocalYaw;
+    private bool missingTurnRotationSourceWarningIssued;
 
     private int speedParameter;
     private int walkPlaybackParameter;
@@ -79,7 +89,9 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
     private void OnEnable()
     {
         previousPosition = transform.position;
-        previousYaw = transform.eulerAngles.y;
+        missingTurnRotationSourceWarningIssued = false;
+        activeTurnRotationSource = GetTurnRotationSource(out activeTurnRotationUsesLocalYaw);
+        previousYaw = GetYaw(activeTurnRotationSource, activeTurnRotationUsesLocalYaw);
         turnDetectionArmed = true;
         wasMoving = false;
         turnDecisionElapsed = 0f;
@@ -109,10 +121,7 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
         Vector3 delta = currentPosition - previousPosition;
         previousPosition = currentPosition;
 
-        float currentYaw = transform.eulerAngles.y;
-        float yawDelta = Mathf.DeltaAngle(previousYaw, currentYaw);
-        float yawSpeed = yawDelta / deltaTime;
-        previousYaw = currentYaw;
+        float yawSpeed = GetYawSpeed(deltaTime);
 
         // Ignore vertical motion. We only care about ground-plane travel speed.
         delta.y = 0f;
@@ -131,6 +140,58 @@ public class ParentVelocityToWalkAnimator : MonoBehaviour
 
         prisonerAnimator.SetFloat(speedParameter, animatorSpeed, speedDampTime, deltaTime);
         prisonerAnimator.SetFloat(walkPlaybackParameter, playback, walkPlaybackDampTime, deltaTime);
+    }
+
+    private float GetYawSpeed(float deltaTime)
+    {
+        Transform currentTurnRotationSource =
+            GetTurnRotationSource(out bool currentTurnRotationUsesLocalYaw);
+
+        float currentYaw = GetYaw(
+            currentTurnRotationSource,
+            currentTurnRotationUsesLocalYaw);
+
+        if (currentTurnRotationSource != activeTurnRotationSource ||
+            currentTurnRotationUsesLocalYaw != activeTurnRotationUsesLocalYaw)
+        {
+            activeTurnRotationSource = currentTurnRotationSource;
+            activeTurnRotationUsesLocalYaw = currentTurnRotationUsesLocalYaw;
+            previousYaw = currentYaw;
+            return 0f;
+        }
+
+        float yawDelta = Mathf.DeltaAngle(previousYaw, currentYaw);
+        previousYaw = currentYaw;
+        return yawDelta / deltaTime;
+    }
+
+    private Transform GetTurnRotationSource(out bool useLocalYaw)
+    {
+        useLocalYaw = useSeparateTurnRotationSource && turnRotationSource != null;
+
+        if (useLocalYaw)
+            return turnRotationSource;
+
+        if (useSeparateTurnRotationSource &&
+            !missingTurnRotationSourceWarningIssued)
+        {
+            Debug.LogWarning(
+                $"{nameof(ParentVelocityToWalkAnimator)} on '{name}' has " +
+                $"{nameof(useSeparateTurnRotationSource)} enabled without a " +
+                $"{nameof(turnRotationSource)}. Falling back to this GameObject's world yaw.",
+                this);
+
+            missingTurnRotationSourceWarningIssued = true;
+        }
+
+        return transform;
+    }
+
+    private static float GetYaw(Transform rotationSource, bool useLocalYaw)
+    {
+        return useLocalYaw
+            ? rotationSource.localEulerAngles.y
+            : rotationSource.eulerAngles.y;
     }
 
     private float GetAnimatorSpeed(float horizontalSpeed, float deltaTime)
