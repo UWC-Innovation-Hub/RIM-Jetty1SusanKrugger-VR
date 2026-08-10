@@ -6,6 +6,7 @@ public class CharacterSpotlight : MonoBehaviour
     [Header("Lights")]
     [SerializeField] private Light spotlight;
     [SerializeField] private Light directionalLight;
+    [SerializeField] private Light[] pointLights;
 
     [Header("Spotlight Settings")]
     [SerializeField] private float spotTargetIntensity = 1f;
@@ -13,7 +14,7 @@ public class CharacterSpotlight : MonoBehaviour
     [Header("Transition")]
     [SerializeField] private float fadeDuration = 0.5f;
 
-    private float _originalSpot;
+    private float[] _originalPoint;
     private float _originalDirectional;
 
     private Coroutine _fadeRoutine;
@@ -22,7 +23,6 @@ public class CharacterSpotlight : MonoBehaviour
     {
         if (spotlight != null)
         {
-            _originalSpot = spotlight.intensity;
             spotlight.intensity = 0f;
             spotlight.enabled = false;
         }
@@ -30,6 +30,18 @@ public class CharacterSpotlight : MonoBehaviour
         if (directionalLight != null)
         {
             _originalDirectional = directionalLight.intensity;
+        }
+
+        if (pointLights != null)
+        {
+            _originalPoint = new float[pointLights.Length];
+            for (int i = 0; i < pointLights.Length; i++)
+            {
+                if (pointLights[i] != null)
+                {
+                    _originalPoint[i] = pointLights[i].intensity;
+                }
+            }
         }
     }
 
@@ -42,7 +54,7 @@ public class CharacterSpotlight : MonoBehaviour
             StopCoroutine(_fadeRoutine);
         }
 
-        _fadeRoutine = StartCoroutine(FadeRoutine(spotStart: spotlight != null ? spotlight.intensity : 0f, spotEnd: spotTargetIntensity, dirStart: directionalLight != null ? directionalLight.intensity : 0f, dirEnd: 0f));
+        _fadeRoutine = StartCoroutine(FadeRoutine(spotStart: spotlight != null ? spotlight.intensity : 0f, spotEnd: spotTargetIntensity, dirStart: directionalLight != null ? directionalLight.intensity : 0f, dirEnd: 0f, pointLightsEnd: 0f));
     }
 
     public void Deactivate()
@@ -52,17 +64,30 @@ public class CharacterSpotlight : MonoBehaviour
             StopCoroutine(_fadeRoutine);
         }
 
-        _fadeRoutine = StartCoroutine(FadeRoutine(spotStart: spotlight != null ? spotlight.intensity : 0f, spotEnd: spotTargetIntensity, dirStart: directionalLight != null ? directionalLight.intensity : 0f, dirEnd: _originalDirectional, disableSpotOnComplete: true));
+        _fadeRoutine = StartCoroutine(FadeRoutine(spotStart: spotlight != null ? spotlight.intensity : 0f, spotEnd: spotTargetIntensity, dirStart: directionalLight != null ? directionalLight.intensity : 0f, dirEnd: _originalDirectional, pointLightsEnd: -1f, disableSpotOnComplete: true));
 
     }
 
     // INTERNAL
 
-    private IEnumerator FadeRoutine(float spotStart, float spotEnd, float dirStart, float dirEnd, bool disableSpotOnComplete = false)
+    private IEnumerator FadeRoutine(float spotStart, float spotEnd, float dirStart, float dirEnd, float pointLightsEnd, bool disableSpotOnComplete = false)
     {
         if (spotlight != null)
         {
             spotlight.enabled = true;
+        }
+
+        float[] pointLightStarts = null;
+        if (pointLights != null)
+        {
+            pointLightStarts = new float[pointLights.Length];
+            for (int i = 0; i < pointLights.Length; i++)
+            {
+                if (pointLights[i] != null)
+                {
+                    pointLightStarts[i] = pointLights[i].intensity;
+                }
+            }
         }
 
         float elapsed = 0f;
@@ -82,6 +107,21 @@ public class CharacterSpotlight : MonoBehaviour
                 directionalLight.intensity = Mathf.Lerp(dirStart, dirEnd, t);
             }
 
+            if (pointLights != null && pointLightStarts != null)
+            {
+                for (int i = 0; i < pointLightStarts.Length; i++)
+                {
+                    if (pointLights[i] == null)
+                    {
+                        continue;
+                    }
+
+                    float target = pointLightsEnd < 0f ? _originalPoint[i] : pointLightsEnd;
+
+                    pointLights[i].intensity = Mathf.Lerp(pointLightStarts[i], target, t);
+                }
+            }
+
             yield return null;
         }
 
@@ -98,6 +138,19 @@ public class CharacterSpotlight : MonoBehaviour
         if (directionalLight != null)
         {
             directionalLight.intensity = dirEnd;
+        }
+
+        if (pointLights != null)
+        {
+            for (int i = 0; i < pointLights.Length; i++)
+            {
+                if (pointLights[i] == null)
+                {
+                    continue;
+                }
+
+                pointLights[i].intensity = pointLightsEnd < 0f ? _originalPoint[i] : pointLightsEnd;
+            }
         }
 
         _fadeRoutine = null;

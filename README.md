@@ -57,6 +57,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C5/
         ├── C6/
             ├── Master/
+            ├── Voices/
     ├── Black_Visitors/
         ├── Checkpoint_4_PREFABS/
             ├── Textures/
@@ -107,6 +108,9 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── prisoner 5/
             ├── prisoner 6/
     ├── Media/
+        ├── Photos/
+            ├── Prison Heads/
+            ├── TutorialPhotos/
         ├── RIM_jetty1_assets/
             ├── 3dContent/
             ├── Images/
@@ -137,9 +141,11 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Lamp_iwanPlays/
             ├── prison-bed/
         ├── C4_J6_Black_Visitors_Room/
+            ├── Black_Visitors_Room_Textures/
             ├── folded-wrinkled-paper/
         ├── C6_SK1_The_Hold/
             ├── GrayBox/
+            ├── Rough/
         ├── Cargo Space/
         ├── Cargo Space exterior/
             ├── Animations/
@@ -175,6 +181,10 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── UI/
         ├── Walking man/
     ├── Prisoner Shaders/
+    ├── Prisoners/
+        ├── Prisoner_Prefabs/
+        ├── Prisoner_Rigs/
+            ├── Textures/
     ├── Resources/
     ├── Ropes and cables Tool/
         ├── OptimizedRopesAndCables/
@@ -203,6 +213,8 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── BlackWaitingRoomTest/
             ├── C1_Final_Pass_TEST_Beta/
             ├── C2_J3_Cell_Rec_Assets/
+            ├── C4_J6_Black_Visitors_Room_TESTING/
+            ├── C6_SK1_The_Hold/
             ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
@@ -519,6 +531,8 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `ControlBoatGate.cs` | `Assets/Scripts/Animations/ControlBoatGate.cs` |
 | `FadeControllerScript.cs` | `Assets/Scripts/Animations/FadeControllerScript.cs` |
 | `MaterialOpacityFader.cs` | `Assets/Scripts/Animations/MaterialOpacityFader.cs` |
+| `ParentVelocityToWalkAnimator.cs` | `Assets/Scripts/Animations/ParentVelocityToWalkAnimator.cs` |
+| `SK_controller.cs` | `Assets/Scripts/Animations/SK_controller.cs` |
 | `TokenMove.cs` | `Assets/Scripts/Animations/TokenMove.cs` |
 | `TruckManager.cs` | `Assets/Scripts/Animations/TruckManager.cs` |
 | `Wheel_rotate.cs` | `Assets/Scripts/Animations/Wheel_rotate.cs` |
@@ -535,11 +549,15 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `WalkieTalkieAudioSource.cs` | `Assets/Scripts/Audio and Video/WalkieTalkieAudioSource.cs` |
 | `DialogueData.cs` | `Assets/Scripts/DialogueData/DialogueData.cs` |
 | `DialogueUI.cs` | `Assets/Scripts/DialogueData/DialogueUI.cs` |
+| `GazeHighlightFeedback.cs` | `Assets/Scripts/GazeInteraction/GazeHighlightFeedback.cs` |
 | `GazeIndicator.cs` | `Assets/Scripts/GazeInteraction/GazeIndicator.cs` |
 | `GazeRaycaster.cs` | `Assets/Scripts/GazeInteraction/GazeRaycaster.cs` |
 | `GazeTarget.cs` | `Assets/Scripts/GazeInteraction/GazeTarget.cs` |
 | `IGazeTarget.cs` | `Assets/Scripts/GazeInteraction/IGazeTarget.cs` |
+| `ArtifactHighlightTrigger.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ArtifactHighlightTrigger.cs` |
+| `ArtifactInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ArtifactInteractionModule.cs` |
 | `BreathingInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/BreathingInteractionModule.cs` |
+| `CellHoldSelector.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CellHoldSelector.cs` |
 | `CharacterHighlight.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterHighlight.cs` |
 | `CharacterInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterInteractionModule.cs` |
 | `CharacterSpotlight.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterSpotlight.cs` |
@@ -559,6 +577,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `SequenceBrain.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SequenceBrain.cs` |
 | `SequenceSignalRouter.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SequenceSignalRouter.cs` |
 | `SetNextPrisoner.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SetNextPrisoner.cs` |
+| `TutorialPopup.cs` | `Assets/Scripts/Interaction_Sequencing Framework/TutorialPopup.cs` |
 | `Background_Character_Spawning.cs` | `Assets/Scripts/Interactions/Background_Character_Spawning.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/Interactions/ClapDetector.cs` |
 | `FingerprintLockout.cs` | `Assets/Scripts/Interactions/FingerprintLockout.cs` |

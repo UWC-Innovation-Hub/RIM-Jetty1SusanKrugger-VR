@@ -6,7 +6,10 @@ using UnityEngine.Events;
 public class CharacterInteractionModule : InteractionModuleBase
 {
     [Header("Characters (assign all four)")]
-    [SerializeField] private CharacterConversation[] characters = new CharacterConversation[4];
+    [SerializeField] private CharacterConversation[] characters = new CharacterConversation[0];
+
+    [Header("Tutorial")]
+    [SerializeField] private TutorialPopup tutorialPopup;
 
     [Header("Events")]
     [Tooltip("Fired each time a conversation is complete")]
@@ -18,6 +21,7 @@ public class CharacterInteractionModule : InteractionModuleBase
     //RUNTIME STATE
 
     public int CompletedCount { get; private set; }
+    public int TotalCount => characters.Length;
 
     public CharacterConversation ActiveCharacter { get; private set; }
 
@@ -38,14 +42,28 @@ public class CharacterInteractionModule : InteractionModuleBase
             if (characters[i] != null)
             {
                 characters[i].Deactivate();
-                characters[i].ShowHighlight();
             }
+        }
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Closed += OnTutorialClosed;
+            tutorialPopup.Show();
+        }
+        else
+        {
+            ShowAllHighlights();
         }
     }
 
     public override void Deactivate()
     {
         Debug.Log($"[CharacterInteractionModule] Deactivate() called. Stack trace:\n{System.Environment.StackTrace}");
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Closed -= OnTutorialClosed;
+        }
 
         if (ActiveCharacter != null)
         {
@@ -100,6 +118,23 @@ public class CharacterInteractionModule : InteractionModuleBase
 
     //INTERNAL HELPERS
 
+    private void OnTutorialClosed()
+    {
+        tutorialPopup.Closed -= OnTutorialClosed;
+        ShowAllHighlights();
+    }
+
+    private void ShowAllHighlights()
+    {
+        for (int i = 0; i < characters.Length; i++)
+        {
+            if (characters[i] != null)
+            {
+                characters[i].ShowHighlight();
+            }
+        }
+    }
+
     private void BeginConversation(CharacterConversation character)
     {
         ActiveCharacter = character;
@@ -146,16 +181,4 @@ public class CharacterInteractionModule : InteractionModuleBase
         }
         return false;
     }
-
-    //EDITORS HELPERS
-
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        if (characters != null && characters.Length != 4)
-        {
-            System.Array.Resize(ref characters, 4);
-        }
-    }
-#endif
 }
