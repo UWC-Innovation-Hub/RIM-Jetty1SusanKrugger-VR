@@ -5,6 +5,7 @@ public class FadeController : MonoBehaviour
 {
     [SerializeField] private Renderer fadeRenderer;
     [SerializeField] private float defaultFadeDuration = 0.5f;
+    [SerializeField] private bool logFadeTransitions = false;
 
     public bool ShouldFadeOnStart;
 
@@ -72,6 +73,11 @@ public class FadeController : MonoBehaviour
         if (duration < 0f)
             duration = defaultFadeDuration;
 
+        float start = _mat.color.a;
+
+        if (logFadeTransitions)
+            Debug.Log($"{name}: Fade alpha {start:0.###} -> {target:0.###} over {Mathf.Max(0f, duration):0.###}s.", this);
+
         // duration == 0 => instant
         if (duration <= 0f)
         {
@@ -81,7 +87,6 @@ public class FadeController : MonoBehaviour
         }
 
         int requestId = ++_fadeRequestId;
-        float start = _mat.color.a;
         float time = 0f;
 
 
