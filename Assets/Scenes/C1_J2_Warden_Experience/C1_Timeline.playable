@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15c38f6fa1940124db1ab7f6fe7268d1, type: 3}
   m_Name: Signal Emitter
   m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.SignalEmitter
-  m_Time: 58.233333333333334
+  m_Time: 0.21666666666666667
   m_Retroactive: 0
   m_EmitOnce: 0
-  m_Asset: {fileID: 11400000, guid: 5202e77405baf0c4f8601f6d80374870, type: 2}
+  m_Asset: {fileID: 11400000, guid: c73b47c29a895cc429b26ab61baded61, type: 2}
 --- !u!114 &-9114701396314860751
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -103,11 +103,11 @@ MonoBehaviour:
     m_Recordable: 0
     m_PostExtrapolationMode: 1
     m_PreExtrapolationMode: 1
-    m_PostExtrapolationTime: 101.04999999999998
+    m_PostExtrapolationTime: 92.96666158040364
     m_PreExtrapolationTime: 76.91666666666667
     m_DisplayName: C1_SK_Arrival_departure
   - m_Version: 1
-    m_Start: 202.98333333333332
+    m_Start: 194.89999491373698
     m_ClipIn: 0
     m_Asset: {fileID: 8950706488835306311}
     m_Duration: 25
@@ -3386,11 +3386,11 @@ MonoBehaviour:
     m_Recordable: 0
     m_PostExtrapolationMode: 1
     m_PreExtrapolationMode: 1
-    m_PostExtrapolationTime: 1.4500000000000028
+    m_PostExtrapolationTime: 5.950000000000003
     m_PreExtrapolationTime: 0
     m_DisplayName: HeadFadeOut
   - m_Version: 1
-    m_Start: 41.45
+    m_Start: 45.95
     m_ClipIn: 0
     m_Asset: {fileID: -8048684634075476877}
     m_Duration: 1.6166666666666671
@@ -8071,7 +8071,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 67.53333
-        value: {x: 0, y: -97.336, z: 0}
+        value: {x: 0, y: -0.3, z: 0}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -8259,7 +8259,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 76.2
-        value: {x: 3.83, y: 0.1, z: 0.25}
+        value: {x: 3.83, y: 0, z: 0.25}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -8582,6 +8582,15 @@ AnimationClip:
       - serializedVersion: 3
         time: 71.13333
         value: 0.1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 76.2
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -8941,7 +8950,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 67.53333
-        value: -97.336
+        value: -0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -10933,7 +10942,7 @@ MonoBehaviour:
     m_EaseInDuration: 15
     m_EaseOutDuration: 0
     m_BlendInDuration: -1
-    m_BlendOutDuration: 1.6999999999999886
+    m_BlendOutDuration: 4.816666666666663
     m_MixInCurve:
       serializedVersion: 2
       m_Curve:
@@ -10993,7 +11002,7 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: 1_1_FerryAudio
   - m_Version: 1
-    m_Start: 201.28333333333333
+    m_Start: 198.16666666666666
     m_ClipIn: 0
     m_Asset: {fileID: 223101333408226744}
     m_Duration: 26.69999999999999
@@ -11001,11 +11010,29 @@ MonoBehaviour:
     m_ParentTrack: {fileID: 5549715287762726070}
     m_EaseInDuration: 0
     m_EaseOutDuration: 10
-    m_BlendInDuration: 1.6999999999999886
+    m_BlendInDuration: 4.816666666666663
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve: []
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
