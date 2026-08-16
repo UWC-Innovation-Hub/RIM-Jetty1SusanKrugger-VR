@@ -25,6 +25,13 @@ public class InventoryModule : InteractionModuleBase
         public AvatarAttachmentPoint[] targetAttachmentPoints;
     }
 
+    [System.Serializable]
+    private class ItemAudioBinding
+    {
+        public EquippableItem item;
+        public AudioClip successClip;
+    }
+
     private class HighlightLerpState
     {
         public float start;
@@ -57,6 +64,10 @@ public class InventoryModule : InteractionModuleBase
     [SerializeField] private OrderedMatchMode orderedMatchMode = OrderedMatchMode.ItemType;
     [SerializeField] private bool rejectOutOfOrderEquips = true;
     [SerializeField] private bool lockCorrectlyPlacedItems = true;
+
+    [Header("Inventory Success Audio")]
+    [SerializeField] private AudioSource successAudioSource;
+    [SerializeField] private List<ItemAudioBinding> successAudioBindings = new List<ItemAudioBinding>();
 
     [Header("Highlight (Material References)")]
     [SerializeField] private bool useHighlight = true;
@@ -193,6 +204,8 @@ public class InventoryModule : InteractionModuleBase
         CorrectPlacedCount = _acceptedItems.Count;
         CurrentStepIndex = CorrectPlacedCount;
 
+        PlaySuccessAudio(item, expectedItem);
+
         if (lockCorrectlyPlacedItems)
         {
             SetItemLocked(item, true);
@@ -267,6 +280,26 @@ public class InventoryModule : InteractionModuleBase
         UpdateHighlight();
         UpdateAttachmentPointHighlights();
         TryCompleteIfReady();
+    }
+
+    private void PlaySuccessAudio(EquippableItem item, EquippableItem expectedItem)
+    {
+        if (successAudioSource == null || item == null || successAudioBindings == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < successAudioBindings.Count; i++)
+        {
+            ItemAudioBinding binding = successAudioBindings[i];
+            if (binding != null &&
+                binding.successClip != null &&
+                (binding.item == item || binding.item == expectedItem))
+            {
+                successAudioSource.PlayOneShot(binding.successClip);
+                return;
+            }
+        }
     }
 
     private void BuildBindingCaches()

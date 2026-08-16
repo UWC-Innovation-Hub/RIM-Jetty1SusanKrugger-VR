@@ -6,3 +6,8 @@ public interface IGazeTarget
     void OnGazeExit();
     void OnGazeDwell();
 }
+
+public interface IGazeProgressTarget
+{
+    void OnGazeProgress(float normalized);
+}
