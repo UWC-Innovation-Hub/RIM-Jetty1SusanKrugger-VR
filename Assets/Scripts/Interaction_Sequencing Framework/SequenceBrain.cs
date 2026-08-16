@@ -188,19 +188,23 @@ public class SequenceBrain : MonoBehaviour
         _isTransitioning = true;
         _pendingExitAfterTransition = false;
 
-        ApplyState(SequenceState.TransitionToSequence, pauseDirector: true);
-
         InteractionModuleBase module = activeInteraction;
 
+        // Fade the still-visible interaction before evaluating the paused sequence.
+        // Evaluating first would restore Timeline's held-black value, causing this
+        // fade to start and end at alpha 1 with no visible transition.
         if (module != null && ShouldUseFade(module))
             yield return fadeController.FadeOutRoutine(module.FadeOutDuration);
+
+        // The screen is now black, so Timeline can safely reassert its paused state.
+        ApplyState(SequenceState.TransitionToSequence, pauseDirector: true);
 
         if (module != null)
             module.Deactivate();
 
         ApplyState(SequenceState.InSequence, pauseDirector: false);
 
-        if (module != null && ShouldUseFade(module))
+        if (module != null && ShouldUseFade(module) && !module.SkipExitFadeIn)
             yield return fadeController.FadeInRoutine(module.FadeInDuration);
 
         _isTransitioning = false;

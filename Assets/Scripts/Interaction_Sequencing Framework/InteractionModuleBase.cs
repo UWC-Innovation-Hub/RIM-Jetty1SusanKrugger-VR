@@ -62,6 +62,9 @@ public abstract class InteractionModuleBase : MonoBehaviour
     [Tooltip("When ticked, SequenceBrain will NOT fade in after activating this interaction. " +
              "Use this for the opening inventory interaction where the Timeline controls the fade itself.")]
     [SerializeField] private bool skipEnterFadeIn = false;
+    [Tooltip("When ticked, SequenceBrain will NOT fade in after this interaction completes. " +
+             "Use this when the resumed sequence Timeline owns the return fade-in.")]
+    [SerializeField] private bool skipExitFadeIn = false;
 
     private bool _previousFogState;
     private bool _hasFogStateSnapshot;
@@ -71,6 +74,7 @@ public abstract class InteractionModuleBase : MonoBehaviour
     public float FadeOutDuration => fadeOutDuration;
     public float FadeInDuration => fadeInDuration;
     public bool SkipEnterFadeIn => skipEnterFadeIn;
+    public bool SkipExitFadeIn => skipExitFadeIn;
 
     protected virtual void Awake()
     {

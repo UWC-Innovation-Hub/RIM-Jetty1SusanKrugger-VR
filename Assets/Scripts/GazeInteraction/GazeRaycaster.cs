@@ -23,6 +23,7 @@ public class GazeRaycaster : MonoBehaviour
     [SerializeField] private float reentryCooldown = 2f;
 
     private IGazeTarget currentTarget;
+    private IGazeProgressTarget currentProgressTarget;
     private float gazeTimer;
     private bool hasTriggeredDwell;
     private readonly Dictionary<IGazeTarget, float> blockedTargets = new Dictionary<IGazeTarget, float>();
@@ -76,15 +77,25 @@ public class GazeRaycaster : MonoBehaviour
         {
             ClearTarget();
             currentTarget = newTarget;
+            currentProgressTarget = newTarget as IGazeProgressTarget;
             currentTarget.OnGazeEnter();
+            currentProgressTarget?.OnGazeProgress(0f);
             gazeTimer = 0f;
             hasTriggeredDwell = false;
         }
 
-        gazeTimer += Time.deltaTime;
-
-        if (!hasTriggeredDwell && gazeTimer >= dwellTime)
+        if (hasTriggeredDwell)
         {
+            return;
+        }
+
+        gazeTimer += Time.deltaTime;
+        float normalized = dwellTime <= 0f ? 1f : Mathf.Clamp01(gazeTimer / dwellTime);
+        currentProgressTarget?.OnGazeProgress(normalized);
+
+        if (normalized >= 1f)
+        {
+            currentProgressTarget?.OnGazeProgress(1f);
             currentTarget.OnGazeDwell();
             hasTriggeredDwell = true;
         }
@@ -95,8 +106,10 @@ public class GazeRaycaster : MonoBehaviour
         if (currentTarget == null) return;
 
         blockedTargets[currentTarget] = Time.time + reentryCooldown;
+        currentProgressTarget?.OnGazeProgress(0f);
         currentTarget.OnGazeExit();
         currentTarget = null;
+        currentProgressTarget = null;
         gazeTimer = 0f;
         hasTriggeredDwell = false;
     }
