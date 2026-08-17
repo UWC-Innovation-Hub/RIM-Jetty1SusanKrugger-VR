@@ -11,6 +11,7 @@ public class CharacterConversation : InteractionModuleBase
     [SerializeField] private DialogueData dialogueData;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private DialogueUI dialogueUI;
+    [SerializeField] private float startDelay = 0.5f;
 
     [Header("Spotlight")]
     [SerializeField] private CharacterSpotlight spotlight;
@@ -22,9 +23,13 @@ public class CharacterConversation : InteractionModuleBase
     [SerializeField] private UnityEvent onConversationEnded;
 
     [Header("Animation")]
-    [SerializeField] private Animator animator;
+    [SerializeField] private Animator bodyAnimator;
     [SerializeField] private string talkingTrigger = "StartTalking";
     [SerializeField] private string idleTrigger = "StopTalking";
+
+    [Header("Facial Animation")]
+    [SerializeField] private Animator facialAnimator;
+    [SerializeField] private string faceTalkingTrigger = "StartTalking";
 
     public string CharacterName => characterName;
 
@@ -84,6 +89,8 @@ public class CharacterConversation : InteractionModuleBase
             audioSource.Stop();
         }
 
+        SetIdle();
+
         base.Deactivate();
     }
 
@@ -103,7 +110,7 @@ public class CharacterConversation : InteractionModuleBase
     {
         if (highlight != null)
         {
-          //  highlight.Show();
+            highlight.Show();
         }
     }
 
@@ -111,7 +118,7 @@ public class CharacterConversation : InteractionModuleBase
     {
         if (highlight != null)
         {
-          //  highlight.Hide();
+            highlight.Hide();
         }
     }
 
@@ -119,17 +126,22 @@ public class CharacterConversation : InteractionModuleBase
 
     private void SetTalking()
     {
-        if (animator != null)
+        if (bodyAnimator != null)
         {
-            animator.SetTrigger(talkingTrigger);
+            bodyAnimator.SetTrigger(talkingTrigger);
+        }
+
+        if (facialAnimator != null)
+        {
+            facialAnimator.SetTrigger(faceTalkingTrigger);
         }
     }
 
     private void SetIdle()
     {
-        if (animator != null)
+        if (bodyAnimator != null)
         {
-            animator.SetTrigger(idleTrigger);
+            bodyAnimator.SetTrigger(idleTrigger);
         }
     }
 
@@ -160,6 +172,11 @@ public class CharacterConversation : InteractionModuleBase
         {
             FinishConversation();
             yield break;
+        }
+
+        if (startDelay > 0)
+        {
+            yield return new WaitForSeconds(startDelay);
         }
 
         if (dialogueData.openingClip != null && audioSource != null)
