@@ -59,6 +59,9 @@ public abstract class InteractionModuleBase : MonoBehaviour
     [SerializeField] private bool useTransitionFade = false;
     [SerializeField] private float fadeOutDuration = 0.35f;
     [SerializeField] private float fadeInDuration = 0.35f;
+    [Tooltip("When ticked, SequenceBrain will NOT fade out before activating this interaction. " +
+             "Use this when the sequence Timeline already reaches black before the interaction gate.")]
+    [SerializeField] private bool skipEnterFadeOut = false;
     [Tooltip("When ticked, SequenceBrain will NOT fade in after activating this interaction. " +
              "Use this for the opening inventory interaction where the Timeline controls the fade itself.")]
     [SerializeField] private bool skipEnterFadeIn = false;
@@ -73,6 +76,7 @@ public abstract class InteractionModuleBase : MonoBehaviour
     public bool UseTransitionFade => useTransitionFade;
     public float FadeOutDuration => fadeOutDuration;
     public float FadeInDuration => fadeInDuration;
+    public bool SkipEnterFadeOut => skipEnterFadeOut;
     public bool SkipEnterFadeIn => skipEnterFadeIn;
     public bool SkipExitFadeIn => skipExitFadeIn;
 
@@ -166,6 +170,22 @@ public abstract class InteractionModuleBase : MonoBehaviour
         director.Stop();
         director.time = 0d;
         director.Evaluate();
+    }
+
+    /// <summary>
+    /// Releases Timeline's animation graph before a script-driven exit fade.
+    /// Deliberately does not rewind or evaluate frame zero, since that could
+    /// overwrite the fader before SequenceBrain restores its captured alpha.
+    /// </summary>
+    public void ReleaseInteractionTimelineForExitFade()
+    {
+        PlayableDirector director = ResolveInteractionTimelineDirector();
+        if (director == null)
+        {
+            return;
+        }
+
+        director.Stop();
     }
 
     private PlayableDirector ResolveInteractionTimelineDirector()

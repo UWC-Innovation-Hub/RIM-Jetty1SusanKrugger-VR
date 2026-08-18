@@ -116,6 +116,8 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
     {
         HighlightMaterial.SetFloat("_EmissionStrength", 2.0f);
     }
+
+
    
     void OnApplicationQuit()
     {
@@ -287,7 +289,7 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
         videoPlayer.Play();
         Debug.Log("Video is playing");
 
-        yield return FadeVideoAlpha(1f);
+        yield return FadeVideoAlpha(0.9f);
 
         if (!videoPlaybackFailed)
         {
