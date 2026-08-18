@@ -544,6 +544,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `RopeMesh.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeMesh.cs` |
 | `RopeWindEffect.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeWindEffect.cs` |
 | `AnimatorTriggerRelay.cs` | `Assets/Scripts/Animations/AnimatorTriggerRelay.cs` |
+| `BoatWaterMovement.cs` | `Assets/Scripts/Animations/BoatWaterMovement.cs` |
 | `Boat_movement.cs` | `Assets/Scripts/Animations/Boat_movement.cs` |
 | `CargoDoorDriver.cs` | `Assets/Scripts/Animations/CargoDoorDriver.cs` |
 | `ClockAnim.cs` | `Assets/Scripts/Animations/ClockAnim.cs` |
