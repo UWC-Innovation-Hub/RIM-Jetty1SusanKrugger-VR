@@ -7,6 +7,10 @@ using UnityEngine.Video;
 
 public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
 {
+    [Header("Interaction")]
+    [Tooltip("Prevent progress and dwell from triggering again after the first completed dwell.")]
+    [SerializeField] private bool completeOnlyOnce = false;
+
     [Header("UI")]
     [Tooltip("World-space canvas shown on gaze")]
     [SerializeField] private GameObject infoCanvas;
@@ -61,6 +65,7 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
 
     private bool playedAudio = false;
     private bool playedVideo = false;
+    private bool hasCompletedDwell = false;
 
     private void Awake()
     {
@@ -142,6 +147,17 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
 
     public void OnGazeDwell()
     {
+        if (completeOnlyOnce && hasCompletedDwell)
+        {
+            HideProgressReticle();
+            return;
+        }
+
+        if (completeOnlyOnce)
+        {
+            hasCompletedDwell = true;
+        }
+
         onGazeDwell?.Invoke();
         HideProgressReticle();
 
@@ -158,6 +174,12 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
 
     public void OnGazeProgress(float normalized)
     {
+        if (completeOnlyOnce && hasCompletedDwell)
+        {
+            HideProgressReticle();
+            return;
+        }
+
         if (!showProgressReticle)
         {
             return;
