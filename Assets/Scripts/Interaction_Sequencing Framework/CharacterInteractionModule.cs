@@ -139,6 +139,14 @@ public class CharacterInteractionModule : InteractionModuleBase
     {
         ActiveCharacter = character;
 
+        for (int i = 0; i < characters.Length; i++)
+        {
+            if (characters[i] != null && characters[i] != character)
+            {
+                characters[i]. HideHighlight();
+            }
+        }
+
         character.Completed -= OnCharacterCompleted;
         character.Completed += OnCharacterCompleted;
 
@@ -159,6 +167,14 @@ public class CharacterInteractionModule : InteractionModuleBase
         }
 
         ActiveCharacter = null;
+
+        for (int i = 0; i < characters.Length; i++)
+        {
+            if (characters[i] != null && !_completedCharacters.Contains(characters[i]))
+            {
+                characters[i]. ShowHighlight();
+            }
+        }
 
         onCharacterCompleted?.Invoke(CompletedCount);
 
