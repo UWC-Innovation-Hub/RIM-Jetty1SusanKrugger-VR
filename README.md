@@ -212,6 +212,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── JS_Testing/
             ├── J1_Testing_lightbake_JS/
             ├── Registration office setup/
+            ├── prefabs/
         ├── SampleScene/
         ├── TestScenes/
             ├── BlackWaitingRoomTest/
@@ -219,6 +220,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── C2_J3_Cell_Rec_Assets/
             ├── C4_J6_Black_Visitors_Room_TESTING/
             ├── C6_SK1_The_Hold/
+            ├── C6_SK1_The_Hold_BACKUP/
             ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
@@ -628,6 +630,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `Mirror movement.cs` | `Assets/Scripts/Mirror/Mirror movement.cs` |
 | `MirrorFollow.cs` | `Assets/Scripts/Mirror/MirrorFollow.cs` |
 | `mirror_movement.cs` | `Assets/Scripts/Mirror/mirror_movement.cs` |
+| `HandIKDistance.cs` | `Assets/Scripts/Prisoner/HandIKDistance.cs` |
 | `PrisonerActorController.cs` | `Assets/Scripts/Prisoner/PrisonerActorController.cs` |
 | `Walk_Cycle_modifier.cs` | `Assets/Scripts/Prisoner/Walk_Cycle_modifier.cs` |
 | `TimelineBindingTransfer.cs` | `Assets/Scripts/Timeline/TimelineBindingTransfer.cs` |
