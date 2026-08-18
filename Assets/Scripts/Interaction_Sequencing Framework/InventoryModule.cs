@@ -451,7 +451,7 @@ public class InventoryModule : InteractionModuleBase
 
         while (IsActive &&
                !IsComplete &&
-               ((initialGazeAudioSource != null && initialGazeAudioSource.isPlaying) ||
+               (IsInitialGazeMediaPlaying() ||
                 fadeElapsed < fadeDuration))
         {
             if (initialGazeUiCanvasGroup != null && fadeElapsed < fadeDuration)
@@ -475,6 +475,13 @@ public class InventoryModule : InteractionModuleBase
         }
 
         OpenInitialGazeGate();
+    }
+
+    private bool IsInitialGazeMediaPlaying()
+    {
+        bool audioIsPlaying = initialGazeAudioSource != null && initialGazeAudioSource.isPlaying;
+        bool videoIsPlaying = initialGazeTarget != null && initialGazeTarget.IsVideoPlaybackActive;
+        return audioIsPlaying || videoIsPlaying;
     }
 
     private void OpenInitialGazeGate()
