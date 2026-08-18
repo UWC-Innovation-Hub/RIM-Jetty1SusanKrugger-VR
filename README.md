@@ -33,9 +33,11 @@ Through VR, visitors can walk through historically significant locations on Robb
 ├── Assets/
     ├── Animations/
         ├── C1/
+            ├── Mixamo edits/
         ├── C4/
             ├── Controllers/
             ├── Sitting Animations/
+        ├── C6/
         ├── J1/
         ├── Mixamo_tests/
     ├── Audio/
@@ -144,6 +146,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Black_Visitors_Room_Textures/
             ├── folded-wrinkled-paper/
         ├── C6_SK1_The_Hold/
+            ├── FAB/
             ├── GrayBox/
             ├── Rough/
         ├── Cargo Space/
@@ -183,6 +186,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Prisoner Shaders/
     ├── Prisoners/
         ├── Prisoner_Prefabs/
+            ├── Chained_Prisoner_Prefabs/
         ├── Prisoner_Rigs/
             ├── Textures/
     ├── Resources/
@@ -208,6 +212,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── JS_Testing/
             ├── J1_Testing_lightbake_JS/
             ├── Registration office setup/
+            ├── prefabs/
         ├── SampleScene/
         ├── TestScenes/
             ├── BlackWaitingRoomTest/
@@ -215,6 +220,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── C2_J3_Cell_Rec_Assets/
             ├── C4_J6_Black_Visitors_Room_TESTING/
             ├── C6_SK1_The_Hold/
+            ├── C6_SK1_The_Hold_BACKUP/
             ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
@@ -286,6 +292,21 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Themes/
         ├── Tutorial/
         ├── Videos/
+    ├── Warders/
+        ├── Textures/
+            ├── WARDER_1_Uniform/
+            ├── Warder_1_Textures/
+            ├── Warder_2_Textures/
+            ├── Warder_2_Uniform/
+            ├── Warder_3_Textures/
+            ├── Warder_3_Uniform/
+            ├── Warder_4_Textures/
+            ├── Warder_4_Uniform/
+            ├── Warder_5_Textures/
+            ├── Warder_5_Uniform/
+            ├── Warder_Hat_v002_Textures/
+        ├── Warder_5_rigs/
+        ├── Warder_Prefabs/
     ├── XR/
         ├── Loaders/
         ├── Resources/
@@ -524,6 +545,8 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `Rope.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/Rope.cs` |
 | `RopeMesh.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeMesh.cs` |
 | `RopeWindEffect.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeWindEffect.cs` |
+| `AnimatorTriggerRelay.cs` | `Assets/Scripts/Animations/AnimatorTriggerRelay.cs` |
+| `BoatWaterMovement.cs` | `Assets/Scripts/Animations/BoatWaterMovement.cs` |
 | `Boat_movement.cs` | `Assets/Scripts/Animations/Boat_movement.cs` |
 | `CargoDoorDriver.cs` | `Assets/Scripts/Animations/CargoDoorDriver.cs` |
 | `ClockAnim.cs` | `Assets/Scripts/Animations/ClockAnim.cs` |
@@ -532,6 +555,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `FadeControllerScript.cs` | `Assets/Scripts/Animations/FadeControllerScript.cs` |
 | `MaterialOpacityFader.cs` | `Assets/Scripts/Animations/MaterialOpacityFader.cs` |
 | `ParentVelocityToWalkAnimator.cs` | `Assets/Scripts/Animations/ParentVelocityToWalkAnimator.cs` |
+| `ProceduralSpotlightFlicker.cs` | `Assets/Scripts/Animations/ProceduralSpotlightFlicker.cs` |
 | `SK_controller.cs` | `Assets/Scripts/Animations/SK_controller.cs` |
 | `TokenMove.cs` | `Assets/Scripts/Animations/TokenMove.cs` |
 | `TruckManager.cs` | `Assets/Scripts/Animations/TruckManager.cs` |
@@ -606,6 +630,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `Mirror movement.cs` | `Assets/Scripts/Mirror/Mirror movement.cs` |
 | `MirrorFollow.cs` | `Assets/Scripts/Mirror/MirrorFollow.cs` |
 | `mirror_movement.cs` | `Assets/Scripts/Mirror/mirror_movement.cs` |
+| `HandIKDistance.cs` | `Assets/Scripts/Prisoner/HandIKDistance.cs` |
 | `PrisonerActorController.cs` | `Assets/Scripts/Prisoner/PrisonerActorController.cs` |
 | `Walk_Cycle_modifier.cs` | `Assets/Scripts/Prisoner/Walk_Cycle_modifier.cs` |
 | `TimelineBindingTransfer.cs` | `Assets/Scripts/Timeline/TimelineBindingTransfer.cs` |
