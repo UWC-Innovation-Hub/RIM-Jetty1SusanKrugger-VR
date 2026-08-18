@@ -7,6 +7,9 @@ public class ArtifactInteractionModule : InteractionModuleBase
     [Header("Wiring")]
     [SerializeField] private ArtifactHighlightTrigger[] targets;
 
+    [Header("Tutorial")]
+    [SerializeField] private TutorialPopup tutorialPopup;
+
     private readonly HashSet<ArtifactHighlightTrigger> _completed = new HashSet<ArtifactHighlightTrigger>();
 
     public override void Activate()
@@ -23,11 +26,25 @@ public class ArtifactInteractionModule : InteractionModuleBase
         }
 
         SubscribeToTargets();
-        ArmAllTargets();
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Closed += OnTutorialClosed;
+            tutorialPopup.Show();
+        }
+        else
+        {
+            ArmAllTargets();
+        } 
     }
 
     public override void Deactivate()
     {
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Closed -= OnTutorialClosed;
+        }
+
         UnsubscribeFromTargets();
 
         if (targets != null)
@@ -44,6 +61,12 @@ public class ArtifactInteractionModule : InteractionModuleBase
     private void OnDisable()
     {
         UnsubscribeFromTargets();
+    }
+
+    private void OnTutorialClosed()
+    {
+        tutorialPopup.Closed -= OnTutorialClosed;
+        ArmAllTargets();
     }
 
     private bool OnTargetSelection(ArtifactHighlightTrigger target)
