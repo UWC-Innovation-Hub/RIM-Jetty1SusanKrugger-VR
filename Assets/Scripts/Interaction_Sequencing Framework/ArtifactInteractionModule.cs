@@ -9,6 +9,10 @@ public class ArtifactInteractionModule : InteractionModuleBase
 
     [Header("Tutorial")]
     [SerializeField] private TutorialPopup tutorialPopup;
+    [SerializeField] private float tutorialTimeout = 15f;
+
+    private Coroutine _tutorialTimeoutRoutine;
+    private bool _tutorialResolved;
 
     private readonly HashSet<ArtifactHighlightTrigger> _completed = new HashSet<ArtifactHighlightTrigger>();
 
@@ -31,6 +35,11 @@ public class ArtifactInteractionModule : InteractionModuleBase
         {
             tutorialPopup.Closed += OnTutorialClosed;
             tutorialPopup.Show();
+
+            if (tutorialTimeout > 0f)
+            {
+                _tutorialTimeoutRoutine = StartCoroutine(TutorialTimeoutRoutine());
+            }
         }
         else
         {
@@ -43,6 +52,12 @@ public class ArtifactInteractionModule : InteractionModuleBase
         if (tutorialPopup != null)
         {
             tutorialPopup.Closed -= OnTutorialClosed;
+        }
+
+        if (_tutorialTimeoutRoutine != null)
+        {
+            StopCoroutine(_tutorialTimeoutRoutine);
+            _tutorialTimeoutRoutine = null;
         }
 
         UnsubscribeFromTargets();
@@ -65,7 +80,48 @@ public class ArtifactInteractionModule : InteractionModuleBase
 
     private void OnTutorialClosed()
     {
-        tutorialPopup.Closed -= OnTutorialClosed;
+        ResolveTutorial();
+    }
+
+    private IEnumerator TutorialTimeoutRoutine()
+    {
+        yield return new WaitForSeconds(tutorialTimeout);
+
+        _tutorialTimeoutRoutine = null;
+
+        if (_tutorialResolved)
+        {
+            yield break;
+        }
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Hide();
+        }
+
+        ResolveTutorial();
+    }
+
+    private void ResolveTutorial()
+    {
+        if (_tutorialResolved)
+        {
+            return;
+        }
+
+        _tutorialResolved = true;
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Closed -= OnTutorialClosed;
+        }
+
+        if (_tutorialTimeoutRoutine != null)
+        {
+            StopCoroutine(_tutorialTimeoutRoutine);
+            _tutorialTimeoutRoutine = null;
+        }
+
         ArmAllTargets();
     }
 
