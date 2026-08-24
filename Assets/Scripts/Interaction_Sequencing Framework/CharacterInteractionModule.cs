@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,6 +11,7 @@ public class CharacterInteractionModule : InteractionModuleBase
 
     [Header("Tutorial")]
     [SerializeField] private TutorialPopup tutorialPopup;
+    [SerializeField] private float tutorialTimeout = 15f;
 
     [Header("Events")]
     [Tooltip("Fired each time a conversation is complete")]
@@ -26,6 +28,8 @@ public class CharacterInteractionModule : InteractionModuleBase
     public CharacterConversation ActiveCharacter { get; private set; }
 
     private readonly HashSet<CharacterConversation> _completedCharacters = new HashSet<CharacterConversation>();
+    private Coroutine _tutorialTimeoutRoutine;
+    private bool _tutorialResolved;
 
     //INTERACTIONMODULEBASE OVERRIDES
 
@@ -35,6 +39,7 @@ public class CharacterInteractionModule : InteractionModuleBase
 
         CompletedCount = 0;
         ActiveCharacter = null;
+        _tutorialResolved = false;
         _completedCharacters.Clear();
 
         for (int i = 0; i < characters.Length; i++)
@@ -49,6 +54,11 @@ public class CharacterInteractionModule : InteractionModuleBase
         {
             tutorialPopup.Closed += OnTutorialClosed;
             tutorialPopup.Show();
+
+            if (tutorialTimeout > 0f)
+            {
+                _tutorialTimeoutRoutine = StartCoroutine(TutorialTimeoutRoutine());
+            }
         }
         else
         {
@@ -63,6 +73,12 @@ public class CharacterInteractionModule : InteractionModuleBase
         if (tutorialPopup != null)
         {
             tutorialPopup.Closed -= OnTutorialClosed;
+        }
+
+        if (_tutorialTimeoutRoutine != null)
+        {
+            StopCoroutine(_tutorialTimeoutRoutine);
+            _tutorialTimeoutRoutine = null;
         }
 
         if (ActiveCharacter != null)
@@ -120,7 +136,48 @@ public class CharacterInteractionModule : InteractionModuleBase
 
     private void OnTutorialClosed()
     {
-        tutorialPopup.Closed -= OnTutorialClosed;
+        ResolveTutorial();
+    }
+
+    private IEnumerator TutorialTimeoutRoutine()
+    {
+        yield return new WaitForSeconds(tutorialTimeout);
+
+        _tutorialTimeoutRoutine = null;
+
+        if (_tutorialResolved)
+        {
+            yield break;
+        }
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Hide();
+        }
+
+        ResolveTutorial();
+    }
+
+    private void ResolveTutorial()
+    {
+        if (_tutorialResolved)
+        {
+            return;
+        }
+
+        _tutorialResolved = true;
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Closed -= OnTutorialClosed;
+        }
+
+        if (_tutorialTimeoutRoutine != null)
+        {
+            StopCoroutine(_tutorialTimeoutRoutine);
+            _tutorialTimeoutRoutine = null;
+        }
+
         ShowAllHighlights();
     }
 
