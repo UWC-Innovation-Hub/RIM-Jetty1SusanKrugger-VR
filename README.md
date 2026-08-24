@@ -144,6 +144,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── prison-bed/
         ├── C4_J6_Black_Visitors_Room/
             ├── Black_Visitors_Room_Textures/
+            ├── Handbag_Textures/
             ├── folded-wrinkled-paper/
         ├── C6_SK1_The_Hold/
             ├── FAB/
