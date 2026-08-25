@@ -12,6 +12,7 @@ public class CharacterConversation : InteractionModuleBase
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private DialogueUI dialogueUI;
     [SerializeField] private float startDelay = 0.5f;
+    [SerializeField] private float responseTimeout = 10f;
 
     [Header("Spotlight")]
     [SerializeField] private CharacterSpotlight spotlight;
@@ -209,7 +210,19 @@ public class CharacterConversation : InteractionModuleBase
         dialogueUI.OnChoiceSelected += OnChoice;
         dialogueUI.Show(dialogueData.choices);
 
+        Coroutine timeoutRoutine = null;
+        if (responseTimeout > 0f)
+        {
+            timeoutRoutine = StartCoroutine(ResponseTimeoutRoutine(dialogueData.choices.Length, i => selectedIndex = 1));
+        }
+
+
         yield return new WaitUntil(() => selectedIndex >= 0);
+
+        if (timeoutRoutine != null)
+        {
+            StopCoroutine(timeoutRoutine);
+        }
 
         dialogueUI.OnChoiceSelected -= OnChoice;
         dialogueUI.Hide();
@@ -223,5 +236,14 @@ public class CharacterConversation : InteractionModuleBase
 
         _dialogueRoutine = null;
         FinishConversation();
+    }
+
+    private IEnumerator ResponseTimeoutRoutine(int choiceCount, System.Action<int> onTimeout)
+    {
+        yield return new WaitForSeconds(responseTimeout);
+
+        int randomIndex = Random.Range(0, choiceCount);
+        Debug.Log($"[CharacterConversation] '{characterName}' response timed out. Auto-selecting index {randomIndex}.");
+        onTimeout(randomIndex);
     }
 }
