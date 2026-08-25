@@ -7,6 +7,10 @@ using UnityEngine.Video;
 
 public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
 {
+    [Header("Interaction")]
+    [Tooltip("Prevent progress and dwell from triggering again after the first completed dwell.")]
+    [SerializeField] private bool completeOnlyOnce = false;
+
     [Header("UI")]
     [Tooltip("World-space canvas shown on gaze")]
     [SerializeField] private GameObject infoCanvas;
@@ -32,6 +36,7 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private bool playVideoOnGaze = true;
     [SerializeField] private bool playVideoOnlyOnce = true;
+    [SerializeField] private float videoFadeDuration = 0.5f;
 
     [SerializeField] private Material HighlightMaterial;
 
@@ -53,14 +58,25 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
     private Coroutine animationCoroutine;
     private Coroutine hideCoroutine;
     private Coroutine indicatorCoroutine;
+    private Coroutine videoPlaybackCoroutine;
     private Vector3 indicatorOriginalScale;
     private GazeIndicator indicatorScript;
     private RectTransform progressReticleRoot;
     private CanvasGroup progressReticleCanvasGroup;
     private Image progressFillArc;
+    private Material videoMaterial;
+    private int videoColorPropertyId = -1;
 
     private bool playedAudio = false;
     private bool playedVideo = false;
+    private bool hasCompletedDwell = false;
+    private bool videoPlaybackFinished = false;
+    private bool videoPlaybackFailed = false;
+
+    private static readonly int BaseColorPropertyId = Shader.PropertyToID("_BaseColor");
+    private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
+
+    public bool IsVideoPlaybackActive { get; private set; }
 
     private void Awake()
     {
@@ -76,13 +92,36 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
             indicatorScript = indicator.GetComponent<GazeIndicator>();
         }
 
+        InitializeVideoPlayback();
+
         EnsureProgressReticle();
         HideProgressReticle();
+    }
+
+    private void OnDestroy()
+    {
+        if (videoPlayer != null)
+        {
+            videoPlayer.loopPointReached -= OnVideoPlaybackFinished;
+            videoPlayer.errorReceived -= OnVideoPlaybackError;
+        }
+
+        if (videoMaterial != null)
+        {
+            Destroy(videoMaterial);
+        }
     }
 
     public void SetEmissionMatUp()
     {
         HighlightMaterial.SetFloat("_EmissionStrength", 2.0f);
+    }
+
+
+   
+    void OnApplicationQuit()
+    {
+        SetEmissionMatUp();
     }
 
     public void SetEmissionMatDown()
@@ -94,16 +133,6 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
     {
         onGazeEnter?.Invoke();
         OnGazeProgress(0f);
-
-        if (playVideoOnGaze && videoPlayer != null)
-        {
-            if (!playVideoOnlyOnce || !playedVideo)
-            {
-                videoPlayer.Play();
-                playedVideo = true;
-                Debug.Log("Video is playing");
-            }
-        }
 
         StopRoutine(ref hideCoroutine);
 
@@ -142,8 +171,39 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
 
     public void OnGazeDwell()
     {
+        if (completeOnlyOnce && hasCompletedDwell)
+        {
+            HideProgressReticle();
+            return;
+        }
+
+        if (completeOnlyOnce)
+        {
+            hasCompletedDwell = true;
+        }
+
+        bool videoSelected = playVideoOnGaze && videoPlayer != null;
+        bool shouldPlayVideo = videoSelected && (!playVideoOnlyOnce || !playedVideo);
+
+        if (shouldPlayVideo)
+        {
+            playedVideo = true;
+            IsVideoPlaybackActive = true;
+        }
+
         onGazeDwell?.Invoke();
         HideProgressReticle();
+
+        if (videoSelected)
+        {
+            if (shouldPlayVideo)
+            {
+                StopRoutine(ref videoPlaybackCoroutine);
+                videoPlaybackCoroutine = StartCoroutine(RunVideoPlaybackSequence());
+            }
+
+            return;
+        }
 
         if (playAudioOnGaze && audioSource != null)
         {
@@ -158,6 +218,12 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
 
     public void OnGazeProgress(float normalized)
     {
+        if (completeOnlyOnce && hasCompletedDwell)
+        {
+            HideProgressReticle();
+            return;
+        }
+
         if (!showProgressReticle)
         {
             return;
@@ -174,6 +240,132 @@ public class GazeTarget : MonoBehaviour, IGazeTarget, IGazeProgressTarget
         SetProgressReticleVisible(fillAmount > 0f);
         progressFillArc.color = progressFillColor;
         progressFillArc.fillAmount = fillAmount;
+    }
+
+    private void InitializeVideoPlayback()
+    {
+        if (videoPlayer == null)
+        {
+            return;
+        }
+
+        videoPlayer.playOnAwake = false;
+        videoPlayer.Stop();
+        videoPlayer.loopPointReached += OnVideoPlaybackFinished;
+        videoPlayer.errorReceived += OnVideoPlaybackError;
+
+        Renderer targetRenderer = videoPlayer.targetMaterialRenderer;
+        if (targetRenderer == null)
+        {
+            Debug.LogWarning($"{name}: VideoPlayer has no target material renderer assigned.");
+            return;
+        }
+
+        videoMaterial = targetRenderer.material;
+
+        if (videoMaterial.HasProperty(BaseColorPropertyId))
+        {
+            videoColorPropertyId = BaseColorPropertyId;
+        }
+        else if (videoMaterial.HasProperty(ColorPropertyId))
+        {
+            videoColorPropertyId = ColorPropertyId;
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: Video material has no supported color property for alpha fading.");
+            return;
+        }
+
+        SetVideoAlpha(0f);
+    }
+
+    private IEnumerator RunVideoPlaybackSequence()
+    {
+        videoPlaybackFinished = false;
+        videoPlaybackFailed = false;
+        SetVideoAlpha(0f);
+
+        videoPlayer.Play();
+        Debug.Log("Video is playing");
+
+        yield return FadeVideoAlpha(0.9f);
+
+        if (!videoPlaybackFailed)
+        {
+            while (!videoPlaybackFinished && !videoPlaybackFailed)
+            {
+                yield return null;
+            }
+        }
+
+        yield return FadeVideoAlpha(0f);
+        CompleteVideoPlaybackSequence();
+    }
+
+    private IEnumerator FadeVideoAlpha(float targetAlpha)
+    {
+        if (videoMaterial == null || videoColorPropertyId < 0)
+        {
+            yield break;
+        }
+
+        float duration = Mathf.Max(0f, videoFadeDuration);
+        float startAlpha = videoMaterial.GetColor(videoColorPropertyId).a;
+
+        if (duration <= 0f)
+        {
+            SetVideoAlpha(targetAlpha);
+            yield break;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            SetVideoAlpha(Mathf.Lerp(startAlpha, targetAlpha, Mathf.Clamp01(elapsed / duration)));
+            yield return null;
+        }
+
+        SetVideoAlpha(targetAlpha);
+    }
+
+    private void SetVideoAlpha(float alpha)
+    {
+        if (videoMaterial == null || videoColorPropertyId < 0)
+        {
+            return;
+        }
+
+        Color color = videoMaterial.GetColor(videoColorPropertyId);
+        color.a = Mathf.Clamp01(alpha);
+        videoMaterial.SetColor(videoColorPropertyId, color);
+    }
+
+    private void OnVideoPlaybackFinished(VideoPlayer source)
+    {
+        if (source == videoPlayer)
+        {
+            videoPlaybackFinished = true;
+        }
+    }
+
+    private void OnVideoPlaybackError(VideoPlayer source, string message)
+    {
+        if (source != videoPlayer)
+        {
+            return;
+        }
+
+        videoPlaybackFailed = true;
+        Debug.LogError($"{name}: Video playback failed: {message}");
+    }
+
+    private void CompleteVideoPlaybackSequence()
+    {
+        SetVideoAlpha(0f);
+        IsVideoPlaybackActive = false;
+        videoPlaybackCoroutine = null;
     }
 
     private IEnumerator HideAfterDelay()

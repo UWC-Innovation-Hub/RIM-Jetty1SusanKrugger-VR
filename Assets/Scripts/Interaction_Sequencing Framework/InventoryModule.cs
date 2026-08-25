@@ -84,6 +84,8 @@ public class InventoryModule : InteractionModuleBase
     [Header("Relocate Settings")]
     public float relocateDelay = 1f;
     public PlayerRelocate playerRelocate;
+    [Tooltip("Run the same delayed player relocation used by successful completion when the inherited interaction timeout expires.")]
+    [SerializeField] private bool relocateOnInteractionTimeout = false;
 
     [Header("Attachment Point Guidance")]
     [SerializeField] private bool highlightExpectedAttachmentPoints = true;
@@ -451,7 +453,7 @@ public class InventoryModule : InteractionModuleBase
 
         while (IsActive &&
                !IsComplete &&
-               ((initialGazeAudioSource != null && initialGazeAudioSource.isPlaying) ||
+               (IsInitialGazeMediaPlaying() ||
                 fadeElapsed < fadeDuration))
         {
             if (initialGazeUiCanvasGroup != null && fadeElapsed < fadeDuration)
@@ -475,6 +477,13 @@ public class InventoryModule : InteractionModuleBase
         }
 
         OpenInitialGazeGate();
+    }
+
+    private bool IsInitialGazeMediaPlaying()
+    {
+        bool audioIsPlaying = initialGazeAudioSource != null && initialGazeAudioSource.isPlaying;
+        bool videoIsPlaying = initialGazeTarget != null && initialGazeTarget.IsVideoPlaybackActive;
+        return audioIsPlaying || videoIsPlaying;
     }
 
     private void OpenInitialGazeGate()
@@ -631,14 +640,39 @@ public class InventoryModule : InteractionModuleBase
 
         if (CorrectPlacedCount >= GetTargetCount())
         {
-            Complete();
+            CompleteInventoryInteraction();
+        }
+    }
 
-            StartCoroutine(FadeOutAudioSource(
-       InventoryAudio,
-       1f
-   ));
+    protected override void OnInteractionTimedOut()
+    {
+        if (!relocateOnInteractionTimeout)
+        {
+            base.OnInteractionTimedOut();
+            return;
+        }
 
+        Debug.Log($"[{name}] Inventory timeout relocation is enabled. Running the normal inventory exit effects.");
+        CompleteInventoryInteraction();
+    }
+
+    private void CompleteInventoryInteraction()
+    {
+        if (!IsActive || IsComplete)
+        {
+            return;
+        }
+
+        Complete();
+        StartCoroutine(FadeOutAudioSource(InventoryAudio, 1f));
+
+        if (playerRelocate != null)
+        {
             StartCoroutine(RelocateAfterDelay());
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: Inventory completion could not relocate the player because no PlayerRelocate is assigned.");
         }
     }
 
@@ -668,9 +702,7 @@ public class InventoryModule : InteractionModuleBase
 
     private IEnumerator RelocateAfterDelay()
     {
-
         yield return new WaitForSeconds(relocateDelay);
-
         playerRelocate.Relocate();
     }
 

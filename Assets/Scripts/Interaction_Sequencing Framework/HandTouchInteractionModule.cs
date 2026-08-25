@@ -23,6 +23,13 @@ public class HandTouchInteractionModule : InteractionModuleBase
     [SerializeField] private bool hideHandsWhenInactive = true;
     [SerializeField] private float revealDelayBetweenHands = 0f;
 
+    [Header("Per-Item Inactivity Assistance")]
+    [Tooltip("Automatically select one remaining hand after the player has been inactive for the configured threshold.")]
+    [SerializeField] private bool enableItemInactivityAssist = false;
+    [Tooltip("How long the remaining hands can stay selectable before one is selected automatically.")]
+    [Min(0f)]
+    [SerializeField] private float itemInactivityTimeoutSeconds = 30f;
+
     [Header("Projection")]
     [SerializeField] private ProjectorController projector;
     [SerializeField] private VideoPlayer videoPlayer;
@@ -68,6 +75,14 @@ public class HandTouchInteractionModule : InteractionModuleBase
 
         ResolveDependencies();
         ResolveStepDependencies();
+
+        if (_sequenceRoutine != null)
+        {
+            StopCoroutine(_sequenceRoutine);
+            _sequenceRoutine = null;
+        }
+
+        RestoreHandAudioMuteStates();
         ResetHands();
         _consumedSteps.Clear();
         _currentSelection = null;
@@ -144,8 +159,14 @@ public class HandTouchInteractionModule : InteractionModuleBase
         {
             if (AllHandsConsumed())
             {
+                yield return RestoreSceneLightBeforeComplete();
                 _sequenceRoutine = null;
-                Complete();
+
+                if (IsActive)
+                {
+                    Complete();
+                }
+
                 yield break;
             }
 
@@ -159,14 +180,38 @@ public class HandTouchInteractionModule : InteractionModuleBase
             {
                 if (AllHandsConsumed())
                 {
+                    yield return RestoreSceneLightBeforeComplete();
                     _sequenceRoutine = null;
-                    Complete();
+
+                    if (IsActive)
+                    {
+                        Complete();
+                    }
                 }
 
                 yield break;
             }
 
             bool projectionStarted = StartProjectionForSelection(_currentSelection);
+            if (!projectionStarted)
+            {
+                HandTouchStep failedStep = _currentSelection;
+                _currentSelection = null;
+
+                if (!IsStepStructurallyValidForProjection(failedStep, logWarning: false))
+                {
+                    _consumedSteps.Add(failedStep);
+                    HideHand(failedStep);
+                }
+                else
+                {
+                    RearmStepSelection(failedStep);
+                    ShowAvailableHands();
+                }
+
+                continue;
+            }
+
             yield return WaitForProjectionToFinish(projectionStarted);
             if (!IsActive || _currentSelection == null)
             {
@@ -233,6 +278,8 @@ public class HandTouchInteractionModule : InteractionModuleBase
 
     private IEnumerator WaitForNextSelection()
     {
+        float elapsed = 0f;
+
         while (IsActive)
         {
             for (int i = 0; i < handSteps.Count; i++)
@@ -259,8 +306,57 @@ public class HandTouchInteractionModule : InteractionModuleBase
                 yield break;
             }
 
+            if (enableItemInactivityAssist && elapsed >= itemInactivityTimeoutSeconds)
+            {
+                if (TrySelectNextHandForInactivityAssist())
+                {
+                    yield break;
+                }
+
+                if (AllHandsConsumed())
+                {
+                    yield break;
+                }
+
+                elapsed = 0f;
+            }
+
+            elapsed += Time.deltaTime;
             yield return null;
         }
+    }
+
+    private bool TrySelectNextHandForInactivityAssist()
+    {
+        for (int i = 0; i < handSteps.Count; i++)
+        {
+            HandTouchStep step = handSteps[i];
+            if (!IsStepAvailable(step))
+            {
+                continue;
+            }
+
+            if (!IsStepStructurallyValidForProjection(step, logWarning: true))
+            {
+                _consumedSteps.Add(step);
+                HideHand(step);
+                continue;
+            }
+
+            _currentSelection = step;
+            StopStepAudio(step);
+
+            if (step.selectionCollider != null)
+            {
+                step.selectionCollider.enabled = false;
+            }
+
+            HideNonSelectedHands(step);
+            Debug.Log($"[{name}] No hand was selected for {itemInactivityTimeoutSeconds:0.##} seconds. Selecting '{GetStepName(step)}' automatically.");
+            return true;
+        }
+
+        return false;
     }
 
     private IEnumerator WaitForProjectionToFinish(bool projectionStarted)
@@ -430,6 +526,44 @@ public class HandTouchInteractionModule : InteractionModuleBase
         }
 
         return true;
+    }
+
+    private bool IsStepStructurallyValidForProjection(HandTouchStep step, bool logWarning)
+    {
+        if (step == null)
+        {
+            return false;
+        }
+
+        if (projector == null || videoPlayer == null)
+        {
+            if (logWarning)
+            {
+                Debug.LogWarning($"{name}: Skipping timed hand '{GetStepName(step)}' because the projector is not configured.");
+            }
+
+            return false;
+        }
+
+        if (step.projectionClip == null)
+        {
+            if (logWarning)
+            {
+                Debug.LogWarning($"{name}: Skipping timed hand '{GetStepName(step)}' because its projection clip is not configured.");
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private static void RearmStepSelection(HandTouchStep step)
+    {
+        if (step?.selectionCollider != null)
+        {
+            step.selectionCollider.enabled = true;
+        }
     }
 
     private void OnVideoLoopPointReached(VideoPlayer player)

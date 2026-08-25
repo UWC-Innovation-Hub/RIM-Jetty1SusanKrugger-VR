@@ -106,6 +106,21 @@ public class FingerprintTrigger : MonoBehaviour
         if (!string.IsNullOrEmpty(requiredTag) && !other.CompareTag(requiredTag))
             return;
 
+        TrySelect();
+    }
+
+    /// <summary>
+    /// Attempts to activate this fingerprint through the same path used by a physical touch.
+    /// This allows interaction modules to provide inactivity assistance without duplicating
+    /// the fingerprint's audio and UI behaviour.
+    /// </summary>
+    public bool TrySelect()
+    {
+        if (!_armed)
+        {
+            return false;
+        }
+
         bool handledByModule = false;
         bool accepted = false;
 
@@ -121,7 +136,7 @@ public class FingerprintTrigger : MonoBehaviour
 
         if (!handledByModule)
         {
-            if (clip == null || projector == null) return;
+            if (clip == null || projector == null) return false;
             accepted = projector.TryPlay(clip);
         }
 
@@ -130,6 +145,8 @@ public class FingerprintTrigger : MonoBehaviour
             AS?.Play();
             BeginInfoFadeIn();
         }
+
+        return accepted;
     }
 
     public void BeginInfoFadeIn()

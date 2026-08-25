@@ -144,6 +144,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── prison-bed/
         ├── C4_J6_Black_Visitors_Room/
             ├── Black_Visitors_Room_Textures/
+            ├── Handbag_Textures/
             ├── folded-wrinkled-paper/
         ├── C6_SK1_The_Hold/
             ├── FAB/
@@ -212,6 +213,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── JS_Testing/
             ├── J1_Testing_lightbake_JS/
             ├── Registration office setup/
+            ├── prefabs/
         ├── SampleScene/
         ├── TestScenes/
             ├── BlackWaitingRoomTest/
@@ -219,6 +221,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── C2_J3_Cell_Rec_Assets/
             ├── C4_J6_Black_Visitors_Room_TESTING/
             ├── C6_SK1_The_Hold/
+            ├── C6_SK1_The_Hold_BACKUP/
             ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
             ├── SortPrisonerTest/
@@ -544,6 +547,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `RopeMesh.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeMesh.cs` |
 | `RopeWindEffect.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/RopeWindEffect.cs` |
 | `AnimatorTriggerRelay.cs` | `Assets/Scripts/Animations/AnimatorTriggerRelay.cs` |
+| `BoatWaterMovement.cs` | `Assets/Scripts/Animations/BoatWaterMovement.cs` |
 | `Boat_movement.cs` | `Assets/Scripts/Animations/Boat_movement.cs` |
 | `CargoDoorDriver.cs` | `Assets/Scripts/Animations/CargoDoorDriver.cs` |
 | `ClockAnim.cs` | `Assets/Scripts/Animations/ClockAnim.cs` |
@@ -627,6 +631,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `Mirror movement.cs` | `Assets/Scripts/Mirror/Mirror movement.cs` |
 | `MirrorFollow.cs` | `Assets/Scripts/Mirror/MirrorFollow.cs` |
 | `mirror_movement.cs` | `Assets/Scripts/Mirror/mirror_movement.cs` |
+| `HandIKDistance.cs` | `Assets/Scripts/Prisoner/HandIKDistance.cs` |
 | `PrisonerActorController.cs` | `Assets/Scripts/Prisoner/PrisonerActorController.cs` |
 | `Walk_Cycle_modifier.cs` | `Assets/Scripts/Prisoner/Walk_Cycle_modifier.cs` |
 | `TimelineBindingTransfer.cs` | `Assets/Scripts/Timeline/TimelineBindingTransfer.cs` |
