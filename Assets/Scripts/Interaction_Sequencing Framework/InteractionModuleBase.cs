@@ -264,6 +264,16 @@ public abstract class InteractionModuleBase : MonoBehaviour
         }
 
         Debug.Log($"[{name}] Interaction timed out after {interactionTimeoutSeconds:0.##} seconds. Completing automatically.");
+        OnInteractionTimedOut();
+    }
+
+    /// <summary>
+    /// Called when the optional whole-interaction timeout expires. Derived modules may
+    /// override this to run module-specific exit work before completion. The default
+    /// preserves the original timeout behaviour for every existing interaction module.
+    /// </summary>
+    protected virtual void OnInteractionTimedOut()
+    {
         Complete();
     }
 

@@ -68,7 +68,7 @@ The integer argument must match the module's position in `interactionModules`. T
 
 Derived modules should override `Activate()` and `Deactivate()`, call `base.Activate()` or `base.Deactivate()`, and call `Complete()` exactly once the player-facing requirement is satisfied.
 
-The base interaction timeout is a hard whole-module bypass: when it expires, it calls `Complete()` without playing unfinished module content. Transition fades remain independent and are applied by `SequenceBrain` only when the module's `useTransitionFade` setting is enabled.
+The base interaction timeout is a hard whole-module bypass. When it expires, it calls the protected `OnInteractionTimedOut()` hook, whose default implementation calls `Complete()` exactly as the original timeout did. Derived modules may override the hook for module-specific exit work without changing other interactions. Transition fades remain independent and are applied by `SequenceBrain` only when the module's `useTransitionFade` setting is enabled.
 
 ## Authoring Workflow
 
@@ -124,7 +124,7 @@ The scene contains Timeline signals that pass indices `0`, `1`, and `2`. Some in
 
 ### `InventoryModule`
 
-[`InventoryModule`](../Scripts/SequenceInteractionMechanism/InventoryModule.cs) completes when the configured number of items have been equipped. It can enforce item order, reject out-of-order equips, lock correctly placed items, highlight the next item, and highlight compatible attachment points.
+[`InventoryModule`](../Scripts/SequenceInteractionMechanism/InventoryModule.cs) completes when the configured number of items have been equipped. It can enforce item order, reject out-of-order equips, lock correctly placed items, highlight the next item, and highlight compatible attachment points. When `relocateOnInteractionTimeout` is enabled, a whole-interaction timeout uses the same delayed relocation and audio fade as successful completion.
 
 Completion source: inventory equip state reaches `requiredEquippedCount`.
 
