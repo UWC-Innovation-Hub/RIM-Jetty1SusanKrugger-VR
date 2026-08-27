@@ -299,6 +299,7 @@ MonoBehaviour:
   useTransitionFade: 0
   fadeOutDuration: 0.35
   fadeInDuration: 0.35
+  skipEnterFadeOut: 0
   skipEnterFadeIn: 0
   skipExitFadeIn: 0
   characterName: Character A
@@ -306,6 +307,7 @@ MonoBehaviour:
   audioSource: {fileID: 2657626}
   dialogueUI: {fileID: 571525585}
   startDelay: 0.5
+  responseTimeout: 10
   spotlight: {fileID: 2657627}
   highlight: {fileID: 2657628}
   onConversationEnded:
@@ -6046,8 +6048,8 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 311962901}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 3.432}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 2.08}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -6055,10 +6057,10 @@ RectTransform:
   - {fileID: 704208883}
   - {fileID: 48366040}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.763, y: 0.98}
+  m_AnchoredPosition: {x: 2.083, y: 0.98}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &312615625
@@ -8425,6 +8427,7 @@ MonoBehaviour:
   useTransitionFade: 1
   fadeOutDuration: 0.5
   fadeInDuration: 0.5
+  skipEnterFadeOut: 0
   skipEnterFadeIn: 0
   skipExitFadeIn: 0
   characters:
@@ -8433,6 +8436,7 @@ MonoBehaviour:
   - {fileID: 759829005}
   tutorialPopup: {fileID: 768529294}
   tutorialTimeout: 10
+  interactionTimeout: 15
   onCharacterCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -14479,6 +14483,7 @@ MonoBehaviour:
   useTransitionFade: 0
   fadeOutDuration: 0.35
   fadeInDuration: 0.35
+  skipEnterFadeOut: 0
   skipEnterFadeIn: 0
   skipExitFadeIn: 0
   characterName: Character D
@@ -14486,6 +14491,7 @@ MonoBehaviour:
   audioSource: {fileID: 759829006}
   dialogueUI: {fileID: 1446792951}
   startDelay: 0.5
+  responseTimeout: 10
   spotlight: {fileID: 759829007}
   highlight: {fileID: 759829008}
   onConversationEnded:
@@ -14841,8 +14847,8 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 768529289}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 3.432}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 2.08}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -14850,10 +14856,10 @@ RectTransform:
   - {fileID: 1926292174}
   - {fileID: 1630646382}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.763, y: 0.98}
+  m_AnchoredPosition: {x: 2.083, y: 0.98}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &768529294
@@ -22297,6 +22303,7 @@ MonoBehaviour:
   useTransitionFade: 0
   fadeOutDuration: 0.35
   fadeInDuration: 0.35
+  skipEnterFadeOut: 0
   skipEnterFadeIn: 0
   skipExitFadeIn: 0
   characterName: Character C
@@ -22304,6 +22311,7 @@ MonoBehaviour:
   audioSource: {fileID: 1116973606}
   dialogueUI: {fileID: 681458559}
   startDelay: 0.5
+  responseTimeout: 10
   spotlight: {fileID: 1116973607}
   highlight: {fileID: 1116973608}
   onConversationEnded:
@@ -27627,6 +27635,7 @@ MonoBehaviour:
   useTransitionFade: 1
   fadeOutDuration: 0.5
   fadeInDuration: 0.5
+  skipEnterFadeOut: 0
   skipEnterFadeIn: 0
   skipExitFadeIn: 0
   targets:
@@ -35879,6 +35888,7 @@ MonoBehaviour:
   useTransitionFade: 0
   fadeOutDuration: 0.35
   fadeInDuration: 0.35
+  skipEnterFadeOut: 0
   skipEnterFadeIn: 0
   skipExitFadeIn: 0
   characterName: Character B
@@ -35886,6 +35896,7 @@ MonoBehaviour:
   audioSource: {fileID: 1830212329}
   dialogueUI: {fileID: 509738151}
   startDelay: 0.5
+  responseTimeout: 10
   spotlight: {fileID: 1830212330}
   highlight: {fileID: 1830212331}
   onConversationEnded:
