@@ -1,7 +1,8 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class ConversationTrigger : MonoBehaviour
+public class ConversationTrigger : MonoBehaviour, IConversationGazeTarget
 {
     [Header("Wiring")]
     [SerializeField] private CharacterInteractionModule interaction;
@@ -10,6 +11,11 @@ public class ConversationTrigger : MonoBehaviour
     [Header("Settings")]
     [Tooltip("This will trigger the conversation")]
     [SerializeField] private string playerTag = "Player";
+
+    [SerializeField] private float gazeConfirmDelay = 0.5f;
+
+    private bool _isPlayerInTrigger;
+    private Coroutine _gazeConfirmRoutine;
 
 
     private void OnTriggerEnter(Collider other)
@@ -21,6 +27,53 @@ public class ConversationTrigger : MonoBehaviour
             return;
         }
 
-        interaction.StartConversation(character);
+        _isPlayerInTrigger = true;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag(playerTag))
+        {
+            return;
+        }
+
+        _isPlayerInTrigger = false;
+        StopGaze();
+    }
+
+    public void OnGazeEnter()
+    {
+        if (_gazeConfirmRoutine != null)
+        {
+            return;
+        }
+
+        _gazeConfirmRoutine = StartCoroutine(GazeConfirmRoutine());
+    }
+
+    public void OnGazeExit()
+    {
+        StopGaze();
+    }
+
+    private IEnumerator GazeConfirmRoutine()
+    {
+        yield return new WaitForSeconds(gazeConfirmDelay);
+
+        _gazeConfirmRoutine = null;
+
+        if (_isPlayerInTrigger)
+        {
+            interaction.StartConversation(character);
+        }
+    }
+
+    private void StopGaze()
+    {
+        if (_gazeConfirmRoutine != null)
+        {
+            StopCoroutine(_gazeConfirmRoutine);
+            _gazeConfirmRoutine = null;
+        }
     }
 }
