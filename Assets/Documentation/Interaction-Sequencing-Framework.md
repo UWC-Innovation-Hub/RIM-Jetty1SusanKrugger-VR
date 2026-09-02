@@ -68,6 +68,8 @@ The integer argument must match the module's position in `interactionModules`. T
 
 Derived modules should override `Activate()` and `Deactivate()`, call `base.Activate()` or `base.Deactivate()`, and call `Complete()` exactly once the player-facing requirement is satisfied.
 
+The base interaction timeout is a hard whole-module bypass. When it expires, it calls the protected `OnInteractionTimedOut()` hook, whose default implementation calls `Complete()` exactly as the original timeout did. Derived modules may override the hook for module-specific exit work without changing other interactions. Transition fades remain independent and are applied by `SequenceBrain` only when the module's `useTransitionFade` setting is enabled.
+
 ## Authoring Workflow
 
 1. Add or reuse `SequenceParent` in the scene.
@@ -122,7 +124,7 @@ The scene contains Timeline signals that pass indices `0`, `1`, and `2`. Some in
 
 ### `InventoryModule`
 
-[`InventoryModule`](../Scripts/SequenceInteractionMechanism/InventoryModule.cs) completes when the configured number of items have been equipped. It can enforce item order, reject out-of-order equips, lock correctly placed items, highlight the next item, and highlight compatible attachment points.
+[`InventoryModule`](../Scripts/SequenceInteractionMechanism/InventoryModule.cs) completes when the configured number of items have been equipped. It can enforce item order, reject out-of-order equips, lock correctly placed items, highlight the next item, and highlight compatible attachment points. When `relocateOnInteractionTimeout` is enabled, a whole-interaction timeout uses the same delayed relocation and audio fade as successful completion.
 
 Completion source: inventory equip state reaches `requiredEquippedCount`.
 
@@ -140,13 +142,13 @@ Completion source: `completedBreathCount` reaches `breathsRequired`, followed by
 
 ### `FingerprintProjectionInteractionModule`
 
-[`FingerprintProjectionInteractionModule`](../Scripts/SequenceInteractionMechanism/FingerprintProjectionInteractionModule.cs) completes after all configured fingerprints are selected and consumed. It subscribes to `FingerprintTrigger.SelectionRequested`, hides non-selected fingerprints during playback, waits for response audio, then fades out the selected fingerprint info.
+[`FingerprintProjectionInteractionModule`](../Scripts/SequenceInteractionMechanism/FingerprintProjectionInteractionModule.cs) completes after all configured fingerprints are selected and consumed. It subscribes to `FingerprintTrigger.SelectionRequested`, hides non-selected fingerprints during playback, waits for response audio, then fades out the selected fingerprint info. Its optional per-item inactivity assistance selects one remaining fingerprint in configured order, waits for that response to finish, then gives the player a fresh interaction window before assisting again.
 
 Completion source: every fingerprint in the linked `FingerprintLockout` has been consumed.
 
 ### `HandTouchInteractionModule`
 
-[`HandTouchInteractionModule`](../Scripts/SequenceInteractionMechanism/HandTouchInteractionModule.cs) completes after all configured hand steps have been selected and their projection clips have finished. It can reveal available hands, mute hand audio while active, play clips through `ProjectorController`, and restore scene lighting before completion.
+[`HandTouchInteractionModule`](../Scripts/SequenceInteractionMechanism/HandTouchInteractionModule.cs) completes after all configured hand steps have been selected and their projection clips have finished. It can reveal available hands, mute hand audio while active, play clips through `ProjectorController`, and restore scene lighting before completion. Its optional per-item inactivity assistance selects one remaining hand in configured order and restarts the inactivity window only after that hand's projection has finished.
 
 Completion source: all configured hand steps are consumed, or an enabled auto-projection bypass completes.
 

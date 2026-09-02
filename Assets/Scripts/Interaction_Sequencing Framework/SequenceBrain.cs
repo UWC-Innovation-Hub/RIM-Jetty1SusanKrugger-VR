@@ -125,12 +125,12 @@ public class SequenceBrain : MonoBehaviour
             // Defensive: prevent double subscribe
             activeInteraction.Completed -= OnActiveInteractionCompleted;
 
-            // Fade out FIRST while the director (and its audio) is still running,
-            // so the VO is never hard-cut while the screen is still visible.
-            if (ShouldUseFade(activeInteraction))
+            // Fade out here unless the sequence Timeline already owns this leg.
+            // In either case, the interaction is activated only once the view is black.
+            if (ShouldUseFade(activeInteraction) && !activeInteraction.SkipEnterFadeOut)
                 yield return fadeController.FadeOutRoutine(activeInteraction.FadeOutDuration);
 
-            // Director is now hidden behind black — safe to pause here.
+            // The director is now hidden behind black — safe to pause here.
             if (director && director.state == PlayState.Playing)
                 director.Pause();
 
@@ -190,11 +190,17 @@ public class SequenceBrain : MonoBehaviour
 
         InteractionModuleBase module = activeInteraction;
 
-        // Fade the still-visible interaction before evaluating the paused sequence.
-        // Evaluating first would restore Timeline's held-black value, causing this
-        // fade to start and end at alpha 1 with no visible transition.
+        // Release the interaction Timeline before fading so its animation graph
+        // cannot keep overwriting the same fader alpha. Preserve and immediately
+        // restore the visible value because stopping a director may apply a bound
+        // property's default value.
         if (module != null && ShouldUseFade(module))
+        {
+            float visibleAlpha = fadeController.CurrentAlpha;
+            module.ReleaseInteractionTimelineForExitFade();
+            fadeController.SetAlphaInstant(visibleAlpha);
             yield return fadeController.FadeOutRoutine(module.FadeOutDuration);
+        }
 
         // The screen is now black, so Timeline can safely reassert its paused state.
         ApplyState(SequenceState.TransitionToSequence, pauseDirector: true);

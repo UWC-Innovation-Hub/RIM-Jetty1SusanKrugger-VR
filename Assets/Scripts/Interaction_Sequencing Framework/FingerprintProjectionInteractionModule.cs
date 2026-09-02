@@ -12,6 +12,13 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
     [Header("Visibility")]
     [SerializeField] private bool hideFingerprintsWhenInactive = true;
 
+    [Header("Per-Item Inactivity Assistance")]
+    [Tooltip("Automatically select one remaining fingerprint after the player has been inactive for the configured threshold.")]
+    [SerializeField] private bool enableItemInactivityAssist = false;
+    [Tooltip("How long the remaining fingerprints can stay selectable before one is selected automatically.")]
+    [Min(0f)]
+    [SerializeField] private float itemInactivityTimeoutSeconds = 30f;
+
     [Header("Light Restore")]
     [SerializeField] private Light sceneLightOverride;
     [SerializeField] private float restoredLightIntensity = 0.5f;
@@ -20,6 +27,7 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
 
     private readonly HashSet<FingerprintTrigger> _consumedFingerprints = new HashSet<FingerprintTrigger>();
     private Coroutine _completeSelectionRoutine;
+    private Coroutine _itemInactivityRoutine;
     private FingerprintTrigger _currentSelection;
     private PlayableDirector _interactionTimelineDirector;
     private Light _resolvedSceneLight;
@@ -48,6 +56,7 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
         EnsureInteractionTimelineDirectorEnabled();
         base.Activate();
         ResolveDependencies();
+        StopItemInactivityAssist();
 
         FingerprintTrigger[] fingerprints = Fingerprints;
         if (fingerprints == null || fingerprints.Length == 0)
@@ -68,11 +77,13 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
 
         SubscribeToFingerprints();
         ShowAvailableFingerprints();
+        BeginItemInactivityAssistIfNeeded();
     }
 
     public override void Deactivate()
     {
         UnsubscribeFromFingerprints();
+        StopItemInactivityAssist();
 
         if (_completeSelectionRoutine != null)
         {
@@ -94,6 +105,7 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
     private void OnDisable()
     {
         UnsubscribeFromFingerprints();
+        StopItemInactivityAssist();
     }
 
     private bool OnFingerprintSelectionRequested(FingerprintTrigger fingerprint)
@@ -115,6 +127,7 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
             return false;
         }
 
+        StopItemInactivityAssist();
         _currentSelection = fingerprint;
         HideNonSelectedFingerprints(fingerprint);
 
@@ -172,7 +185,109 @@ public class FingerprintProjectionInteractionModule : InteractionModuleBase
         }
 
         ShowAvailableFingerprints();
+        BeginItemInactivityAssistIfNeeded();
         _completeSelectionRoutine = null;
+    }
+
+    private void BeginItemInactivityAssistIfNeeded()
+    {
+        StopItemInactivityAssist();
+
+        if (!enableItemInactivityAssist || !IsActive || IsComplete || _currentSelection != null)
+        {
+            return;
+        }
+
+        _itemInactivityRoutine = StartCoroutine(ItemInactivityRoutine());
+    }
+
+    private void StopItemInactivityAssist()
+    {
+        if (_itemInactivityRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(_itemInactivityRoutine);
+        _itemInactivityRoutine = null;
+    }
+
+    private IEnumerator ItemInactivityRoutine()
+    {
+        float elapsed = 0f;
+
+        while (IsActive && !IsComplete && _currentSelection == null && elapsed < itemInactivityTimeoutSeconds)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        _itemInactivityRoutine = null;
+
+        if (!IsActive || IsComplete || _currentSelection != null)
+        {
+            yield break;
+        }
+
+        FingerprintTrigger[] fingerprints = Fingerprints;
+        if (fingerprints != null)
+        {
+            for (int i = 0; i < fingerprints.Length; i++)
+            {
+                FingerprintTrigger fingerprint = fingerprints[i];
+                if (fingerprint == null || _consumedFingerprints.Contains(fingerprint))
+                {
+                    continue;
+                }
+
+                AudioSource responseAudio = fingerprint.ResponseAudio;
+                if (responseAudio == null || responseAudio.clip == null)
+                {
+                    Debug.LogWarning($"{name}: Skipping timed fingerprint '{fingerprint.name}' because its response audio is not configured.");
+                    ConsumeInvalidFingerprint(fingerprint);
+                    continue;
+                }
+
+                Debug.Log($"[{name}] No fingerprint was selected for {itemInactivityTimeoutSeconds:0.##} seconds. Selecting '{fingerprint.name}' automatically.");
+                if (fingerprint.TrySelect())
+                {
+                    yield break;
+                }
+
+                Debug.LogWarning($"{name}: Timed selection of fingerprint '{fingerprint.name}' was rejected. Restarting its inactivity timer.");
+                ShowAvailableFingerprints();
+                BeginItemInactivityAssistIfNeeded();
+                yield break;
+            }
+        }
+
+        if (AllFingerprintsConsumed())
+        {
+            _completeSelectionRoutine = StartCoroutine(CompleteAfterLightRestore());
+        }
+    }
+
+    private void ConsumeInvalidFingerprint(FingerprintTrigger fingerprint)
+    {
+        if (fingerprint == null)
+        {
+            return;
+        }
+
+        _consumedFingerprints.Add(fingerprint);
+        fingerprint.SetArmed(false);
+        fingerprint.SetVisible(false);
+    }
+
+    private IEnumerator CompleteAfterLightRestore()
+    {
+        yield return RestoreSceneLightBeforeComplete();
+        _completeSelectionRoutine = null;
+
+        if (IsActive)
+        {
+            Complete();
+        }
     }
 
     private bool AllFingerprintsConsumed()

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,6 +11,10 @@ public class CharacterInteractionModule : InteractionModuleBase
 
     [Header("Tutorial")]
     [SerializeField] private TutorialPopup tutorialPopup;
+    [SerializeField] private float tutorialTimeout = 15f;
+
+    [Header("Interaction Timeout")]
+    [SerializeField] private float interactionTimeout = 15f;
 
     [Header("Events")]
     [Tooltip("Fired each time a conversation is complete")]
@@ -26,6 +31,9 @@ public class CharacterInteractionModule : InteractionModuleBase
     public CharacterConversation ActiveCharacter { get; private set; }
 
     private readonly HashSet<CharacterConversation> _completedCharacters = new HashSet<CharacterConversation>();
+    private Coroutine _tutorialTimeoutRoutine;
+    private Coroutine _interactionTimeoutRoutine;
+    private bool _tutorialResolved;
 
     //INTERACTIONMODULEBASE OVERRIDES
 
@@ -35,6 +43,7 @@ public class CharacterInteractionModule : InteractionModuleBase
 
         CompletedCount = 0;
         ActiveCharacter = null;
+        _tutorialResolved = false;
         _completedCharacters.Clear();
 
         for (int i = 0; i < characters.Length; i++)
@@ -49,6 +58,11 @@ public class CharacterInteractionModule : InteractionModuleBase
         {
             tutorialPopup.Closed += OnTutorialClosed;
             tutorialPopup.Show();
+
+            if (tutorialTimeout > 0f)
+            {
+                _tutorialTimeoutRoutine = StartCoroutine(TutorialTimeoutRoutine());
+            }
         }
         else
         {
@@ -63,6 +77,18 @@ public class CharacterInteractionModule : InteractionModuleBase
         if (tutorialPopup != null)
         {
             tutorialPopup.Closed -= OnTutorialClosed;
+        }
+
+        if (_tutorialTimeoutRoutine != null)
+        {
+            StopCoroutine(_tutorialTimeoutRoutine);
+            _tutorialTimeoutRoutine = null;
+        }
+
+        if (_interactionTimeoutRoutine != null)
+        {
+            StopCoroutine(_interactionTimeoutRoutine);
+            _interactionTimeoutRoutine = null;
         }
 
         if (ActiveCharacter != null)
@@ -120,12 +146,57 @@ public class CharacterInteractionModule : InteractionModuleBase
 
     private void OnTutorialClosed()
     {
-        tutorialPopup.Closed -= OnTutorialClosed;
+        ResolveTutorial();
+    }
+
+    private IEnumerator TutorialTimeoutRoutine()
+    {
+        yield return new WaitForSeconds(tutorialTimeout);
+
+        _tutorialTimeoutRoutine = null;
+
+        if (_tutorialResolved)
+        {
+            yield break;
+        }
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Hide();
+        }
+
+        ResolveTutorial();
+    }
+
+    private void ResolveTutorial()
+    {
+        if (_tutorialResolved)
+        {
+            return;
+        }
+
+        Debug.Log("[CharacterInteractionModule] ResolveTutorial() called.");
+
+        _tutorialResolved = true;
+
+        if (tutorialPopup != null)
+        {
+            tutorialPopup.Closed -= OnTutorialClosed;
+        }
+
+        if (_tutorialTimeoutRoutine != null)
+        {
+            StopCoroutine(_tutorialTimeoutRoutine);
+            _tutorialTimeoutRoutine = null;
+        }
+
         ShowAllHighlights();
     }
 
     private void ShowAllHighlights()
     {
+        Debug.Log($"[CharacterInteractionModule] ShowAllHighlights() called. interactionTimeout: {interactionTimeout}");
+
         for (int i = 0; i < characters.Length; i++)
         {
             if (characters[i] != null)
@@ -133,10 +204,27 @@ public class CharacterInteractionModule : InteractionModuleBase
                 characters[i].ShowHighlight();
             }
         }
+
+        if (interactionTimeout > 0f)
+        {
+            if (_interactionTimeoutRoutine != null)
+            {
+                StopCoroutine(_interactionTimeoutRoutine);
+            }
+
+            Debug.Log($"[CharacterInteractionModule] Starting interaction timeout ({interactionTimeout}s).");
+            _interactionTimeoutRoutine = StartCoroutine(InteractionTimeoutRoutine());
+        }
     }
 
     private void BeginConversation(CharacterConversation character)
     {
+        if (_interactionTimeoutRoutine != null)
+        {
+            StopCoroutine(_interactionTimeoutRoutine);
+            _interactionTimeoutRoutine = null;
+        }
+
         ActiveCharacter = character;
 
         for (int i = 0; i < characters.Length; i++)
@@ -176,6 +264,16 @@ public class CharacterInteractionModule : InteractionModuleBase
             }
         }
 
+        if (interactionTimeout > 0f && CompletedCount < characters.Length)
+        {
+            if (_interactionTimeoutRoutine != null)
+            {
+                StopCoroutine(_interactionTimeoutRoutine);
+            }
+
+            _interactionTimeoutRoutine = StartCoroutine(InteractionTimeoutRoutine());
+        }
+
         onCharacterCompleted?.Invoke(CompletedCount);
 
         if (CompletedCount >= characters.Length)
@@ -196,5 +294,31 @@ public class CharacterInteractionModule : InteractionModuleBase
             }
         }
         return false;
+    }
+
+    private IEnumerator InteractionTimeoutRoutine()
+    {
+        yield return new WaitForSeconds(interactionTimeout);
+
+        _interactionTimeoutRoutine = null;
+
+        List<CharacterConversation> remaining = new List<CharacterConversation>();
+
+        for (int i = 0; i < characters.Length; i++)
+        {
+            if (characters[i] != null && !_completedCharacters.Contains(characters[i]))
+            {
+                remaining.Add(characters[i]);
+            }
+        }
+
+        if (remaining.Count == 0)
+        {
+            yield break;
+        }
+
+        CharacterConversation randomCharacter = remaining[Random.Range(0, remaining.Count)];
+        Debug.Log($"[CharacterInteractionModule] Interaction timed out. Auto-starting conversation with '{randomCharacter.CharacterName}'.");
+        StartConversation(randomCharacter);
     }
 }

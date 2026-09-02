@@ -12,6 +12,8 @@ public class FadeController : MonoBehaviour
     private Material _mat;
     private int _fadeRequestId;
 
+    public float CurrentAlpha => _mat != null ? _mat.color.a : 1f;
+
     private void Awake()
     {
         if (!fadeRenderer)
@@ -58,14 +60,18 @@ public class FadeController : MonoBehaviour
 
     public void SetBlackInstant()
     {
-        _fadeRequestId++;
-        SetAlpha(1f);
+        SetAlphaInstant(1f);
     }
 
     public void SetClearInstant()
     {
+        SetAlphaInstant(0f);
+    }
+
+    public void SetAlphaInstant(float alpha)
+    {
         _fadeRequestId++;
-        SetAlpha(0f);
+        SetAlpha(Mathf.Clamp01(alpha));
     }
 
     private IEnumerator FadeRoutine(float target, float duration)

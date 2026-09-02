@@ -113,6 +113,28 @@ public class PrisonerSortModule : InteractionModuleBase
             CompleteCellOnlyBatch();
     }
 
+    protected override void OnInteractionTimedOut()
+    {
+        if (!CanDispatchAndAwaitCompletion(out int validParticipantCount, out int requiredParticipantCount))
+        {
+            Debug.LogError(
+                $"[{name}] Prisoner sort timed out, but only {validParticipantCount} fully configured " +
+                $"participant(s) can report completion and {requiredParticipantCount} are required. " +
+                "Falling back to immediate completion to avoid blocking the sequence.");
+            base.OnInteractionTimedOut();
+            return;
+        }
+
+        if (HasSentBatchToCell)
+        {
+            Debug.Log($"[{name}] Prisoner sort timed out while the batch was already moving. Waiting for the existing completion events.");
+            return;
+        }
+
+        Debug.Log($"[{name}] Prisoner sort timed out. Sending the configured batch to the cell and waiting for completion events.");
+        SendBatchToCell();
+    }
+
     private void CompleteCellOnlyBatch()
     {
         if (!IsActive || IsComplete)
@@ -180,6 +202,35 @@ public class PrisonerSortModule : InteractionModuleBase
             return requiredFinishedCount;
 
         return participants != null ? participants.Length : 0;
+    }
+
+    private bool CanDispatchAndAwaitCompletion(out int validParticipantCount, out int requiredParticipantCount)
+    {
+        requiredParticipantCount = ResolveRequiredFinishedCount();
+        validParticipantCount = 0;
+
+        if (requiredParticipantCount <= 0 || participants == null)
+            return false;
+
+        HashSet<SetNextPrisoner> completionNotifiers = new();
+
+        for (int i = 0; i < participants.Length; i++)
+        {
+            PrisonerSortParticipant participant = participants[i];
+            if (participant == null ||
+                participant.root == null ||
+                participant.choiceAnimator == null ||
+                participant.walkAnimator == null ||
+                participant.arrivalNotifier == null)
+            {
+                continue;
+            }
+
+            completionNotifiers.Add(participant.arrivalNotifier);
+        }
+
+        validParticipantCount = completionNotifiers.Count;
+        return validParticipantCount >= requiredParticipantCount;
     }
 
     private string ResolveParticipantId(string participantId)
