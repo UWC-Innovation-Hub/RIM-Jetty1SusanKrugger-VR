@@ -60,9 +60,15 @@ public class ConversationRaycast : MonoBehaviour
 
     private void SetTarget(IConversationGazeTarget newTarget)
     {
+
         if (newTarget == _currentTarget)
         {
             return;
+        }
+
+        if (newTarget != null)
+        {
+            Debug.Log($"[ConversationRaycast] Now gazing at '{(MonoBehaviour)newTarget}.name'");
         }
 
         _currentTarget?.OnGazeExit();

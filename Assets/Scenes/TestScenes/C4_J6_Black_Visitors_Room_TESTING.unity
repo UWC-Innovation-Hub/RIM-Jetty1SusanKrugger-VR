@@ -8686,7 +8686,7 @@ MonoBehaviour:
   - {fileID: 759829005}
   tutorialPopup: {fileID: 768529294}
   tutorialTimeout: 10
-  interactionTimeout: 15
+  interactionTimeout: 30
   onCharacterCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -15080,7 +15080,7 @@ Transform:
   m_GameObject: {fileID: 657676754}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.0022099428, z: -0, w: 0.99999756}
-  m_LocalPosition: {x: 0.043, y: 0.9276999, z: 0.555}
+  m_LocalPosition: {x: 0.043, y: 0.9276999, z: 0.674}
   m_LocalScale: {x: 0.33123997, y: 1.2090499, z: 0.56883997}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15101,7 +15101,7 @@ MonoBehaviour:
   interaction: {fileID: 432127133}
   character: {fileID: 1830212332}
   playerTag: Player
-  gazeConfirmDelay: 0.5
+  gazeConfirmDelay: 2
 --- !u!65 &657676757
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15121,8 +15121,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.3440392, y: 1.2602276, z: 0.62899244}
-  m_Center: {x: -0.05742247, y: -0.13011171, z: -0.1855077}
+  m_Size: {x: 2.3440392, y: 1.2602276, z: 0.7397972}
+  m_Center: {x: -0.057422467, y: -0.13011171, z: -0.13010511}
 --- !u!4 &660743509 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2222597352995485919, guid: 857ab99e7f1c9884c8ce0a34734bb6d2, type: 3}
@@ -17438,7 +17438,7 @@ Transform:
   m_GameObject: {fileID: 781149276}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.0022099428, z: -0, w: 0.99999756}
-  m_LocalPosition: {x: 0.053, y: 0.92769986, z: 0.571}
+  m_LocalPosition: {x: 0.053, y: 0.92769986, z: 0.629}
   m_LocalScale: {x: 0.33123997, y: 1.2090499, z: 0.56883997}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17459,7 +17459,7 @@ MonoBehaviour:
   interaction: {fileID: 432127133}
   character: {fileID: 1116973609}
   playerTag: Player
-  gazeConfirmDelay: 0.5
+  gazeConfirmDelay: 2
 --- !u!65 &781149279
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19518,7 +19518,7 @@ Transform:
   m_GameObject: {fileID: 867714350}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.0022099428, z: -0, w: 0.99999756}
-  m_LocalPosition: {x: 0, y: 0.9277, z: 0.511}
+  m_LocalPosition: {x: 0, y: 0.9277, z: 0.604}
   m_LocalScale: {x: 0.33123997, y: 1.2090499, z: 0.56883997}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -19539,7 +19539,7 @@ MonoBehaviour:
   interaction: {fileID: 432127133}
   character: {fileID: 759829005}
   playerTag: Player
-  gazeConfirmDelay: 0.5
+  gazeConfirmDelay: 2
 --- !u!65 &867714353
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27876,7 +27876,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4098006907829395248, guid: 0a348921965ab53418ce1df07d875c7f, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 4156764990879944773, guid: 0a348921965ab53418ce1df07d875c7f, type: 3}
       propertyPath: m_Layer

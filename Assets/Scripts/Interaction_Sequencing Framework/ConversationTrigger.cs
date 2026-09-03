@@ -43,6 +43,8 @@ public class ConversationTrigger : MonoBehaviour, IConversationGazeTarget
 
     public void OnGazeEnter()
     {
+        Debug.Log("Looking at character");
+
         if (_gazeConfirmRoutine != null)
         {
             return;
