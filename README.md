@@ -574,10 +574,12 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `WalkieTalkieAudioSource.cs` | `Assets/Scripts/Audio and Video/WalkieTalkieAudioSource.cs` |
 | `DialogueData.cs` | `Assets/Scripts/DialogueData/DialogueData.cs` |
 | `DialogueUI.cs` | `Assets/Scripts/DialogueData/DialogueUI.cs` |
+| `ConversationRaycast.cs` | `Assets/Scripts/GazeInteraction/ConversationRaycast.cs` |
 | `GazeHighlightFeedback.cs` | `Assets/Scripts/GazeInteraction/GazeHighlightFeedback.cs` |
 | `GazeIndicator.cs` | `Assets/Scripts/GazeInteraction/GazeIndicator.cs` |
 | `GazeRaycaster.cs` | `Assets/Scripts/GazeInteraction/GazeRaycaster.cs` |
 | `GazeTarget.cs` | `Assets/Scripts/GazeInteraction/GazeTarget.cs` |
+| `IConversationGazeTarget.cs` | `Assets/Scripts/GazeInteraction/IConversationGazeTarget.cs` |
 | `IGazeTarget.cs` | `Assets/Scripts/GazeInteraction/IGazeTarget.cs` |
 | `ArtifactHighlightTrigger.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ArtifactHighlightTrigger.cs` |
 | `ArtifactInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ArtifactInteractionModule.cs` |
