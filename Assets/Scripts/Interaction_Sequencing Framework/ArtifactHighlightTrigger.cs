@@ -12,6 +12,8 @@ public class ArtifactHighlightTrigger : MonoBehaviour
     [SerializeField] private Grabbable grabbable;
     [SerializeField] private MonoBehaviour interactable;
 
+    [SerializeField] private Collider targetCollider;
+
     [Header("Highlight")]
     [SerializeField] private Renderer targetRenderer;
     [SerializeField] private int materialIndex = 0;
@@ -24,6 +26,16 @@ public class ArtifactHighlightTrigger : MonoBehaviour
     [Header("Response Playback")]
     [SerializeField] private AudioSource responseAudio;
     [SerializeField] private VideoPlayer responseVideo;
+
+    [Header("Return To Origin")]
+    [SerializeField] private float returnDelaySeconds = 5f;
+    [SerializeField] private float returnDuration = 0.5f;
+    [SerializeField] private AnimationCurve returnCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+    private Vector3 _originalPosition;
+    private Quaternion _originalRotation;
+    private Rigidbody _rigidbody;
+    private Coroutine _returnRoutine;
 
     private MaterialPropertyBlock _mpb;
     private Coroutine _fadeRoutine;
@@ -59,6 +71,17 @@ public class ArtifactHighlightTrigger : MonoBehaviour
         {
             Debug.LogWarning($"{name}: InteractableHighlightTrigger needs a Grabbable reference.");
         }
+
+        if (targetCollider == null)
+        {
+            targetCollider = GetComponent<Collider>();
+        }
+
+        _originalPosition = transform.position;
+        _originalRotation = transform.rotation;
+        _rigidbody = GetComponent<Rigidbody>();
+
+        SetArmed(false);
     }
 
     private void OnEnable()
@@ -81,6 +104,8 @@ public class ArtifactHighlightTrigger : MonoBehaviour
             StopCoroutine(_fadeRoutine);
             _fadeRoutine = null;
         }
+
+        CancelReturn();
     }
 
     public void SetArmed(bool armed)
@@ -90,6 +115,11 @@ public class ArtifactHighlightTrigger : MonoBehaviour
         if (interactable != null)
         {
             interactable.enabled = armed;
+        }
+
+        if (targetCollider != null)
+        {
+            targetCollider.enabled = armed;
         }
 
         StartFade(armed ? highlightValue : idleValue);
@@ -109,10 +139,19 @@ public class ArtifactHighlightTrigger : MonoBehaviour
 
     private void HandlePointerEvent(PointerEvent evt)
     {
+        if (evt.Type == PointerEventType.Unselect)
+        {
+            CancelReturn();
+            _returnRoutine = StartCoroutine(ReturnAfterDelayRoutine());
+            return;
+        }
+
         if (evt.Type != PointerEventType.Select)
         {
             return;
         }
+
+        CancelReturn();
 
         if (!_armed || _isComplete)
         {
@@ -133,6 +172,62 @@ public class ArtifactHighlightTrigger : MonoBehaviour
         if (accepted)
         {
             PlayResponse();
+        }
+    }
+
+    private void CancelReturn()
+    {
+        if (_returnRoutine != null)
+        {
+            StopCoroutine(_returnRoutine);
+            _returnRoutine = null;
+        }
+    }
+
+    private IEnumerator ReturnAfterDelayRoutine()
+    {
+        yield return new WaitForSeconds(returnDelaySeconds);
+        yield return ReturnToOrigin();
+        _returnRoutine = null;
+    }
+
+    private IEnumerator ReturnToOrigin()
+    {
+        bool hasRigidbody = _rigidbody != null;
+        bool wasKinematic = hasRigidbody && _rigidbody.isKinematic;
+
+        if (hasRigidbody)
+        {
+            _rigidbody.linearVelocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero;
+            _rigidbody.isKinematic = true;
+        }
+
+        if (returnDuration <= 0f)
+        {
+            transform.SetPositionAndRotation(_originalPosition, _originalRotation);
+        }
+        else
+        {
+            Vector3 startPosition = transform.position;
+            Quaternion startRotation = transform.rotation;
+
+            float elapsed = 0f;
+
+            while (elapsed < returnDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = returnCurve.Evaluate(Mathf.Clamp01(elapsed / returnDuration));
+                transform.SetPositionAndRotation(Vector3.Lerp(startPosition, _originalPosition, t), Quaternion.Slerp(startRotation, _originalRotation, t));
+                yield return null;
+            }
+
+            transform.SetPositionAndRotation(_originalPosition, _originalRotation);
+        }
+
+        if (hasRigidbody)
+        {
+            _rigidbody.isKinematic = wasKinematic;
         }
     }
 
