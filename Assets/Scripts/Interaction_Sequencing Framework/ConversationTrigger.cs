@@ -14,20 +14,22 @@ public class ConversationTrigger : MonoBehaviour, IConversationGazeTarget
 
     [SerializeField] private float gazeConfirmDelay = 0.5f;
 
+    [SerializeField] private float gazeDeacyRate = 2f;
+
     private bool _isPlayerInTrigger;
-    private Coroutine _gazeConfirmRoutine;
+    private bool _isGazing;
+    private float _gazeTimer;
+    private bool _conversationStarted;
 
 
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log($"[CharacterTrigger] OnTriggerEnter fired on '{name}' by '{other.name}' (tag: {other.tag}. Collider enabled: {GetComponent<Collider>().enabled}");
 
-        if (!other.CompareTag(playerTag))
+        if (other.CompareTag(playerTag))
         {
-            return;
+            _isPlayerInTrigger = true;
         }
-
-        _isPlayerInTrigger = true;
     }
 
     private void OnTriggerExit(Collider other)
@@ -38,44 +40,39 @@ public class ConversationTrigger : MonoBehaviour, IConversationGazeTarget
         }
 
         _isPlayerInTrigger = false;
-        StopGaze();
+        _gazeTimer = 0f;
+        _conversationStarted = false;
     }
 
-    public void OnGazeEnter()
-    {
-        Debug.Log("Looking at character");
+    public void OnGazeEnter() => _isGazing = true;
 
-        if (_gazeConfirmRoutine != null)
+    public void OnGazeExit() => _isGazing = false;
+
+    private void Update()
+    {
+        if (_conversationStarted)
         {
             return;
         }
 
-        _gazeConfirmRoutine = StartCoroutine(GazeConfirmRoutine());
-    }
-
-    public void OnGazeExit()
-    {
-        StopGaze();
-    }
-
-    private IEnumerator GazeConfirmRoutine()
-    {
-        yield return new WaitForSeconds(gazeConfirmDelay);
-
-        _gazeConfirmRoutine = null;
-
-        if (_isPlayerInTrigger)
+        if (_isPlayerInTrigger && _isGazing)
         {
-            interaction.StartConversation(character);
+            Debug.Log("Convo not starting");
+            _gazeTimer += Time.deltaTime;
         }
-    }
-
-    private void StopGaze()
-    {
-        if (_gazeConfirmRoutine != null)
+        else
         {
-            StopCoroutine(_gazeConfirmRoutine);
-            _gazeConfirmRoutine = null;
+            _gazeTimer -= gazeDeacyRate * Time.deltaTime;
+        }
+
+        _gazeTimer = Mathf.Clamp(_gazeTimer, 0f, gazeConfirmDelay);
+
+        if (_gazeTimer >= gazeConfirmDelay)
+        {
+            _conversationStarted = true;
+            
+            interaction.StartConversation(character);
+
         }
     }
 }

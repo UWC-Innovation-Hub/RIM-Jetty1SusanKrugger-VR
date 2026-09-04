@@ -46,6 +46,8 @@ public class ConversationRaycast : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, characterLayers))
         {
+            Debug.Log($"[ConversationRaycast] Raycast hit collider '{hit.collider.name}' on layer {LayerMask.LayerToName(hit.collider.gameObject.layer)}");
+
             IConversationGazeTarget target = hit.collider.GetComponentInParent<IConversationGazeTarget>();
 
             if (target != null)
@@ -68,7 +70,7 @@ public class ConversationRaycast : MonoBehaviour
 
         if (newTarget != null)
         {
-            Debug.Log($"[ConversationRaycast] Now gazing at '{(MonoBehaviour)newTarget}.name'");
+            Debug.Log($"[ConversationRaycast] Now gazing at '{((MonoBehaviour)newTarget).name}'");
         }
 
         _currentTarget?.OnGazeExit();
