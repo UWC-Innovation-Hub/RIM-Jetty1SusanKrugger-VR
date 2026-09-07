@@ -123,6 +123,32 @@ public class CharacterConversation : InteractionModuleBase
         }
     }
 
+    public void PauseAnimation()
+    {
+        if (bodyAnimator != null)
+        {
+            bodyAnimator.speed = 0f;
+        }
+
+        if (facialAnimator != null)
+        {
+            facialAnimator.speed = 0f;
+        }
+    }
+
+    public void ResumeAnimation()
+    {
+        if (bodyAnimator != null)
+        {
+            bodyAnimator.speed = 1f;
+        }
+
+        if (facialAnimator != null)
+        {
+            facialAnimator.speed = 1f;
+        }
+    }
+
     //ANIMATION HELPERS
 
     private void SetTalking()

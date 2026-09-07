@@ -7237,6 +7237,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 362655941}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!95 &364592819 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 525382130855159162, guid: 857ab99e7f1c9884c8ce0a34734bb6d2, type: 3}
+  m_PrefabInstance: {fileID: 1509074712}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &365627689
 GameObject:
   m_ObjectHideFlags: 0
@@ -7868,6 +7873,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389386702}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!95 &390024832 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 1054755575175390018, guid: bcd634af68fe23b45b78f7edd92d801a, type: 3}
+  m_PrefabInstance: {fileID: 861222494}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &392085063
 GameObject:
   m_ObjectHideFlags: 0
@@ -8684,9 +8694,15 @@ MonoBehaviour:
   - {fileID: 1830212332}
   - {fileID: 1116973609}
   - {fileID: 759829005}
+  backgroundCharacters:
+  - {fileID: 1456659149}
+  - {fileID: 1973699003}
+  - {fileID: 2057815605}
+  - {fileID: 1488259373}
+  - {fileID: 390024832}
   tutorialPopup: {fileID: 768529294}
   tutorialTimeout: 10
-  interactionTimeout: 30
+  interactionTimeout: 15
   onCharacterCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -14717,7 +14733,7 @@ MonoBehaviour:
   bodyAnimator: {fileID: 759829009}
   talkingTrigger: StartTalking
   idleTrigger: StopTalking
-  facialAnimator: {fileID: 0}
+  facialAnimator: {fileID: 519157773}
   faceTalkingTrigger: StartTalking
 --- !u!82 &759829006
 AudioSource:
@@ -22551,7 +22567,7 @@ MonoBehaviour:
   bodyAnimator: {fileID: 1116973610}
   talkingTrigger: StartTalking
   idleTrigger: StopTalking
-  facialAnimator: {fileID: 0}
+  facialAnimator: {fileID: 1352982396}
   faceTalkingTrigger: StartTalking
 --- !u!95 &1116973610 stripped
 Animator:
@@ -28546,6 +28562,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _facing: 0
   _doubleSided: 0
+--- !u!95 &1456659149 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5247283307085127741, guid: aacd482270b0a7c46b3814b2a04c90e4, type: 3}
+  m_PrefabInstance: {fileID: 1700890310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1463446468
 GameObject:
   m_ObjectHideFlags: 0
@@ -36015,7 +36036,7 @@ MonoBehaviour:
   bodyAnimator: {fileID: 1830212333}
   talkingTrigger: StartTalking
   idleTrigger: StopTalking
-  facialAnimator: {fileID: 0}
+  facialAnimator: {fileID: 364592819}
   faceTalkingTrigger: StartTalking
 --- !u!95 &1830212333 stripped
 Animator:
@@ -38786,6 +38807,11 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!95 &1973699003 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7762346573088537998, guid: f7283e3f7615bdb4a926711fe5edd90a, type: 3}
+  m_PrefabInstance: {fileID: 1829231404}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1983612974
 GameObject:
   m_ObjectHideFlags: 0
@@ -50176,7 +50202,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1230205862449363734}
   - component: {fileID: 8941342247410068030}
-  - component: {fileID: 8941342247410068031}
   m_Layer: 0
   m_Name: HG_Body.007
   m_TagString: Untagged
@@ -50593,28 +50618,6 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.001729548, y: -0.10063556, z: 0.02828934}
     m_Extent: {x: 0.61859995, y: 0.9387481, z: 0.26148757}
   m_DirtyAABB: 0
---- !u!95 &8941342247410068031
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8760725767975330653}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &8943418318708503500
 Transform:
   m_ObjectHideFlags: 0
