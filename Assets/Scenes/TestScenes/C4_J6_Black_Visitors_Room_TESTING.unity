@@ -1190,7 +1190,6 @@ GameObject:
   - component: {fileID: 73777460}
   - component: {fileID: 73777459}
   - component: {fileID: 73777458}
-  - component: {fileID: 73777463}
   m_Layer: 0
   m_Name: '[BuildingBlock] Camera Rig'
   m_TagString: Player
@@ -1353,25 +1352,6 @@ Transform:
   - {fileID: 1168609291}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &73777463
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 73777457}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43bd31c07b64b4146a09de52a3d8821e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GazeRaycaster
-  gazeCamera: {fileID: 2109421176}
-  maxDistance: 10
-  interactableLayers:
-    serializedVersion: 2
-    m_Bits: 16384
-  dwellTime: 1
-  reentryCooldown: 2
 --- !u!1 &74067691
 GameObject:
   m_ObjectHideFlags: 0
@@ -8700,6 +8680,8 @@ MonoBehaviour:
   - {fileID: 2057815605}
   - {fileID: 1488259373}
   - {fileID: 390024832}
+  animationFadeOutDuration: 0.5
+  animationFadeInDuration: 0.5
   tutorialPopup: {fileID: 768529294}
   tutorialTimeout: 10
   interactionTimeout: 15
@@ -12936,8 +12918,6 @@ MonoBehaviour:
   interaction: {fileID: 432127133}
   character: {fileID: 1830212332}
   playerTag: Player
-  gazeConfirmDelay: 0.5
-  gazeDeacyRate: 2
 --- !u!65 &657676757
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15295,8 +15275,6 @@ MonoBehaviour:
   interaction: {fileID: 432127133}
   character: {fileID: 1116973609}
   playerTag: Player
-  gazeConfirmDelay: 2
-  gazeDeacyRate: 2
 --- !u!65 &781149279
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -17376,8 +17354,6 @@ MonoBehaviour:
   interaction: {fileID: 432127133}
   character: {fileID: 759829005}
   playerTag: Player
-  gazeConfirmDelay: 2
-  gazeDeacyRate: 2
 --- !u!65 &867714353
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -35309,8 +35285,6 @@ MonoBehaviour:
   interaction: {fileID: 432127133}
   character: {fileID: 2657629}
   playerTag: Player
-  gazeConfirmDelay: 0.5
-  gazeDeacyRate: 2
 --- !u!65 &1812480352
 BoxCollider:
   m_ObjectHideFlags: 0
