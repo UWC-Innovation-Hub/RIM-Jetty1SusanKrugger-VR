@@ -9,6 +9,13 @@ public class CharacterInteractionModule : InteractionModuleBase
     [Header("Characters (assign all four)")]
     [SerializeField] private CharacterConversation[] characters = new CharacterConversation[0];
 
+    [Header("Non-interactable Characters")]
+    [SerializeField] private Animator[] backgroundCharacters;
+    [SerializeField] private float animationFadeOutDuration = 0.5f;
+    [SerializeField] private float animationFadeInDuration = 0.5f;
+
+    private Coroutine _backgroundAnimatorFadeRoutine;
+
     [Header("Tutorial")]
     [SerializeField] private TutorialPopup tutorialPopup;
     [SerializeField] private float tutorialTimeout = 15f;
@@ -91,6 +98,12 @@ public class CharacterInteractionModule : InteractionModuleBase
             _interactionTimeoutRoutine = null;
         }
 
+        if (_backgroundAnimatorFadeRoutine != null)
+        {
+            StopCoroutine(_backgroundAnimatorFadeRoutine);
+            _backgroundAnimatorFadeRoutine = null;
+        }
+
         if (ActiveCharacter != null)
         {
             ActiveCharacter.Completed -= OnCharacterCompleted;
@@ -105,6 +118,8 @@ public class CharacterInteractionModule : InteractionModuleBase
                 characters[i].HideHighlight();
             }
         }
+
+        SetBackgroundAnimatorSpeed(1f);
 
 
         base.Deactivate();
@@ -231,9 +246,12 @@ public class CharacterInteractionModule : InteractionModuleBase
         {
             if (characters[i] != null && characters[i] != character)
             {
-                characters[i]. HideHighlight();
+                characters[i].HideHighlight();
+                characters[i].PauseAnimation();
             }
         }
+
+        SetBackgroundAnimatorSpeed(0f);
 
         character.Completed -= OnCharacterCompleted;
         character.Completed += OnCharacterCompleted;
@@ -249,6 +267,7 @@ public class CharacterInteractionModule : InteractionModuleBase
         {
             finished.Completed -= OnCharacterCompleted;
             finished.Deactivate();
+            finished.ResumeAnimation();
             finished.HideHighlight();
             _completedCharacters.Add(finished);
             CompletedCount = _completedCharacters.Count;
@@ -260,9 +279,12 @@ public class CharacterInteractionModule : InteractionModuleBase
         {
             if (characters[i] != null && !_completedCharacters.Contains(characters[i]))
             {
-                characters[i]. ShowHighlight();
+                characters[i].ResumeAnimation();
+                characters[i].ShowHighlight();
             }
         }
+
+        SetBackgroundAnimatorSpeed(1f);
 
         if (interactionTimeout > 0f && CompletedCount < characters.Length)
         {
@@ -294,6 +316,59 @@ public class CharacterInteractionModule : InteractionModuleBase
             }
         }
         return false;
+    }
+
+    private void SetBackgroundAnimatorSpeed(float target)
+    {
+        if (backgroundCharacters == null || backgroundCharacters.Length == 0)
+        {
+            return;
+        }
+
+        if (_backgroundAnimatorFadeRoutine != null)
+        {
+            StopCoroutine(_backgroundAnimatorFadeRoutine);
+        }
+
+        float duration = target <= 0f ? animationFadeInDuration : animationFadeInDuration;
+        _backgroundAnimatorFadeRoutine = StartCoroutine(FadeBackgroundAnimators(target, duration));
+    }
+
+    private IEnumerator FadeBackgroundAnimators(float target, float duration)
+    {
+        float[] startSpeeds = new float[backgroundCharacters.Length];
+        for (int i = 0; i < backgroundCharacters.Length; i++)
+        {
+            startSpeeds[i] = backgroundCharacters[i] != null ? backgroundCharacters[i].speed : target;
+        }
+
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            for (int i = 0; i < backgroundCharacters.Length; i++)
+            {
+                if (backgroundCharacters[i] != null)
+                {
+                    backgroundCharacters[i].speed = Mathf.Lerp(startSpeeds[i], target, t);
+                }
+
+                yield return null;
+            }
+        }
+
+        for (int i = 0; i < backgroundCharacters.Length; i++)
+        {
+            if (backgroundCharacters[i] != null)
+            {
+                backgroundCharacters[i].speed = target;
+            }
+        }
+
+        _backgroundAnimatorFadeRoutine = null;
     }
 
     private IEnumerator InteractionTimeoutRoutine()
