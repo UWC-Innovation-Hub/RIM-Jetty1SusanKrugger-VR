@@ -40,6 +40,7 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── C6/
         ├── J1/
         ├── Mixamo_tests/
+            ├── Face animation tests/
     ├── Audio/
         ├── C1/
             ├── Master/
@@ -150,6 +151,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── FAB/
             ├── GrayBox/
             ├── Rough/
+            ├── V1 hull/
         ├── Cargo Space/
         ├── Cargo Space exterior/
             ├── Animations/
@@ -178,6 +180,7 @@ Through VR, visitors can walk through historically significant locations on Robb
             ├── Organization/
             ├── Waiting Room/
             ├── body track/
+            ├── seperate elements/
         ├── Interactions/
         ├── Objects/
         ├── Rooms/
@@ -229,6 +232,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Scripts/
         ├── Animations/
         ├── Audio and Video/
+        ├── Character Behaviour/
         ├── DialogueData/
         ├── GazeInteraction/
         ├── Interaction_Sequencing Framework/
@@ -243,6 +247,7 @@ Through VR, visitors can walk through historically significant locations on Robb
     ├── Settings/
         ├── Build Profiles/
         ├── Project Configuration/
+    ├── Shaders/
     ├── Starter Assets/
         ├── Editor/
         ├── Runtime/
@@ -562,6 +567,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `TruckManager.cs` | `Assets/Scripts/Animations/TruckManager.cs` |
 | `Wheel_rotate.cs` | `Assets/Scripts/Animations/Wheel_rotate.cs` |
 | `AudioSourceControl.cs` | `Assets/Scripts/Audio and Video/AudioSourceControl.cs` |
+| `CharacterSequence.cs` | `Assets/Scripts/Audio and Video/CharacterSequence.cs` |
 | `CinemachineMirrorTargetBinder.cs` | `Assets/Scripts/Audio and Video/CinemachineMirrorTargetBinder.cs` |
 | `FootstepAudioSource.cs` | `Assets/Scripts/Audio and Video/FootstepAudioSource.cs` |
 | `FootstepSMB.cs` | `Assets/Scripts/Audio and Video/FootstepSMB.cs` |
@@ -572,6 +578,8 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `VideoProjectorController.cs` | `Assets/Scripts/Audio and Video/VideoProjectorController.cs` |
 | `VideoTrigger.cs` | `Assets/Scripts/Audio and Video/VideoTrigger.cs` |
 | `WalkieTalkieAudioSource.cs` | `Assets/Scripts/Audio and Video/WalkieTalkieAudioSource.cs` |
+| `EyeBehaviourStateMachine.cs` | `Assets/Scripts/Character Behaviour/EyeBehaviourStateMachine.cs` |
+| `SpeechLookAtController.cs` | `Assets/Scripts/Character Behaviour/SpeechLookAtController.cs` |
 | `DialogueData.cs` | `Assets/Scripts/DialogueData/DialogueData.cs` |
 | `DialogueUI.cs` | `Assets/Scripts/DialogueData/DialogueUI.cs` |
 | `ConversationRaycast.cs` | `Assets/Scripts/GazeInteraction/ConversationRaycast.cs` |
@@ -647,6 +655,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `PickUpUI.cs` | `Assets/Scripts/UI/PickUpUI.cs` |
 | `RewardUI.cs` | `Assets/Scripts/UI/RewardUI.cs` |
 | `TenSecTimer.cs` | `Assets/Scripts/UI/TenSecTimer.cs` |
+| `PlanarReflection.cs` | `Assets/Shaders/PlanarReflection.cs` |
 | `DisableInPlayModeAttribute.cs` | `Assets/Toolkits/Rope/Core/DisableInPlayModeAttribute.cs` |
 | `DisableInPlayModePropertyDrawer.cs` | `Assets/Toolkits/Rope/Core/Editor/DisableInPlayModePropertyDrawer.cs` |
 | `RopeEditor.cs` | `Assets/Toolkits/Rope/Core/Editor/RopeEditor.cs` |
