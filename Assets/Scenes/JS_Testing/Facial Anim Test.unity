@@ -811,6 +811,107 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6372429370837317218, guid: b0ee0046b3123594799790164431b9f2, type: 3}
   m_PrefabInstance: {fileID: 775362880}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &158348110
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 158348111}
+  - component: {fileID: 158348113}
+  - component: {fileID: 158348112}
+  m_Layer: 0
+  m_Name: Head_rotation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &158348111
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158348110}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.1381562, z: -0, w: 0.9904105}
+  m_LocalPosition: {x: 0.45468664, y: -1.2592, z: 13.707857}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1617382492}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &158348112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158348110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3c430f382484144e925c097c2d33cfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.MultiAimConstraint
+  m_Weight: 1
+  m_Data:
+    m_ConstrainedObject: {fileID: 777265887}
+    m_SourceObjects:
+      m_Length: 1
+      m_Item0:
+        transform: {fileID: 1726223112}
+        weight: 1
+      m_Item1:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item2:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item3:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item4:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item5:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item6:
+        transform: {fileID: 0}
+        weight: 0
+      m_Item7:
+        transform: {fileID: 0}
+        weight: 0
+    m_Offset: {x: 0, y: 0, z: 0}
+    m_MinLimit: -180
+    m_MaxLimit: 180
+    m_AimAxis: 4
+    m_UpAxis: 2
+    m_WorldUpType: 0
+    m_WorldUpObject: {fileID: 0}
+    m_WorldUpAxis: 2
+    m_MaintainOffset: 0
+    m_ConstrainedAxes:
+      x: 1
+      y: 1
+      z: 1
+--- !u!114 &158348113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158348110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.Rig
+  m_Weight: 1
+  m_Effectors: []
 --- !u!4 &159295350 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4716912707440563511, guid: b0ee0046b3123594799790164431b9f2, type: 3}
@@ -3949,6 +4050,8 @@ MonoBehaviour:
   m_RigLayers:
   - m_Rig: {fileID: 1053599487}
     m_Active: 1
+  - m_Rig: {fileID: 158348113}
+    m_Active: 1
   m_Effectors: []
 --- !u!95 &1617382494
 Animator:
@@ -4085,9 +4188,15 @@ MonoBehaviour:
   rightForwardAxis: 4
   rightUpAxis: 2
   horizontalClamp: 23.6
-  verticalClamp: 24.6
-  stateBlendTime: 0.08
+  verticalClamp: 9.7
+  stateBlendTime: 0.02
   proceduralLookDistance: 5
+  lookPointReference: {fileID: 1726223112}
+  lookPointHorizontalTriggerDistance: 0.3
+  lookPointVerticalTriggerDistance: 0.3
+  jitterProbability: 0.275
+  jitterAmount: 1
+  jitterRandomness: 0.138
   scanning: 0.491
   eyeMoveSpeed: 1
   scanningSpeed: 0.5
@@ -4097,8 +4206,8 @@ MonoBehaviour:
   minimumIdleHoldTime: 1
   maximumIdleHoldTime: 4
   minimumIdleMoveSpeed: 0
-  maximumIdleMoveSpeed: 25
-  interestPointsInfluence: 0.411
+  maximumIdleMoveSpeed: 29
+  interestPointsInfluence: 0.313
   interestPointFieldOfView: 100
   interestPoints:
   - target: {fileID: 1033705948}
@@ -4119,19 +4228,28 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 1
+      time: 0.001663208
+      value: 0.0066604614
       inSlope: 0
-      outSlope: -1
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
+      time: 0.122858435
+      value: 0.97590953
+      inSlope: 0.20368688
+      outSlope: 0.20368688
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.038978066
+    - serializedVersion: 3
       time: 1
       value: 0
       inSlope: -1
-      outSlope: 0
+      outSlope: -1
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -4466,6 +4584,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7884496161776889255, guid: b0ee0046b3123594799790164431b9f2, type: 3}
   m_PrefabInstance: {fileID: 775362880}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1726223111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1726223112}
+  m_Layer: 0
+  m_Name: Warder Look Point Reference
+  m_TagString: Untagged
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1726223112
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726223111}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.87825, y: 3.11441, z: -12.16657}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1734671215 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2759137132629361842, guid: bcd634af68fe23b45b78f7edd92d801a, type: 3}
@@ -5107,6 +5256,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3612933387658316923, guid: 8fd3f7748185dd84ba9fbca32e0ea511, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1053599485}
+    - targetCorrespondingSourceObject: {fileID: 3612933387658316923, guid: 8fd3f7748185dd84ba9fbca32e0ea511, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 158348111}
     - targetCorrespondingSourceObject: {fileID: 351383159177724999, guid: 8fd3f7748185dd84ba9fbca32e0ea511, type: 3}
       insertIndex: -1
       addedObject: {fileID: 534326928}
@@ -5484,19 +5636,25 @@ MonoBehaviour:
   rightForwardAxis: 3
   rightUpAxis: 4
   horizontalClamp: 40
-  verticalClamp: 25
-  stateBlendTime: 0.08
+  verticalClamp: 15.1
+  stateBlendTime: 0.03
   proceduralLookDistance: 5
-  scanning: 0.7
-  eyeMoveSpeed: 0.65
-  scanningSpeed: 0.5
-  scanSpeedRandomness: 0.5
+  lookPointReference: {fileID: 0}
+  lookPointHorizontalTriggerDistance: 0.3
+  lookPointVerticalTriggerDistance: 0.3
+  jitterProbability: 1
+  jitterAmount: 0.5
+  jitterRandomness: 0.263
+  scanning: 0.862
+  eyeMoveSpeed: 1
+  scanningSpeed: 0.521
+  scanSpeedRandomness: 0
   scanningSize: 0.25
-  scanningHeight: 0.25
+  scanningHeight: 0
   minimumIdleHoldTime: 0.15
   maximumIdleHoldTime: 4
   minimumIdleMoveSpeed: 0
-  maximumIdleMoveSpeed: 25
+  maximumIdleMoveSpeed: 50
   interestPointsInfluence: 0
   interestPointFieldOfView: 100
   interestPoints:
@@ -6294,3 +6452,4 @@ SceneRoots:
   - {fileID: 123576151}
   - {fileID: 1967943855}
   - {fileID: 1929665758}
+  - {fileID: 1726223112}

@@ -78,6 +78,56 @@ public class EyeBehaviorStateMachine : MonoBehaviour
     [Min(0.1f)]
     [SerializeField] private float proceduralLookDistance = 5f;
 
+    [Header("Look Point Reference")]
+
+    [Tooltip(
+        "Optional empty GameObject. When assigned, it is repositioned to the eyes' " +
+        "actual gaze point whenever that point deviates far enough from straight-ahead " +
+        "(per the trigger distances below). Useful as an aim target for a head/spine " +
+        "Multi-Aim Constraint, so the head only reacts to meaningfully large eye " +
+        "movements rather than every small idle scan.")]
+    [SerializeField] private Transform lookPointReference;
+
+    [Tooltip(
+        "Minimum horizontal deviation (world units, measured perpendicular to the " +
+        "character's straight-ahead direction) the gaze point must reach before " +
+        "Look Point Reference is moved to it.")]
+    [Min(0f)]
+    [SerializeField] private float lookPointHorizontalTriggerDistance = 0.3f;
+
+    [Tooltip(
+        "Minimum vertical deviation (world units, measured perpendicular to the " +
+        "character's straight-ahead direction) the gaze point must reach before " +
+        "Look Point Reference is moved to it.")]
+    [Min(0f)]
+    [SerializeField] private float lookPointVerticalTriggerDistance = 0.3f;
+
+    [Header("Look Movement - Jitter")]
+
+    [Tooltip(
+        "Probability that a NEW look destination (a fresh Idle target, an Eye " +
+        "Contact stare/look-away swap, a new Stare target, etc.) is approached via " +
+        "a staggered/jittered path instead of moving directly. Rolled once per " +
+        "destination change, never every frame. 0 = eyes never jitter point to " +
+        "point. 1 = eyes always jitter point to point.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float jitterProbability = 0f;
+
+    [Tooltip(
+        "Relative density of jitter waypoints per unit of world-space distance " +
+        "between the old and new look point. Longer transitions get proportionally " +
+        "more jitter waypoints than short ones (clamped to a sane range).")]
+    [Min(0f)]
+    [SerializeField] private float jitterAmount = 1f;
+
+    [Tooltip(
+        "How far each intermediate jitter waypoint deviates from the straight line " +
+        "drawn between the old and new point, scaled by the transition distance. " +
+        "0 = waypoints sit essentially on the direct line. Higher values scatter " +
+        "them further off that line.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float jitterRandomness = 0.3f;
+
     // -------------------------------------------------------------------------
     // Idle
     // -------------------------------------------------------------------------
@@ -108,13 +158,13 @@ public class EyeBehaviorStateMachine : MonoBehaviour
 
     [Tooltip(
         "0 = scan points remain close to center. " +
-        "1 = horizontal scan points may theoretically reach ±180 degrees. " +
+        "1 = horizontal scan points may theoretically reach \u00b1180 degrees. " +
         "The final eye clamp still limits the physical eye rotation.")]
     [Range(0f, 1f)]
     [SerializeField] private float scanningSize = 0.25f;
 
     [Tooltip(
-        "0 = vertical scanning is limited to approximately ±25 degrees. " +
+        "0 = vertical scanning is limited to approximately \u00b125 degrees. " +
         "1 = vertical scanning approaches its full useful range.")]
     [Range(0f, 1f)]
     [SerializeField] private float scanningHeight = 0.25f;
@@ -288,6 +338,23 @@ public class EyeBehaviorStateMachine : MonoBehaviour
     private bool eyeContactLookingAway;
     private Vector3 eyeContactAwayPoint;
 
+    /// <summary>
+    /// Set whenever EyeContact behaviour begins fresh (explicit state entry,
+    /// Reactive Eye Contact engaging, or a new target assigned mid-EyeContact),
+    /// so the very first look at the target/away-point is eligible for jitter.
+    /// </summary>
+    private bool eyeContactJustEntered;
+
+    // -------------------------------------------------------------------------
+    // Stare runtime
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Set whenever Stare begins fresh (explicit state entry, or a new target
+    /// assigned mid-Stare), so the first look at the target is eligible for jitter.
+    /// </summary>
+    private bool stareJustEntered;
+
     // -------------------------------------------------------------------------
     // Reactive Eye Contact runtime
     // -------------------------------------------------------------------------
@@ -300,6 +367,32 @@ public class EyeBehaviorStateMachine : MonoBehaviour
     private bool reactiveEyeContactEngaged;
 
     private float reactiveDecisionTimer;
+
+    // -------------------------------------------------------------------------
+    // Jitter runtime
+    // -------------------------------------------------------------------------
+
+    private const int MinJitterWaypoints = 1;
+    private const int MaxJitterWaypoints = 6;
+    private const float MinJitterDistance = 0.05f;
+    private const float JitterWaypointArrivalTolerance = 0.02f;
+    private const float JitterMaxWaypointTime = 0.35f;
+    private const float JitterDeviationScale = 0.5f;
+
+    // Fixed-size reusable buffer - never allocated per-transition.
+    private readonly Vector3[] jitterWaypoints = new Vector3[MaxJitterWaypoints + 1];
+
+    private bool jitterActive;
+    private int jitterWaypointCount;
+    private int jitterWaypointIndex;
+    private float jitterWaypointTimer;
+
+    /// <summary>
+    /// Set true for exactly one frame when a jitter sequence finishes, so the
+    /// calling state (Idle) can resync its own movement-speed system without
+    /// a discontinuity.
+    /// </summary>
+    private bool jitterJustCompleted;
 
     // -------------------------------------------------------------------------
     // Public API
@@ -366,6 +459,9 @@ public class EyeBehaviorStateMachine : MonoBehaviour
         // naturally to the new target rather than snapping.
         if (currentState == EyeState.EyeContact || reactiveEyeContactEngaged)
             ResetEyeContactState();
+
+        if (currentState == EyeState.Stare)
+            stareJustEntered = true;
     }
 
     /// <summary>
@@ -481,14 +577,15 @@ public class EyeBehaviorStateMachine : MonoBehaviour
                 break;
 
             case EyeState.Stare:
-                UpdateStare();
+                UpdateStare(deltaTime);
                 break;
         }
 
         // -------------------------------------------------------------
         // 3 / 4. Smooth ONE shared world-space look point.
         //
-        // Every state feeds desiredLookPoint.
+        // Every state feeds desiredLookPoint (optionally routed through a
+        // jitter sequence first - see SetLookTarget()).
         // Neither eye receives a state target directly.
         //
         // This guarantees state and target changes go through the same
@@ -512,7 +609,16 @@ public class EyeBehaviorStateMachine : MonoBehaviour
         }
 
         // -------------------------------------------------------------
-        // 5. Independently rotate each eye toward the SAME world point.
+        // 5. Optionally reposition an external Look Point Reference object
+        //    to the eyes' actual gaze point, once it deviates far enough
+        //    from straight-ahead. Purely observational - never feeds back
+        //    into eye rotation.
+        // -------------------------------------------------------------
+
+        UpdateLookPointReference();
+
+        // -------------------------------------------------------------
+        // 6. Independently rotate each eye toward the SAME world point.
         //
         // Because each eye has a different world-space position, they
         // naturally converge on nearby objects.
@@ -543,35 +649,54 @@ public class EyeBehaviorStateMachine : MonoBehaviour
 
         stateTimer -= deltaTime;
 
+        bool choseNewTarget = false;
+
         if (stateTimer <= 0f)
         {
             ChooseNewIdleTarget();
             stateTimer = GetIdleHoldDuration();
+            choseNewTarget = true;
         }
 
-        float moveSpeed = Mathf.Lerp(
-            minimumIdleMoveSpeed,
-            maximumIdleMoveSpeed,
-            eyeMoveSpeed);
-
-        if (moveSpeed <= 0f)
+        if (!jitterActive)
         {
-            // Eye Move Speed = 0 means do not travel between idle points.
-            // idleMovingPoint simply remains where it currently is.
+            float moveSpeed = Mathf.Lerp(
+                minimumIdleMoveSpeed,
+                maximumIdleMoveSpeed,
+                eyeMoveSpeed);
+
+            if (moveSpeed <= 0f)
+            {
+                // Eye Move Speed = 0 means do not travel between idle points.
+                // idleMovingPoint simply remains where it currently is.
+            }
+            else
+            {
+                // Exponential smoothing gives a useful 0-1 "speed" control while
+                // remaining frame-rate independent.
+                float t = 1f - Mathf.Exp(-moveSpeed * deltaTime);
+
+                idleMovingPoint = Vector3.Lerp(
+                    idleMovingPoint,
+                    idleTargetPoint,
+                    t);
+            }
         }
-        else
+
+        // While an active jitter sequence is driving desiredLookPoint, keep
+        // idleMovingPoint parked at the shared look point so that once the
+        // sequence completes, normal Eye Move Speed control resumes from
+        // the eyes' actual position with no discontinuity.
+        SetLookTarget(
+            idleMovingPoint,
+            choseNewTarget ? idleTargetPoint : (Vector3?)null,
+            deltaTime);
+
+        if (jitterJustCompleted)
         {
-            // Exponential smoothing gives a useful 0-1 "speed" control while
-            // remaining frame-rate independent.
-            float t = 1f - Mathf.Exp(-moveSpeed * deltaTime);
-
-            idleMovingPoint = Vector3.Lerp(
-                idleMovingPoint,
-                idleTargetPoint,
-                t);
+            idleMovingPoint = idleTargetPoint;
+            jitterJustCompleted = false;
         }
-
-        desiredLookPoint = idleMovingPoint;
     }
 
     private void ChooseNewIdleTarget()
@@ -632,13 +757,13 @@ public class EyeBehaviorStateMachine : MonoBehaviour
          * The prompt describes 0 as a restricted vertical range and 1 as
          * matching the full horizontal range.
          *
-         * Pitch values beyond ±90 degrees effectively begin pointing behind
-         * the character, so treating ±180 degrees as a useful vertical scan
+         * Pitch values beyond \u00b190 degrees effectively begin pointing behind
+         * the character, so treating \u00b1180 degrees as a useful vertical scan
          * range is ambiguous.
          *
          * Therefore:
-         *     Scanning Height = 0 -> approximately ±25 degrees.
-         *     Scanning Height = 1 -> up to ±90 degrees.
+         *     Scanning Height = 0 -> approximately \u00b125 degrees.
+         *     Scanning Height = 1 -> up to \u00b190 degrees.
          *
          * The physical eye's Vertical Clamp is applied afterwards regardless.
          */
@@ -880,7 +1005,9 @@ public class EyeBehaviorStateMachine : MonoBehaviour
         {
             // Do not snap: let idleMovingPoint continue from wherever the
             // shared, already-smoothed look point currently is, and force
-            // a fresh Idle target choice on the very next Idle tick.
+            // a fresh Idle target choice on the very next Idle tick. Any
+            // jitter sequence in flight is left to finish naturally rather
+            // than being cut off abruptly.
             idleMovingPoint = currentLookPoint;
             stateTimer = 0f;
         }
@@ -898,6 +1025,8 @@ public class EyeBehaviorStateMachine : MonoBehaviour
     {
         if (!IsEyeContactTargetValid())
         {
+            eyeContactJustEntered = false;
+
             if (reactiveEyeContactEngaged)
             {
                 // Graceful cancellation: return to Idle without snapping.
@@ -923,17 +1052,28 @@ public class EyeBehaviorStateMachine : MonoBehaviour
         if (lookAwayTime <= 0f && stareTime > 0f)
         {
             eyeContactLookingAway = false;
-            desiredLookPoint = eyeContactTarget.position;
+
+            Vector3 target = eyeContactTarget.position;
+
+            SetLookTarget(
+                target,
+                eyeContactJustEntered ? target : (Vector3?)null,
+                deltaTime);
+
+            eyeContactJustEntered = false;
             return;
         }
 
         // Stare Time = 0 means never directly look at the target.
         if (stareTime <= 0f)
         {
+            bool pickedNewAwayPoint = false;
+
             if (!eyeContactLookingAway || stateTimer <= 0f)
             {
                 eyeContactLookingAway = true;
                 PickEyeContactAwayPoint();
+                pickedNewAwayPoint = true;
 
                 // If Look Away Time is also zero there is no meaningful
                 // cycle duration, so use a small refresh period.
@@ -944,11 +1084,21 @@ public class EyeBehaviorStateMachine : MonoBehaviour
 
             stateTimer -= deltaTime;
 
-            desiredLookPoint = eyeContactAwayPoint;
+            bool isNew = pickedNewAwayPoint || eyeContactJustEntered;
+
+            SetLookTarget(
+                eyeContactAwayPoint,
+                isNew ? eyeContactAwayPoint : (Vector3?)null,
+                deltaTime);
+
+            eyeContactJustEntered = false;
             return;
         }
 
         stateTimer -= deltaTime;
+
+        bool justTransitioned = eyeContactJustEntered;
+        eyeContactJustEntered = false;
 
         if (stateTimer <= 0f)
         {
@@ -960,6 +1110,7 @@ public class EyeBehaviorStateMachine : MonoBehaviour
                 // engagement to disengage and hand control back to Idle.
                 eyeContactLookingAway = false;
                 stateTimer = GetStareDuration();
+                justTransitioned = true;
 
                 if (currentState == EyeState.Idle && reactiveEyeContactEngaged)
                 {
@@ -972,12 +1123,18 @@ public class EyeBehaviorStateMachine : MonoBehaviour
                 eyeContactLookingAway = true;
                 PickEyeContactAwayPoint();
                 stateTimer = lookAwayTime;
+                justTransitioned = true;
             }
         }
 
-        desiredLookPoint = eyeContactLookingAway
+        Vector3 continuousPoint = eyeContactLookingAway
             ? eyeContactAwayPoint
             : eyeContactTarget.position;
+
+        SetLookTarget(
+            continuousPoint,
+            justTransitioned ? continuousPoint : (Vector3?)null,
+            deltaTime);
     }
 
     private void PickEyeContactAwayPoint()
@@ -1085,7 +1242,7 @@ public class EyeBehaviorStateMachine : MonoBehaviour
     // STARE
     // =========================================================================
 
-    private void UpdateStare()
+    private void UpdateStare(float deltaTime)
     {
         if (eyeContactTarget != null)
         {
@@ -1096,12 +1253,198 @@ public class EyeBehaviorStateMachine : MonoBehaviour
              * per-eye angular clamp still prevents physically impossible
              * rotations if that target moves behind the character.
              */
-            desiredLookPoint = eyeContactTarget.position;
+            Vector3 target = eyeContactTarget.position;
+
+            SetLookTarget(
+                target,
+                stareJustEntered ? target : (Vector3?)null,
+                deltaTime);
         }
         else
         {
             desiredLookPoint = GetForwardLookPoint();
         }
+
+        stareJustEntered = false;
+    }
+
+    // =========================================================================
+    // LOOK MOVEMENT / JITTER
+    // =========================================================================
+
+    /// <summary>
+    /// Single choke point every state routes its computed look point through.
+    /// If newDestination is non-null, this frame represents the start of a
+    /// genuinely new point-to-point transition (a fresh "snap point"), and a
+    /// jitter sequence toward it may be rolled. Otherwise continuousPoint is
+    /// simply the state's live, frame-to-frame value (e.g. a moving target's
+    /// current position, or Idle's own moving-point interpolation).
+    /// </summary>
+    private void SetLookTarget(Vector3 continuousPoint, Vector3? newDestination, float deltaTime)
+    {
+        if (newDestination.HasValue)
+            BeginPossibleJitterTransition(newDestination.Value);
+
+        desiredLookPoint = jitterActive
+            ? AdvanceJitterTraversal(deltaTime)
+            : continuousPoint;
+    }
+
+    /// <summary>
+    /// Rolls Jitter Probability for a new destination and, on success,
+    /// generates a short sequence of waypoints scattered around the direct
+    /// line from the eyes' current position to that destination. The final
+    /// waypoint is always the exact destination - jitter never introduces a
+    /// permanent aiming error.
+    /// </summary>
+    private void BeginPossibleJitterTransition(Vector3 destination)
+    {
+        jitterActive = false;
+        jitterWaypointCount = 0;
+        jitterWaypointIndex = 0;
+        jitterWaypointTimer = 0f;
+
+        if (jitterProbability <= 0f)
+            return;
+
+        if (UnityEngine.Random.value > jitterProbability)
+            return;
+
+        Vector3 startPoint = currentLookPoint;
+        float distance = Vector3.Distance(startPoint, destination);
+
+        // Not enough travel distance for a staggered path to read as
+        // anything other than noise.
+        if (distance < MinJitterDistance)
+            return;
+
+        int scatterCount = Mathf.Clamp(
+            Mathf.RoundToInt(jitterAmount * distance),
+            MinJitterWaypoints,
+            MaxJitterWaypoints);
+
+        Vector3 direction = (destination - startPoint) / distance;
+
+        // Build a stable perpendicular basis around the travel direction so
+        // scatter offsets read as "off the line" rather than along it.
+        Vector3 referenceUp = GetCharacterRestUp();
+        Vector3 perpendicularA = Vector3.Cross(direction, referenceUp);
+
+        if (perpendicularA.sqrMagnitude < 0.000001f)
+            perpendicularA = Vector3.Cross(direction, Vector3.right);
+
+        perpendicularA.Normalize();
+        Vector3 perpendicularB = Vector3.Cross(direction, perpendicularA);
+
+        float maxDeviation = distance * jitterRandomness * JitterDeviationScale;
+
+        for (int i = 0; i < scatterCount; i++)
+        {
+            float t = (i + 1f) / (scatterCount + 1f);
+
+            Vector3 pointOnLine = Vector3.Lerp(startPoint, destination, t);
+
+            float angle = UnityEngine.Random.Range(0f, Mathf.PI * 2f);
+            float radius = UnityEngine.Random.Range(0f, maxDeviation);
+
+            Vector3 offset =
+                (perpendicularA * Mathf.Cos(angle) + perpendicularB * Mathf.Sin(angle)) *
+                radius;
+
+            jitterWaypoints[i] = pointOnLine + offset;
+        }
+
+        // The final waypoint is always the real destination, exactly.
+        jitterWaypoints[scatterCount] = destination;
+
+        jitterWaypointCount = scatterCount + 1;
+        jitterWaypointIndex = 0;
+        jitterWaypointTimer = 0f;
+        jitterActive = true;
+        jitterJustCompleted = false;
+    }
+
+    /// <summary>
+    /// Advances through the current jitter waypoint sequence once the eyes
+    /// are close enough to the active waypoint (or a max-time safeguard
+    /// trips so a slow-moving eye never stalls indefinitely). Returns the
+    /// waypoint that should be fed to the shared SmoothDamp this frame.
+    /// </summary>
+    private Vector3 AdvanceJitterTraversal(float deltaTime)
+    {
+        Vector3 waypoint = jitterWaypoints[jitterWaypointIndex];
+
+        float distanceToWaypoint = Vector3.Distance(currentLookPoint, waypoint);
+
+        jitterWaypointTimer += deltaTime;
+
+        bool arrived = distanceToWaypoint <= JitterWaypointArrivalTolerance;
+        bool timedOut = jitterWaypointTimer >= JitterMaxWaypointTime;
+
+        if (arrived || timedOut)
+        {
+            jitterWaypointIndex++;
+            jitterWaypointTimer = 0f;
+
+            if (jitterWaypointIndex >= jitterWaypointCount)
+            {
+                jitterActive = false;
+                jitterJustCompleted = true;
+
+                // Sequence complete - the last waypoint IS the real
+                // destination, so just keep returning it.
+                return jitterWaypoints[jitterWaypointCount - 1];
+            }
+
+            waypoint = jitterWaypoints[jitterWaypointIndex];
+        }
+
+        return waypoint;
+    }
+
+    // =========================================================================
+    // LOOK POINT REFERENCE
+    // =========================================================================
+
+    /// <summary>
+    /// If Look Point Reference is assigned, moves it to the eyes' actual
+    /// gaze point (currentLookPoint) whenever that point's horizontal or
+    /// vertical deviation from the character's straight-ahead direction
+    /// meets or exceeds the configured trigger distance. When neither
+    /// threshold is met, the reference object is deliberately left where
+    /// it last was - this is what lets a downstream Multi-Aim Constraint
+    /// ignore small idle scans and only react once the eyes look somewhere
+    /// meaningfully off-center.
+    /// </summary>
+    private void UpdateLookPointReference()
+    {
+        if (lookPointReference == null)
+            return;
+
+        Vector3 center = GetEyeCenter();
+        Vector3 forward = GetCharacterRestForward();
+        Vector3 up = GetCharacterRestUp();
+        Vector3 right = GetCharacterRestRight();
+
+        Vector3 toLook = currentLookPoint - center;
+
+        // Project the gaze point onto the straight-ahead ray so the lateral
+        // offset is measured at the same depth as the gaze point itself,
+        // rather than at some fixed procedural look distance.
+        float forwardDistance = Vector3.Dot(toLook, forward);
+        Vector3 pointOnForwardRay = center + forward * forwardDistance;
+
+        Vector3 lateralOffset = currentLookPoint - pointOnForwardRay;
+
+        float horizontalDeviation = Mathf.Abs(Vector3.Dot(lateralOffset, right));
+        float verticalDeviation = Mathf.Abs(Vector3.Dot(lateralOffset, up));
+
+        bool farEnough =
+            horizontalDeviation >= lookPointHorizontalTriggerDistance ||
+            verticalDeviation >= lookPointVerticalTriggerDistance;
+
+        if (farEnough)
+            lookPointReference.position = currentLookPoint;
     }
 
     // =========================================================================
@@ -1123,7 +1466,7 @@ public class EyeBehaviorStateMachine : MonoBehaviour
                 break;
 
             case EyeState.Stare:
-                // No internal Stare state required.
+                stareJustEntered = true;
                 break;
         }
     }
@@ -1145,6 +1488,8 @@ public class EyeBehaviorStateMachine : MonoBehaviour
 
     private void ResetEyeContactState()
     {
+        eyeContactJustEntered = true;
+
         if (stareTime <= 0f)
         {
             eyeContactLookingAway = true;
@@ -1337,6 +1682,19 @@ public class EyeBehaviorStateMachine : MonoBehaviour
         return average.normalized;
     }
 
+    private Vector3 GetCharacterRestRight()
+    {
+        Vector3 forward = GetCharacterRestForward();
+        Vector3 up = GetCharacterRestUp();
+
+        Vector3 right = Vector3.Cross(up, forward);
+
+        if (right.sqrMagnitude < 0.000001f)
+            return transform.right;
+
+        return right.normalized;
+    }
+
     private Vector3 GetRestAxisWorld(
         Transform eye,
         Quaternion restLocalRotation,
@@ -1515,6 +1873,20 @@ public class EyeBehaviorStateMachine : MonoBehaviour
             Gizmos.DrawLine(
                 rightEye.position,
                 currentLookPoint);
+        }
+
+        // Active jitter waypoints, so the staggered path can be inspected.
+        if (jitterActive && jitterWaypointCount > 0)
+        {
+            Gizmos.color = Color.magenta;
+
+            for (int i = 0; i < jitterWaypointCount; i++)
+            {
+                Gizmos.DrawWireSphere(jitterWaypoints[i], 0.015f);
+
+                if (i > 0)
+                    Gizmos.DrawLine(jitterWaypoints[i - 1], jitterWaypoints[i]);
+            }
         }
 
         if (reactiveEyeContact && eyeContactTarget != null)
