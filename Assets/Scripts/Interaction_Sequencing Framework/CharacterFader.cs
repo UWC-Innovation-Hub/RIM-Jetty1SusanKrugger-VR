@@ -111,8 +111,9 @@ public class CharacterFader : MonoBehaviour
         if (_routine != null)
         {
             StopCoroutine(_routine);
-            _routine = StartCoroutine(FadeRoutine(target, deactivateAtEnd));
         }
+
+        _routine = StartCoroutine(FadeRoutine(target, deactivateAtEnd));
     }
 
     private IEnumerator FadeRoutine(float target, bool deactivateAtEnd)

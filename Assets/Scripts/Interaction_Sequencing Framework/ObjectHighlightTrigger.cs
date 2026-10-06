@@ -52,6 +52,14 @@ public class ObjectHighlightTrigger : MonoBehaviour
     {
         if (pointable != null)
         {
+            pointable.WhenPointerEventRaised += HandlePointerEvent;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (pointable != null)
+        {
             pointable.WhenPointerEventRaised -= HandlePointerEvent;
         }
 
@@ -148,6 +156,8 @@ public class ObjectHighlightTrigger : MonoBehaviour
         {
             StopCoroutine(_fadeRoutine);
         }
+
+        _fadeRoutine = StartCoroutine(FadeRoutine(target));
     }
 
     private IEnumerator FadeRoutine(float target)
