@@ -76,6 +76,11 @@ public class CharacterFader : MonoBehaviour
         }
 
         _slots = slots.ToArray();
+
+        if (_slots.Length == 0)
+        {
+            Debug.LogWarning($"{name}: no materials with '{colorProperty}' found, fade will have no visible effect.", this);
+        }
     }
 
     public void FadeOut()

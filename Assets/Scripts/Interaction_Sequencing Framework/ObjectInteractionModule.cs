@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ObjectInteractionModule : InteractionModuleBase
 {
@@ -15,6 +14,10 @@ public class ObjectInteractionModule : InteractionModuleBase
     [Header("Tutorial")]
     [SerializeField] private TutorialPopup tutorialPopup;
     [SerializeField] private float tutorialTimeout = 15f;
+
+    [Header("Highlight")]
+    [Tooltip("On: targets glow as soon as the interaction starts. Off: they glow once armed.")]
+    [SerializeField] private bool highlightOnActivate = true;
 
     private Coroutine _introRoutine;
     private Coroutine _tutorialTimeoutRoutine;
@@ -36,6 +39,11 @@ public class ObjectInteractionModule : InteractionModuleBase
         }
 
         SubscribeToTargets();
+
+        if (highlightOnActivate)
+        {
+            SetHighlightAll(true);
+        }
 
         _introRoutine = StartCoroutine(IntroRoutine());
     }
@@ -65,7 +73,13 @@ public class ObjectInteractionModule : InteractionModuleBase
         {
             for (int i = 0; i < targets.Length; i++)
             {
-                targets[i]?.SetArmed(false);
+                if (targets[i] == null)
+                {
+                    continue;
+                }
+
+                targets[i].SetArmed(false);
+                targets[i].SetHighlighted(false, true);
             }
         }
 
@@ -73,7 +87,6 @@ public class ObjectInteractionModule : InteractionModuleBase
         {
             RestoreCharacters();
         }
-
 
         base.Deactivate();
     }
@@ -220,6 +233,7 @@ public class ObjectInteractionModule : InteractionModuleBase
     private IEnumerator FinalizeAfterPlayback(ObjectHighlightTrigger target)
     {
         target.SetArmed(false);
+        target.SetHighlighted(false);
 
         float audioTime = 0f;
 
@@ -270,6 +284,19 @@ public class ObjectInteractionModule : InteractionModuleBase
 
             target.ResetTrigger();
             target.SetArmed(true);
+
+            if (!highlightOnActivate)
+            {
+                target.SetHighlighted(true);
+            }
+        }
+    }
+
+    private void SetHighlightAll(bool highlighted)
+    {
+        for (int i = 0; i < targets.Length; i++)
+        {
+            targets[i]?.SetHighlighted(highlighted);
         }
     }
 
