@@ -593,6 +593,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `ArtifactInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ArtifactInteractionModule.cs` |
 | `BreathingInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/BreathingInteractionModule.cs` |
 | `CellHoldSelector.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CellHoldSelector.cs` |
+| `CharacterFader.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterFader.cs` |
 | `CharacterHighlight.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterHighlight.cs` |
 | `CharacterInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterInteractionModule.cs` |
 | `CharacterSpotlight.cs` | `Assets/Scripts/Interaction_Sequencing Framework/CharacterSpotlight.cs` |
@@ -603,6 +604,8 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `HandTouchInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/HandTouchInteractionModule.cs` |
 | `InteractionModuleBase.cs` | `Assets/Scripts/Interaction_Sequencing Framework/InteractionModuleBase.cs` |
 | `InventoryModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/InventoryModule.cs` |
+| `ObjectHighlightTrigger.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ObjectHighlightTrigger.cs` |
+| `ObjectInteractionModule.cs` | `Assets/Scripts/Interaction_Sequencing Framework/ObjectInteractionModule.cs` |
 | `PlayerRelocate.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PlayerRelocate.cs` |
 | `PrisonerRoute.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PrisonerRoute.cs` |
 | `PrisonerSortData.cs` | `Assets/Scripts/Interaction_Sequencing Framework/PrisonerSortData.cs` |
