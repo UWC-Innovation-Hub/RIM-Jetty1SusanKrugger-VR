@@ -4509,7 +4509,7 @@ GameObject:
   - component: {fileID: 214839110}
   - component: {fileID: 214839109}
   - component: {fileID: 214839116}
-  - component: {fileID: 214839115}
+  - component: {fileID: 214839117}
   m_Layer: 0
   m_Name: LetterFour
   m_TagString: Untagged
@@ -4662,18 +4662,6 @@ Transform:
   - {fileID: 879122638}
   m_Father: {fileID: 2044617213}
   m_LocalEulerAnglesHint: {x: 0, y: -13.491, z: 0}
---- !u!114 &214839115
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 214839108}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4ed88b103af4fc48acc8a21e676c5ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArtifactHighlightTrigger
 --- !u!82 &214839116
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4768,6 +4756,79 @@ AudioSource:
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &214839117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214839108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf47b4021fd6bd499897c6d40dc75df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactHighlightTrigger
+  grabbable: {fileID: 214839109}
+  interactable: {fileID: 0}
+  targetCollider: {fileID: 214839111}
+  targetRenderer: {fileID: 214839112}
+  materialIndex: 1
+  emissionProperty: _EmissionStrength
+  highlightValue: 2
+  idleValue: 0
+  fadeDuration: 0.3
+  fadeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  responseAudio: {fileID: 214839116}
+  responseVideo: {fileID: 0}
+  returnDelaySeconds: 3
+  returnDuration: 0.5
+  returnCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -16728,7 +16789,6 @@ GameObject:
   - component: {fileID: 830120331}
   - component: {fileID: 830120330}
   - component: {fileID: 830120329}
-  - component: {fileID: 830120335}
   - component: {fileID: 830120336}
   - component: {fileID: 830120337}
   m_Layer: 0
@@ -16883,18 +16943,6 @@ Transform:
   - {fileID: 141589652}
   m_Father: {fileID: 2044617213}
   m_LocalEulerAnglesHint: {x: 0, y: -107.416, z: 0}
---- !u!114 &830120335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 830120328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4ed88b103af4fc48acc8a21e676c5ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArtifactHighlightTrigger
 --- !u!82 &830120336
 AudioSource:
   m_ObjectHideFlags: 0
@@ -16999,31 +17047,72 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 830120328}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9597e632dfbca247bcf65e49c67078e, type: 3}
+  m_Script: {fileID: 11500000, guid: ecf47b4021fd6bd499897c6d40dc75df, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.OneGrabTranslateTransformer
-  _constraints:
-    ConstraintsAreRelative: 0
-    MinX:
-      Constrain: 0
-      Value: 0
-    MaxX:
-      Constrain: 0
-      Value: 0
-    MinY:
-      Constrain: 0
-      Value: 0
-    MaxY:
-      Constrain: 0
-      Value: 0
-    MinZ:
-      Constrain: 0
-      Value: 0
-    MaxZ:
-      Constrain: 0
-      Value: 0
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactHighlightTrigger
+  grabbable: {fileID: 830120329}
+  interactable: {fileID: 0}
+  targetCollider: {fileID: 830120331}
+  targetRenderer: {fileID: 830120332}
+  materialIndex: 1
+  emissionProperty: _EmissionStrength
+  highlightValue: 2
+  idleValue: 0
+  fadeDuration: 0.3
+  fadeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  responseAudio: {fileID: 830120336}
+  responseVideo: {fileID: 0}
+  returnDelaySeconds: 3
+  returnDuration: 0.5
+  returnCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &843130282
 GameObject:
   m_ObjectHideFlags: 0
@@ -28450,9 +28539,9 @@ MonoBehaviour:
   skipEnterFadeIn: 0
   skipExitFadeIn: 0
   targets:
-  - {fileID: 1966724829}
-  - {fileID: 830120335}
-  - {fileID: 214839115}
+  - {fileID: 1966724831}
+  - {fileID: 830120337}
+  - {fileID: 214839117}
   tutorialPopup: {fileID: 311962902}
   tutorialTimeout: 10
 --- !u!4 &1429801157 stripped
@@ -39085,8 +39174,8 @@ GameObject:
   - component: {fileID: 1966724825}
   - component: {fileID: 1966724824}
   - component: {fileID: 1966724823}
-  - component: {fileID: 1966724829}
   - component: {fileID: 1966724830}
+  - component: {fileID: 1966724831}
   m_Layer: 0
   m_Name: LetterTwo
   m_TagString: Untagged
@@ -39239,18 +39328,6 @@ Transform:
   - {fileID: 1931430029}
   m_Father: {fileID: 2044617213}
   m_LocalEulerAnglesHint: {x: 0, y: -107.416, z: 0}
---- !u!114 &1966724829
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1966724822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4ed88b103af4fc48acc8a21e676c5ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArtifactHighlightTrigger
 --- !u!82 &1966724830
 AudioSource:
   m_ObjectHideFlags: 0
@@ -39345,6 +39422,79 @@ AudioSource:
       weightedMode: 0
       inWeight: 0.33333334
       outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &1966724831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1966724822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf47b4021fd6bd499897c6d40dc75df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArtifactHighlightTrigger
+  grabbable: {fileID: 1966724823}
+  interactable: {fileID: 0}
+  targetCollider: {fileID: 1966724825}
+  targetRenderer: {fileID: 1966724826}
+  materialIndex: 1
+  emissionProperty: _EmissionStrength
+  highlightValue: 2
+  idleValue: 0
+  fadeDuration: 0.3
+  fadeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  responseAudio: {fileID: 1966724830}
+  responseVideo: {fileID: 0}
+  returnDelaySeconds: 3
+  returnDuration: 0.5
+  returnCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
