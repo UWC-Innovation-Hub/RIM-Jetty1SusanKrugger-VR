@@ -11,6 +11,10 @@ public class ObjectInteractionModule : InteractionModuleBase
     [SerializeField] private CharacterFader[] charactersFadeOut;
     [SerializeField] private bool restoreCharacters = true;
 
+    [Header("Colour")]
+    [SerializeField] private SaturationFader satFader;
+    [SerializeField] private bool restoreColor = true;
+
     [Header("Tutorial")]
     [SerializeField] private TutorialPopup tutorialPopup;
     [SerializeField] private float tutorialTimeout = 15f;
@@ -88,6 +92,11 @@ public class ObjectInteractionModule : InteractionModuleBase
             RestoreCharacters();
         }
 
+        if (restoreColor)
+        {
+            RestoreColor();
+        }
+
         base.Deactivate();
     }
 
@@ -98,7 +107,7 @@ public class ObjectInteractionModule : InteractionModuleBase
 
     private IEnumerator IntroRoutine()
     {
-        float waitTime = FadeOutCharacters();
+        float waitTime = Mathf.Max(FadeOutCharacters(), FadeToGrayscale());
 
         if (waitTime > 0f)
         {
@@ -151,6 +160,25 @@ public class ObjectInteractionModule : InteractionModuleBase
         }
 
         return longest;
+    }
+
+    private float FadeToGrayscale()
+    {
+        if (satFader == null)
+        {
+            return 0f;
+        }
+
+        satFader.FadeToGrayscale();
+        return satFader.FadeDuration;
+    }
+
+    private void RestoreColor()
+    {
+        if (satFader != null)
+        {
+            satFader.SetColorInstant();
+        }
     }
 
     private void RestoreCharacters()
