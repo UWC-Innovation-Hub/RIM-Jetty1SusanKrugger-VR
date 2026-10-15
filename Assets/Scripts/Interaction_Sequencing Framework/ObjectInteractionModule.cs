@@ -13,6 +13,7 @@ public class ObjectInteractionModule : InteractionModuleBase
 
     [Header("Colour")]
     [SerializeField] private SaturationFader satFader;
+    [SerializeField] private bool fadeBack = true;
     [SerializeField] private bool restoreColor = true;
 
     [Header("Tutorial")]
@@ -24,6 +25,7 @@ public class ObjectInteractionModule : InteractionModuleBase
     [SerializeField] private bool highlightOnActivate = true;
 
     private Coroutine _introRoutine;
+    private Coroutine _completeRoutine;
     private Coroutine _tutorialTimeoutRoutine;
     private bool _tutorialResolved;
 
@@ -58,6 +60,12 @@ public class ObjectInteractionModule : InteractionModuleBase
         {
             StopCoroutine(_introRoutine);
             _introRoutine = null;
+        }
+
+        if (_completeRoutine != null)
+        {
+            StopCoroutine(_completeRoutine);
+            _completeRoutine = null;
         }
 
         if (tutorialPopup != null)
@@ -171,6 +179,25 @@ public class ObjectInteractionModule : InteractionModuleBase
 
         satFader.FadeToGrayscale();
         return satFader.FadeDuration;
+    }
+
+    private IEnumerator CompleteRoutine()
+    {
+        satFader.FadeToColor();
+
+        if (satFader.FadeDuration > 0f)
+        {
+            yield return new WaitForSeconds(satFader.FadeDuration);
+        }
+
+        _completeRoutine = null;
+
+        if (!IsActive)
+        {
+            yield break;
+        }
+
+        Complete();
     }
 
     private void RestoreColor()
@@ -295,7 +322,14 @@ public class ObjectInteractionModule : InteractionModuleBase
 
         if (_completed.Count >= targets.Length)
         {
-            Complete();
+            if (fadeBack && satFader != null)
+            {
+                _completeRoutine = StartCoroutine(CompleteRoutine());
+            }
+            else
+            {
+                Complete();
+            }
         }
     }
 
