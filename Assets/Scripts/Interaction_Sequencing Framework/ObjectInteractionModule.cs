@@ -10,6 +10,8 @@ public class ObjectInteractionModule : InteractionModuleBase
     [Header("Characters")]
     [SerializeField] private CharacterFader[] charactersFadeOut;
     [SerializeField] private bool restoreCharacters = true;
+    [SerializeField] private CameraLayerSwitcher layerSwitcher;
+    [SerializeField] private bool fadeCharactersBack = true;
 
     [Header("Colour")]
     [SerializeField] private SaturationFader satFader;
@@ -97,6 +99,7 @@ public class ObjectInteractionModule : InteractionModuleBase
 
         if (restoreCharacters)
         {
+            ShowCharacterLayer();
             RestoreCharacters();
         }
 
@@ -128,6 +131,8 @@ public class ObjectInteractionModule : InteractionModuleBase
         {
             yield break;
         }
+
+        HideCharacterLayer();
 
         if (tutorialPopup != null)
         {
@@ -181,13 +186,76 @@ public class ObjectInteractionModule : InteractionModuleBase
         return satFader.FadeDuration;
     }
 
+    private void HideCharacterLayer()
+    {
+        if (layerSwitcher != null)
+        {
+            layerSwitcher.Hide();
+        }
+    }
+
+    private void ShowCharacterLayer()
+    {
+        if (layerSwitcher != null)
+        {
+            layerSwitcher.Show();
+        }
+    }
+
+    private float FadeInCharacters()
+    {
+        float longest = 0f;
+
+        if (charactersFadeOut == null)
+        {
+            return longest;
+        }
+
+        for (int i = 0; i < charactersFadeOut.Length; i++)
+        {
+            CharacterFader character = charactersFadeOut[i];
+
+            if (character == null)
+            {
+                continue;
+            }
+
+            character.FadeIn();
+            longest = Mathf.Max(longest, character.FadeDuration);
+        }
+
+        return longest;
+    }
+
+    private float FadeToColor()
+    {
+        if (satFader == null)
+        {
+            return 0f;
+        }
+
+        satFader.FadeToColor();
+        return satFader.FadeDuration;
+    }
+
     private IEnumerator CompleteRoutine()
     {
-        satFader.FadeToColor();
+        float waitTime = 0f;
 
-        if (satFader.FadeDuration > 0f)
+        if (fadeCharactersBack)
         {
-            yield return new WaitForSeconds(satFader.FadeDuration);
+            ShowCharacterLayer();
+            waitTime = Mathf.Max(waitTime, FadeInCharacters());
+        }
+
+        if (fadeBack)
+        {
+            waitTime = Mathf.Max(waitTime, FadeToColor());
+        }
+
+        if (waitTime > 0f)
+        {
+            yield return new WaitForSeconds(waitTime);
         }
 
         _completeRoutine = null;
@@ -322,7 +390,7 @@ public class ObjectInteractionModule : InteractionModuleBase
 
         if (_completed.Count >= targets.Length)
         {
-            if (fadeBack && satFader != null)
+            if (fadeCharactersBack || (fadeBack && satFader != null))
             {
                 _completeRoutine = StartCoroutine(CompleteRoutine());
             }
