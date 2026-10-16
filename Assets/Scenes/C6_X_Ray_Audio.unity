@@ -168,7 +168,7 @@ Transform:
   m_GameObject: {fileID: 32058210}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.03596, y: 9.42288, z: 5.26}
+  m_LocalPosition: {x: 9.99, y: 9.42288, z: 11.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -926,10 +926,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AcousticWaveController
   waveMaterial: {fileID: 2100000, guid: 8c293a362339360488f91c87421d4a18, type: 2}
   waveOrigin: {fileID: 32058212}
-  waveSpeed: 5
+  waveSpeed: 2
   maxRadius: 15
   waveWidth: 0.1
   waveInterval: 0.75
+  sourceRadius: 3
+  sourceFadeDuration: 2
 --- !u!4 &619188622
 Transform:
   m_ObjectHideFlags: 0

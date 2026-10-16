@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 public class AcousticWaveController : MonoBehaviour
 {
@@ -15,7 +15,12 @@ public class AcousticWaveController : MonoBehaviour
     [Header("Multiple Wave Settings")]
     public float waveInterval = 0.75f;
 
-    private Coroutine waveBurstCoroutine;
+    [Header("Source Illumination")]
+    public float sourceRadius = 3f;
+    public float sourceFadeDuration = 0.4f;
+
+    private float sourceIntensity;
+    private float sourceTimeRemaining;
 
     private const int MaxWaves = 3;
     private const float InactiveRadius = -100f;
@@ -24,6 +29,8 @@ public class AcousticWaveController : MonoBehaviour
     private readonly bool[] waveActive = new bool[MaxWaves];
 
     private int nextWaveIndex = 0;
+
+    private Coroutine waveBurstCoroutine;
 
     // Shader property IDs
     private static readonly int[] WaveRadiusIDs =
@@ -39,12 +46,21 @@ public class AcousticWaveController : MonoBehaviour
     private static readonly int WaveWidthID =
         Shader.PropertyToID("_WaveWidth");
 
+    private static readonly int SourceRadiusID =
+        Shader.PropertyToID("_SourceRadius");
+
+    private static readonly int SourceIntensityID =
+        Shader.PropertyToID("_SourceIntensity");
+
 
     private void Start()
     {
         if (waveMaterial == null || waveOrigin == null)
         {
-            Debug.LogError("AcousticWaveController: Missing references.");
+            Debug.LogError(
+                "AcousticWaveController: Missing references."
+            );
+
             enabled = false;
             return;
         }
@@ -61,6 +77,20 @@ public class AcousticWaveController : MonoBehaviour
             );
         }
 
+        // Initialize source illumination
+        sourceIntensity = 0f;
+        sourceTimeRemaining = 0f;
+
+        waveMaterial.SetFloat(
+            SourceIntensityID,
+            0f
+        );
+
+        waveMaterial.SetFloat(
+            SourceRadiusID,
+            sourceRadius
+        );
+
         waveMaterial.SetVector(
             WaveOriginID,
             waveOrigin.position
@@ -70,25 +100,51 @@ public class AcousticWaveController : MonoBehaviour
 
     private void Update()
     {
-        // Allow WaveWidth adjustment during Play Mode
+        // Allow parameter adjustments during Play Mode
         waveMaterial.SetFloat(WaveWidthID, waveWidth);
+        waveMaterial.SetFloat(SourceRadiusID, sourceRadius);
+
+        // -----------------------------
+        // SOURCE ILLUMINATION
+        // -----------------------------
+
+        if (sourceTimeRemaining > 0f)
+        {
+            sourceTimeRemaining -= Time.deltaTime;
+
+            sourceIntensity = Mathf.Clamp01(
+                sourceTimeRemaining /
+                Mathf.Max(0.01f, sourceFadeDuration)
+            );
+        }
+        else
+        {
+            sourceIntensity = 0f;
+        }
+
+        waveMaterial.SetFloat(
+            SourceIntensityID,
+            sourceIntensity
+        );
+
+
+        // -----------------------------
+        // WAVE PROPAGATION
+        // -----------------------------
 
         for (int i = 0; i < MaxWaves; i++)
         {
             if (!waveActive[i])
                 continue;
 
-            // Expand this wave independently
             waveRadii[i] += waveSpeed * Time.deltaTime;
 
-            // Deactivate when maximum radius is reached
             if (waveRadii[i] >= maxRadius)
             {
                 waveActive[i] = false;
                 waveRadii[i] = InactiveRadius;
             }
 
-            // Update the corresponding shader property
             waveMaterial.SetFloat(
                 WaveRadiusIDs[i],
                 waveRadii[i]
@@ -103,14 +159,15 @@ public class AcousticWaveController : MonoBehaviour
         if (!Application.isPlaying || !enabled)
             return;
 
-        // Select the next available wave slot
+        if (waveMaterial == null || waveOrigin == null)
+            return;
+
         int index = nextWaveIndex;
 
-        // Reset and activate this wave
         waveRadii[index] = 0f;
         waveActive[index] = true;
 
-        // Update shared wave origin
+        // Capture current audio source position
         waveMaterial.SetVector(
             WaveOriginID,
             waveOrigin.position
@@ -121,9 +178,26 @@ public class AcousticWaveController : MonoBehaviour
             0f
         );
 
-        // Advance to the next slot
+        // -----------------------------
+        // TRIGGER SOURCE ILLUMINATION
+        // -----------------------------
+
+        sourceIntensity = 1f;
+        sourceTimeRemaining = Mathf.Max(
+            0.01f,
+            sourceFadeDuration
+        );
+
+        waveMaterial.SetFloat(
+            SourceIntensityID,
+            sourceIntensity
+        );
+
+        // Advance wave slot
         nextWaveIndex = (nextWaveIndex + 1) % MaxWaves;
     }
+
+
     [ContextMenu("Trigger Three Waves")]
     public void TriggerWaves()
     {
@@ -133,8 +207,10 @@ public class AcousticWaveController : MonoBehaviour
         if (waveBurstCoroutine != null)
             return;
 
-        waveBurstCoroutine = StartCoroutine(TriggerWavesCoroutine());
+        waveBurstCoroutine =
+            StartCoroutine(TriggerWavesCoroutine());
     }
+
 
     private IEnumerator TriggerWavesCoroutine()
     {
@@ -143,7 +219,9 @@ public class AcousticWaveController : MonoBehaviour
             TriggerWave();
 
             if (i < MaxWaves - 1)
-                yield return new WaitForSeconds(waveInterval);
+                yield return new WaitForSeconds(
+                    Mathf.Max(0f, waveInterval)
+                );
         }
 
         waveBurstCoroutine = null;
