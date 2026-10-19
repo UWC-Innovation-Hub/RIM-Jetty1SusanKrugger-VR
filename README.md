@@ -617,6 +617,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `SetNextPrisoner.cs` | `Assets/Scripts/Interaction_Sequencing Framework/SetNextPrisoner.cs` |
 | `TutorialPopup.cs` | `Assets/Scripts/Interaction_Sequencing Framework/TutorialPopup.cs` |
 | `Background_Character_Spawning.cs` | `Assets/Scripts/Interactions/Background_Character_Spawning.cs` |
+| `CameraLayerSwitcher.cs` | `Assets/Scripts/Interactions/CameraLayerSwitcher.cs` |
 | `ClapDetector.cs` | `Assets/Scripts/Interactions/ClapDetector.cs` |
 | `FingerprintLockout.cs` | `Assets/Scripts/Interactions/FingerprintLockout.cs` |
 | `FingerprintTrigger.cs` | `Assets/Scripts/Interactions/FingerprintTrigger.cs` |
@@ -628,8 +629,10 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `InstructionObject.cs` | `Assets/Scripts/Interactions/InstructionObject.cs` |
 | `InteractionCompleteListener.cs` | `Assets/Scripts/Interactions/InteractionCompleteListener.cs` |
 | `PalmGestureDetector.cs` | `Assets/Scripts/Interactions/PalmGestureDetector.cs` |
+| `PlayerChains.cs` | `Assets/Scripts/Interactions/PlayerChains.cs` |
 | `ProgressObject.cs` | `Assets/Scripts/Interactions/ProgressObject.cs` |
 | `ProgressTracker.cs` | `Assets/Scripts/Interactions/ProgressTracker.cs` |
+| `SaturationFader.cs` | `Assets/Scripts/Interactions/SaturationFader.cs` |
 | `TimedChoiceManager.cs` | `Assets/Scripts/Interactions/TimedChoiceManager.cs` |
 | `TouchHandsPoseGate.cs` | `Assets/Scripts/Interactions/TouchHandsPoseGate.cs` |
 | `AvatarAttachmentPoint.cs` | `Assets/Scripts/InventoryTest/AvatarAttachmentPoint.cs` |
