@@ -8,9 +8,13 @@ public class PlayerChains : MonoBehaviour
     [Header("Objects")]
     [SerializeField] private List<GameObject> objectOn = new List<GameObject>();
     [SerializeField] private GameObject objectOff;
+    [SerializeField] private float delayBeforeActive = 0.5f;
 
     [Header("Hand Detection")]
     [SerializeField] private string handTag = "Hand";
+
+    [Header("Auto Inactive")]
+    [SerializeField] private float activeDuration = 3f;
 
     [Header("Exit Animation")]
     [SerializeField] private float moveDistance = 0.2f;
@@ -24,6 +28,7 @@ public class PlayerChains : MonoBehaviour
 
     private bool hasTriggered;
     private bool isAnimating;
+    private bool isActiveWindowRunning;
 
     private void Reset()
     {
@@ -37,7 +42,7 @@ public class PlayerChains : MonoBehaviour
             return;
         }
 
-        if (isAnimating)
+        if (isAnimating || isActiveWindowRunning)
         {
             return;
         }
@@ -49,6 +54,13 @@ public class PlayerChains : MonoBehaviour
 
         hasTriggered = true;
 
+        StartCoroutine(ActiveAfterDelay());
+
+        if (objectOff != null)
+        {
+            StartCoroutine(MoveForwardThenOff(objectOff));
+        }
+
         foreach (GameObject obj in objectOn)
         {
             if (obj != null)
@@ -57,10 +69,62 @@ public class PlayerChains : MonoBehaviour
             }
         }
 
+        //if (activeDuration > 0f)
+        //{
+        //    StartCoroutine(DeactivateAfterDelay());
+        //}
+
         if (objectOff != null)
         {
             StartCoroutine(MoveForwardThenOff(objectOff));
         }
+    }
+
+    //private IEnumerator DeactivateAfterDelay()
+    //{
+    //    isActiveWindowRunning = true;
+
+    //    yield return new WaitForSeconds(activeDuration);
+
+    //    foreach (GameObject obj in objectOn)
+    //    {
+    //        if (obj != null) obj.SetActive(false);
+    //    }
+
+    //    isActiveWindowRunning = false;
+    //}
+
+    private IEnumerator ActiveAfterDelay()
+    {
+        isActiveWindowRunning = true;
+
+        if (delayBeforeActive > 0f)
+        {
+            yield return new WaitForSeconds(delayBeforeActive);
+        }
+
+        foreach (GameObject obj in objectOn)
+        {
+            if (obj != null)
+            {
+                obj.SetActive(true);
+            }
+        }
+
+        if (activeDuration > 0f)
+        {
+            yield return new WaitForSeconds(activeDuration);
+
+            foreach (GameObject obj in objectOn)
+            {
+                if (obj != null)
+                {
+                    obj.SetActive(false);
+                }
+            }
+        }
+
+        isActiveWindowRunning = false;
     }
 
     private IEnumerator MoveForwardThenOff(GameObject target)
