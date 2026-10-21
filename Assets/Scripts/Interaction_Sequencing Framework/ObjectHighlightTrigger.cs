@@ -33,6 +33,10 @@ public class ObjectHighlightTrigger : MonoBehaviour
     [SerializeField] private AudioSource responseAudio;
     [SerializeField] private VideoPlayer responseVideo;
 
+    [Header("Info Text")]
+    [SerializeField] private TextFader infoText;
+    [SerializeField] private bool fadeTextWhenDone = true;
+
     private readonly HashSet<Collider> _collidersInside = new HashSet<Collider>();
 
     private MaterialPropertyBlock _mpb;
@@ -100,12 +104,34 @@ public class ObjectHighlightTrigger : MonoBehaviour
     {
         _isComplete = true;
         SetArmed(false);
+
+        if (fadeTextWhenDone && infoText != null)
+        {
+            infoText.FadeOut();
+        }
     }
 
     public void ResetTrigger()
     {
         _isComplete = false;
         SetArmed(false);
+        HideInfo();
+    }
+
+    public void HideInfo()
+    {
+        if (infoText != null)
+        {
+            infoText.HideInstant();
+        }
+    }
+
+    private void ShowInfoText()
+    {
+        if (infoText != null)
+        {
+            infoText.FadeIn();
+        }
     }
 
     public void SetHighlighted(bool highlighted, bool instant = false)
