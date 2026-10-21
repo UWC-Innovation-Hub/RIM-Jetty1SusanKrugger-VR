@@ -104,6 +104,12 @@ public class AcousticWaveController : MonoBehaviour
         waveMaterial.SetFloat(WaveWidthID, waveWidth);
         waveMaterial.SetFloat(SourceRadiusID, sourceRadius);
 
+        // Keep wave origin synchronized with moving AudioSource
+waveMaterial.SetVector(
+    WaveOriginID,
+    waveOrigin.position
+);
+
         // -----------------------------
         // SOURCE ILLUMINATION
         // -----------------------------
@@ -162,20 +168,10 @@ public class AcousticWaveController : MonoBehaviour
         if (waveMaterial == null || waveOrigin == null)
             return;
 
-        int index = nextWaveIndex;
-
-        waveRadii[index] = 0f;
-        waveActive[index] = true;
-
         // Capture current audio source position
         waveMaterial.SetVector(
             WaveOriginID,
             waveOrigin.position
-        );
-
-        waveMaterial.SetFloat(
-            WaveRadiusIDs[index],
-            0f
         );
 
         // -----------------------------
@@ -193,8 +189,29 @@ public class AcousticWaveController : MonoBehaviour
             sourceIntensity
         );
 
+        // The shader has only three wave slots. Reusing a travelling wave
+        // resets its radius, so frequent sounds can prevent it from ever
+        // reaching distant geometry. Keep active waves and skip excess pulses.
+        int index = -1;
+        for (int offset = 0; offset < MaxWaves; offset++)
+        {
+            int candidate = (nextWaveIndex + offset) % MaxWaves;
+            if (!waveActive[candidate])
+            {
+                index = candidate;
+                break;
+            }
+        }
+
+        if (index < 0)
+            return;
+
+        waveRadii[index] = 0f;
+        waveActive[index] = true;
+        waveMaterial.SetFloat(WaveRadiusIDs[index], 0f);
+
         // Advance wave slot
-        nextWaveIndex = (nextWaveIndex + 1) % MaxWaves;
+        nextWaveIndex = (index + 1) % MaxWaves;
     }
 
 
