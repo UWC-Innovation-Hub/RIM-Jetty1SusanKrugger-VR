@@ -252,6 +252,8 @@ public class ObjectHighlightTrigger : MonoBehaviour
         {
             responseAudio.Play();
         }
+
+        ShowInfoText();
     }
 
     // ---- Highlight ----
