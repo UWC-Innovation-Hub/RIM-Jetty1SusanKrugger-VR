@@ -229,6 +229,21 @@ waveMaterial.SetVector(
     }
 
 
+    // Cancel scheduled emissions; waves already travelling finish normally.
+    public void CancelPendingWaves()
+    {
+        if (waveBurstCoroutine == null)
+            return;
+
+        StopCoroutine(waveBurstCoroutine);
+        waveBurstCoroutine = null;
+    }
+
+    private void OnDisable()
+    {
+        CancelPendingWaves();
+    }
+
     private IEnumerator TriggerWavesCoroutine()
     {
         for (int i = 0; i < MaxWaves; i++)

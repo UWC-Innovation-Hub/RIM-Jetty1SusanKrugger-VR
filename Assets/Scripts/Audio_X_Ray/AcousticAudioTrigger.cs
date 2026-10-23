@@ -6,6 +6,14 @@ public class AcousticAudioTrigger : MonoBehaviour
     public AudioSource audioSource;
     public AcousticWaveController waveController;
 
+    [Header("Trigger Mode")]
+    [Tooltip("Enabled: react to audio peaks. Disabled: emit timed waves without audio for testing.")]
+    public bool audioReactive = true;
+
+    [Min(0.01f)]
+    [Tooltip("Seconds between test triggers when Audio Reactive is disabled.")]
+    public float testTriggerInterval = 1f;
+
     [Header("Audio Detection")]
     [Range(0f, 1f)]
     public float triggerThreshold = 0.035f;
@@ -31,6 +39,7 @@ public class AcousticAudioTrigger : MonoBehaviour
 
     private bool armed = true;
     private float lastTriggerTime = float.NegativeInfinity;
+    private bool previousAudioReactive;
 
 
     private void Awake()
@@ -38,10 +47,10 @@ public class AcousticAudioTrigger : MonoBehaviour
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
 
-        if (audioSource == null || waveController == null)
+        if (waveController == null)
         {
             Debug.LogError(
-                "AcousticAudioTrigger: Missing references.",
+                "AcousticAudioTrigger: Assign a wave controller.",
                 this
             );
 
@@ -49,15 +58,53 @@ public class AcousticAudioTrigger : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        previousAudioReactive = audioReactive;
+        ResetDetection();
+    }
+
+    private void OnDisable()
+    {
+        if (waveController != null)
+            waveController.CancelPendingWaves();
+        ResetDetection();
+    }
+
+    private void ResetDetection()
+    {
+        currentRMS = 0f;
+        smoothedRMS = 0f;
+        armed = true;
+        lastTriggerTime = float.NegativeInfinity;
+    }
 
     private void Update()
     {
-        // Only analyze audio while playing
-        if (!audioSource.isPlaying)
+        if (waveController == null || !waveController.isActiveAndEnabled)
+            return;
+
+        if (previousAudioReactive != audioReactive)
         {
-            currentRMS = 0f;
-            smoothedRMS = 0f;
-            armed = true;
+            // Do not carry delayed test/burst emissions into the new mode.
+            waveController.CancelPendingWaves();
+            ResetDetection();
+            previousAudioReactive = audioReactive;
+        }
+
+        if (!audioReactive)
+        {
+            if (Time.time - lastTriggerTime >= Mathf.Max(0.01f, testTriggerInterval))
+                TriggerAudioWave();
+            return;
+        }
+
+        // Only analyze audio while playing
+        if (audioSource == null || !audioSource.isActiveAndEnabled ||
+            !audioSource.isPlaying || audioSource.mute || audioSource.volume <= 0f)
+        {
+            waveController.CancelPendingWaves();
+            ResetDetection();
             return;
         }
 
