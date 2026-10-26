@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,14 +6,12 @@ public class DialogueUI : MonoBehaviour
 {
     [Header("Wiring")]
     [SerializeField] private Button buttonYes;
-    [SerializeField] private Button buttonNo;
 
     public event Action<int> OnChoiceSelected;
 
     private void Awake()
     {
         buttonYes.onClick.AddListener(() => OnChoiceSelected?.Invoke(0));
-        buttonNo.onClick.AddListener(() => OnChoiceSelected?.Invoke(1));
 
         Hide();
     }
@@ -29,11 +26,6 @@ public class DialogueUI : MonoBehaviour
        if (choices != null && choices.Length > 0)
         {
             SetButtonLabel(buttonYes, choices[0].responseText);
-        }
-
-       if (choices != null && choices.Length > 1)
-        {
-            SetButtonLabel(buttonNo, choices[1].responseText);
         }
 
         gameObject.SetActive(true);
