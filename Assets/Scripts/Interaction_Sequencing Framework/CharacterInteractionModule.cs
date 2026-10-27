@@ -116,6 +116,7 @@ public class CharacterInteractionModule : InteractionModuleBase
             if (characters[i] != null)
             {
                 characters[i].HideHighlight();
+                characters[i].ResumeAnimation();
             }
         }
 
@@ -266,8 +267,8 @@ public class CharacterInteractionModule : InteractionModuleBase
         if (finished != null)
         {
             finished.Completed -= OnCharacterCompleted;
-            finished.Deactivate();
             finished.ResumeAnimation();
+            finished.Deactivate();
             finished.HideHighlight();
             _completedCharacters.Add(finished);
             CompletedCount = _completedCharacters.Count;
