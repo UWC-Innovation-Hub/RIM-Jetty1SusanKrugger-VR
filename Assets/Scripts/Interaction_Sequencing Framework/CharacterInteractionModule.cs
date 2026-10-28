@@ -331,7 +331,7 @@ public class CharacterInteractionModule : InteractionModuleBase
             StopCoroutine(_backgroundAnimatorFadeRoutine);
         }
 
-        float duration = target <= 0f ? animationFadeInDuration : animationFadeInDuration;
+        float duration = target <= 0f ? animationFadeOutDuration : animationFadeInDuration;
         _backgroundAnimatorFadeRoutine = StartCoroutine(FadeBackgroundAnimators(target, duration));
     }
 
@@ -356,9 +356,9 @@ public class CharacterInteractionModule : InteractionModuleBase
                 {
                     backgroundCharacters[i].speed = Mathf.Lerp(startSpeeds[i], target, t);
                 }
-
-                yield return null;
             }
+
+            yield return null;
         }
 
         for (int i = 0; i < backgroundCharacters.Length; i++)
