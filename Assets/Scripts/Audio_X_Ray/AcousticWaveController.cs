@@ -12,6 +12,13 @@ public class AcousticWaveController : MonoBehaviour
     public float maxRadius = 5f;
     public float waveWidth = 0.1f;
 
+    [Header("Wave Range Fade")]
+    [Min(0.01f)] public float fadeDistance = 4f;
+
+    [Header("Residual Illumination")]
+    [Min(0f)] public float trailLength = 2f;
+    [Range(0f, 1f)] public float trailIntensity = 0.25f;
+
     [Header("Multiple Wave Settings")]
     public float waveInterval = 0.75f;
 
@@ -51,6 +58,18 @@ public class AcousticWaveController : MonoBehaviour
 
     private static readonly int SourceIntensityID =
         Shader.PropertyToID("_SourceIntensity");
+
+    private static readonly int MaxRadiusID =
+        Shader.PropertyToID("_MaxRadius");
+
+    private static readonly int FadeDistanceID =
+        Shader.PropertyToID("_FadeDistance");
+
+    private static readonly int TrailLengthID =
+        Shader.PropertyToID("_TrailLength");
+
+    private static readonly int TrailIntensityID =
+        Shader.PropertyToID("_TrailIntensity");
 
 
     private void Start()
@@ -103,12 +122,17 @@ public class AcousticWaveController : MonoBehaviour
         // Allow parameter adjustments during Play Mode
         waveMaterial.SetFloat(WaveWidthID, waveWidth);
         waveMaterial.SetFloat(SourceRadiusID, sourceRadius);
+        waveMaterial.SetFloat(MaxRadiusID, Mathf.Max(0.01f, maxRadius));
+        waveMaterial.SetFloat(FadeDistanceID,
+            Mathf.Clamp(fadeDistance, 0.01f, Mathf.Max(0.01f, maxRadius)));
+        waveMaterial.SetFloat(TrailLengthID, Mathf.Max(0f, trailLength));
+        waveMaterial.SetFloat(TrailIntensityID, Mathf.Clamp01(trailIntensity));
 
         // Keep wave origin synchronized with moving AudioSource
-waveMaterial.SetVector(
-    WaveOriginID,
-    waveOrigin.position
-);
+        waveMaterial.SetVector(
+            WaveOriginID,
+            waveOrigin.position
+        );
 
         // -----------------------------
         // SOURCE ILLUMINATION

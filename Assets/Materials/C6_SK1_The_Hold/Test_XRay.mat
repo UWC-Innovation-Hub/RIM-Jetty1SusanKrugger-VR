@@ -69,6 +69,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NoiseTexture:
+        m_Texture: {fileID: 2800000, guid: a500da76aa6d48a78af162e69b57ffc0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -107,13 +111,17 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _DistortionStrength: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
+    - _FadeDistance: 4
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _MaxRadius: 15
     - _Metallic: 0
+    - _NoiseScale: 0.7
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
@@ -121,17 +129,17 @@ Material:
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _SourceIntensity: 0.39841533
+    - _SourceIntensity: 0.3189191
     - _SourceRadius: 3
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _TrailIntensity: 0.25
-    - _TrailLength: 2
-    - _WaveRadius: 8.872019
+    - _TrailIntensity: 1
+    - _TrailLength: 5
+    - _WaveRadius: 6.810812
     - _WaveRadius2: -100
-    - _WaveRadius3: -100
+    - _WaveRadius3: 9.612986
     - _WaveWidth: 1
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
@@ -141,7 +149,7 @@ Material:
     - _Color: {r: 1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _WaveOrigin: {r: 5.8181114, g: 9.42288, b: 11.08, a: 0}
+    - _WaveOrigin: {r: -5.008709, g: 9.42288, b: 11.08, a: 0}
     - _WaveOrigin2: {r: 0, g: 0, b: 0, a: 0}
     - _WaveOrigin3: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
