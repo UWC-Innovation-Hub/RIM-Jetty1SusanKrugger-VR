@@ -193,6 +193,13 @@ public class CharacterConversation : InteractionModuleBase
         SetIdle();
     }
 
+    private IEnumerator ResponseTimeoutRoutine(System.Action<int> onTimeout)
+    {
+        yield return new WaitForSeconds(responseTimeout);
+        Debug.Log($"[CharacterConversation] '{characterName}' response timed out. Auto-selecting fallback (index 1).");
+        onTimeout(1);
+    }
+
     private IEnumerator DialogueRoutine()
     {
         if (dialogueData == null)
@@ -239,7 +246,7 @@ public class CharacterConversation : InteractionModuleBase
         Coroutine timeoutRoutine = null;
         if (responseTimeout > 0f)
         {
-            timeoutRoutine = StartCoroutine(ResponseTimeoutRoutine(dialogueData.choices.Length, i => selectedIndex = 1));
+            timeoutRoutine = StartCoroutine(ResponseTimeoutRoutine(i => selectedIndex = i));
         }
 
 
@@ -262,14 +269,5 @@ public class CharacterConversation : InteractionModuleBase
 
         _dialogueRoutine = null;
         FinishConversation();
-    }
-
-    private IEnumerator ResponseTimeoutRoutine(int choiceCount, System.Action<int> onTimeout)
-    {
-        yield return new WaitForSeconds(responseTimeout);
-
-        int randomIndex = Random.Range(0, choiceCount);
-        Debug.Log($"[CharacterConversation] '{characterName}' response timed out. Auto-selecting index {randomIndex}.");
-        onTimeout(randomIndex);
     }
 }
