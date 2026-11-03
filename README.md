@@ -628,11 +628,13 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `InstructionManager.cs` | `Assets/Scripts/Interactions/InstructionManager.cs` |
 | `InstructionObject.cs` | `Assets/Scripts/Interactions/InstructionObject.cs` |
 | `InteractionCompleteListener.cs` | `Assets/Scripts/Interactions/InteractionCompleteListener.cs` |
+| `ObjectFader.cs` | `Assets/Scripts/Interactions/ObjectFader.cs` |
 | `PalmGestureDetector.cs` | `Assets/Scripts/Interactions/PalmGestureDetector.cs` |
 | `PlayerChains.cs` | `Assets/Scripts/Interactions/PlayerChains.cs` |
 | `ProgressObject.cs` | `Assets/Scripts/Interactions/ProgressObject.cs` |
 | `ProgressTracker.cs` | `Assets/Scripts/Interactions/ProgressTracker.cs` |
 | `SaturationFader.cs` | `Assets/Scripts/Interactions/SaturationFader.cs` |
+| `TextFader.cs` | `Assets/Scripts/Interactions/TextFader.cs` |
 | `TimedChoiceManager.cs` | `Assets/Scripts/Interactions/TimedChoiceManager.cs` |
 | `TouchHandsPoseGate.cs` | `Assets/Scripts/Interactions/TouchHandsPoseGate.cs` |
 | `AvatarAttachmentPoint.cs` | `Assets/Scripts/InventoryTest/AvatarAttachmentPoint.cs` |
