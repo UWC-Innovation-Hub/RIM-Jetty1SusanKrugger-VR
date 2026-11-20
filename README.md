@@ -41,6 +41,12 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── J1/
         ├── Mixamo_tests/
             ├── Face animation tests/
+        ├── Rokoko Tests/
+            ├── C2/
+            ├── Drift/
+            ├── New/
+            ├── Rig Tests/
+            ├── old/
     ├── Audio/
         ├── C1/
             ├── Master/
@@ -194,6 +200,26 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── Prisoner_Rigs/
             ├── Textures/
     ├── Resources/
+    ├── Rokoko/
+        ├── Art/
+            ├── Fonts/
+            ├── Icons/
+            ├── Materials/
+            ├── Meshes/
+            ├── Shaders/
+            ├── Textures/
+        ├── EditorScripts/
+            ├── Editor/
+        ├── Prefabs/
+            ├── Actors/
+            ├── UI/
+        ├── Resources/
+        ├── Scenes/
+            ├── RokokoPluginExampleScene/
+        ├── Scripts/
+            ├── Core/
+            ├── Mono/
+            ├── Plugins/
     ├── Ropes and cables Tool/
         ├── OptimizedRopesAndCables/
             ├── Example/
@@ -221,12 +247,14 @@ Through VR, visitors can walk through historically significant locations on Robb
         ├── TestScenes/
             ├── BlackWaitingRoomTest/
             ├── C1_Final_Pass_TEST_Beta/
+            ├── C2_Final_Pass/
             ├── C2_J3_Cell_Rec_Assets/
             ├── C4_J6_Black_Visitors_Room_TESTING/
             ├── C6_SK1_The_Hold/
             ├── C6_SK1_The_Hold_BACKUP/
             ├── Cell_ProjectionTest_Backup/
             ├── MemoryProjectorTest/
+            ├── Rokoko_Tests/
             ├── SortPrisonerTest/
             ├── SortPrisonerTest_MetaMovement_Sequenced/
     ├── Scripts/
@@ -366,6 +394,7 @@ Through VR, visitors can walk through historically significant locations on Robb
 <!-- AUTO-SCRIPTS-START -->
 | Script | Path |
 |---|---|
+| `RokokoShoulderCorrection.cs` | `Assets/Animations/Rokoko Tests/New/RokokoShoulderCorrection.cs` |
 | `AutoRotate.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/AutoRotate.cs` |
 | `CameraOrbit.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/CameraOrbit.cs` |
 | `CreateSingleton.cs` | `Assets/MagicaCloth2/Example (Can be deleted)/Common/Scripts/CreateSingleton.cs` |
@@ -545,6 +574,48 @@ Through VR, visitors can walk through historically significant locations on Robb
 | `ElapsedTtimer.cs` | `Assets/Media/RIM_jetty1_assets/scripts/ElapsedTtimer.cs` |
 | `SceneManager.cs` | `Assets/Media/RIM_jetty1_assets/scripts/SceneManager.cs` |
 | `UISceneLoader.cs` | `Assets/Media/RIM_jetty1_assets/scripts/UISceneLoader.cs` |
+| `ActorEditor.cs` | `Assets/Rokoko/EditorScripts/Editor/ActorEditor.cs` |
+| `ActorNewtonEditor.cs` | `Assets/Rokoko/EditorScripts/Editor/ActorNewtonEditor.cs` |
+| `BlendShapesMappingEditor.cs` | `Assets/Rokoko/EditorScripts/Editor/BlendShapesMappingEditor.cs` |
+| `CharacterEditor.cs` | `Assets/Rokoko/EditorScripts/Editor/CharacterEditor.cs` |
+| `FaceEditor.cs` | `Assets/Rokoko/EditorScripts/Editor/FaceEditor.cs` |
+| `HumanBoneMappingEditor.cs` | `Assets/Rokoko/EditorScripts/Editor/HumanBoneMappingEditor.cs` |
+| `PropColorEditor.cs` | `Assets/Rokoko/EditorScripts/Editor/PropColorEditor.cs` |
+| `PropEditor.cs` | `Assets/Rokoko/EditorScripts/Editor/PropEditor.cs` |
+| `TweakableEditor.cs` | `Assets/Rokoko/EditorScripts/Editor/TweakableEditor.cs` |
+| `ARKitBlendshapes.cs` | `Assets/Rokoko/Scripts/Core/ARKitBlendshapes.cs` |
+| `CalibrateRequestData.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/CalibrateRequestData.cs` |
+| `InfoRequestData.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/InfoRequestData.cs` |
+| `LivestreamRequestData.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/LivestreamRequestData.cs` |
+| `PlaybackRequestData.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/PlaybackRequestData.cs` |
+| `RecordingRequestData.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/RecordingRequestData.cs` |
+| `RequestData.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/RequestData.cs` |
+| `ResetActorRequestData.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/ResetActorRequestData.cs` |
+| `StudioCommandAPI.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/StudioCommandAPI.cs` |
+| `StudioCommandAPIBase.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/StudioCommandAPIBase.cs` |
+| `TrackerRequestData.cs` | `Assets/Rokoko/Scripts/Core/CommandAPI/TrackerRequestData.cs` |
+| `JsonLiveSerializerV3.cs` | `Assets/Rokoko/Scripts/Core/JsonLiveSerializerV3.cs` |
+| `LZ4Wrapper.cs` | `Assets/Rokoko/Scripts/Core/LZ4Wrapper.cs` |
+| `StudioReceiver.cs` | `Assets/Rokoko/Scripts/Core/StudioReceiver.cs` |
+| `UDPReceiver.cs` | `Assets/Rokoko/Scripts/Core/UDPReceiver.cs` |
+| `Actor.cs` | `Assets/Rokoko/Scripts/Mono/Inputs/Actor.cs` |
+| `ActorNewton.cs` | `Assets/Rokoko/Scripts/Mono/Inputs/ActorNewton.cs` |
+| `BlendShapesMapping.cs` | `Assets/Rokoko/Scripts/Mono/Inputs/BlendShapesMapping.cs` |
+| `Character.cs` | `Assets/Rokoko/Scripts/Mono/Inputs/Character.cs` |
+| `Face.cs` | `Assets/Rokoko/Scripts/Mono/Inputs/Face.cs` |
+| `HumanBoneMapping.cs` | `Assets/Rokoko/Scripts/Mono/Inputs/HumanBoneMapping.cs` |
+| `Prop.cs` | `Assets/Rokoko/Scripts/Mono/Inputs/Prop.cs` |
+| `PropColor.cs` | `Assets/Rokoko/Scripts/Mono/Inputs/PropColor.cs` |
+| `PrefabInstancer.cs` | `Assets/Rokoko/Scripts/Mono/PrefabInstancer.cs` |
+| `PrefabPool.cs` | `Assets/Rokoko/Scripts/Mono/PrefabPool.cs` |
+| `RokokoHelper.cs` | `Assets/Rokoko/Scripts/Mono/RokokoHelper.cs` |
+| `BlendshapesDictionary.cs` | `Assets/Rokoko/Scripts/Mono/Serializable/BlendshapesDictionary.cs` |
+| `HumanTPoseDictionary.cs` | `Assets/Rokoko/Scripts/Mono/Serializable/HumanTPoseDictionary.cs` |
+| `SerializableDictionary.cs` | `Assets/Rokoko/Scripts/Mono/Serializable/SerializableDictionary.cs` |
+| `StudioManager.cs` | `Assets/Rokoko/Scripts/Mono/StudioManager.cs` |
+| `TPoseGuideGameComponent.cs` | `Assets/Rokoko/Scripts/Mono/TPoseGuideGameComponent.cs` |
+| `InputHierarchyRow.cs` | `Assets/Rokoko/Scripts/Mono/UI/InputHierarchyRow.cs` |
+| `UIHierarchyManager.cs` | `Assets/Rokoko/Scripts/Mono/UI/UIHierarchyManager.cs` |
 | `CameraMove.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Example/Scripts/CameraMove.cs` |
 | `PointsAssignExample.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Example/Scripts/PointsAssignExample.cs` |
 | `RopeEditor.cs` | `Assets/Ropes and cables Tool/OptimizedRopesAndCables/Script/Editor/RopeEditor.cs` |
